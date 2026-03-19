@@ -610,6 +610,18 @@ body {
 .handle { width: 40px; height: 4px; background: rgba(92,58,28,0.18); border-radius: 99px; margin: 12px auto 0; }
 .shinner { padding: 20px 20px 50px; }
 
+/* Fade gradient at the bottom to hint there's more content */
+.bsheet-fade {
+  position: fixed; bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 100%; max-width: 500px;
+  height: 80px;
+  background: linear-gradient(to top, #FAF5EC 30%, transparent 100%);
+  pointer-events: none; z-index: 102;
+  opacity: 0; transition: opacity .38s;
+}
+.bsheet.open ~ .bsheet-fade { opacity: 1; }
+
 /* ── ENTRY PANEL ────────────────────────────────── */
 .ep-date {
   font-family: 'Satisfy', cursive; font-size: 28px;
@@ -648,8 +660,38 @@ body {
 
 .mood-row { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 22px; scrollbar-width: none; }
 .mood-row::-webkit-scrollbar { display: none; }
+
+/* Wrapper buat tooltip */
+.mbtn-wrap {
+  position: relative; flex-shrink: 0;
+  display: flex; flex-direction: column; align-items: center;
+}
+.mbtn-tip {
+  position: absolute; bottom: calc(100% + 7px);
+  left: 50%; transform: translateX(-50%);
+  background: #3B2410; color: #FAF5EC;
+  font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 400;
+  letter-spacing: .06em; white-space: nowrap;
+  padding: 4px 8px; border-radius: 6px;
+  pointer-events: none;
+  opacity: 0; transform: translateX(-50%) translateY(4px);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  z-index: 10;
+}
+/* tiny caret */
+.mbtn-tip::after {
+  content: '';
+  position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+  border: 4px solid transparent;
+  border-top-color: #3B2410;
+}
+.mbtn-wrap:hover .mbtn-tip,
+.mbtn-wrap:focus-within .mbtn-tip {
+  opacity: 1; transform: translateX(-50%) translateY(0);
+}
+
 .mbtn {
-  flex-shrink: 0; width: 48px; height: 48px; border-radius: 50%;
+  width: 48px; height: 48px; border-radius: 50%;
   border: 1.5px solid transparent;
   background: rgba(92,58,28,0.07); cursor: pointer; font-size: 22px;
   display: flex; align-items: center; justify-content: center; transition: all .2s;
@@ -707,38 +749,99 @@ body {
   padding: 24px;
 }
 .auth-card {
-  width: 100%; max-width: 380px;
-  background: #FAF5EC;
-  border-radius: 14px; padding: 36px 28px 32px;
-  box-shadow: 0 8px 32px rgba(92,58,28,0.14), 0 2px 8px rgba(92,58,28,0.08);
+  width: 100%; max-width: 360px;
+  background: linear-gradient(170deg, #FBF6EE 0%, #F5EDD8 100%);
+  border-radius: 18px; padding: 44px 32px 36px;
+  box-shadow:
+    0 20px 60px rgba(92,58,28,0.18),
+    0 4px 16px rgba(92,58,28,0.10),
+    inset 0 1px 0 rgba(255,255,255,0.8);
+  position: relative; overflow: hidden;
+}
+/* Decorative corner flourish */
+.auth-card::before {
+  content: '';
+  position: absolute; top: 0; right: 0;
+  width: 120px; height: 120px;
+  background: radial-gradient(ellipse at top right, rgba(212,179,140,0.25) 0%, transparent 70%);
+  pointer-events: none;
+}
+.auth-card::after {
+  content: '';
+  position: absolute; bottom: 0; left: 0;
+  width: 80px; height: 80px;
+  background: radial-gradient(ellipse at bottom left, rgba(42,56,96,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+.auth-headline {
+  font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 300;
+  font-size: 15px; color: rgba(92,58,28,0.5); letter-spacing: .14em;
+  text-align: center; margin-bottom: 28px; line-height: 1.7;
+}
+.auth-divider {
+  display: flex; align-items: center; gap: 10px; margin: 20px 0;
+}
+.auth-divider::before, .auth-divider::after {
+  content: ''; flex: 1; height: 1px;
+  background: rgba(92,58,28,0.12);
+}
+.auth-divider span {
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: 11px; color: rgba(92,58,28,0.35); letter-spacing: .1em;
 }
 .auth-tabs {
-  display: flex; gap: 0; margin-bottom: 22px;
-  border-bottom: 1.5px solid rgba(92,58,28,0.14);
+  display: flex; gap: 0; margin-bottom: 24px;
+  background: rgba(92,58,28,0.06); border-radius: 10px; padding: 3px;
 }
 .auth-tab {
   flex: 1; background: none; border: none; cursor: pointer;
-  font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 400;
-  color: #A89070; padding: 8px 0 10px; letter-spacing: .04em;
-  border-bottom: 2px solid transparent; margin-bottom: -1.5px;
-  transition: all .18s;
+  font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 400;
+  color: rgba(92,58,28,0.45); padding: 8px 0; letter-spacing: .05em;
+  border-radius: 8px; transition: all .22s;
 }
-.auth-tab.active { color: #3B2410; border-bottom-color: #3B2410; font-weight: 500; }
-.auth-field { margin-bottom: 16px; }
+.auth-tab.active {
+  background: #FAF5EC; color: #3B2410; font-weight: 500;
+  box-shadow: 0 1px 6px rgba(92,58,28,0.12);
+}
+.auth-field { margin-bottom: 18px; }
 .auth-err {
   font-family: 'DM Sans', sans-serif; font-size: 12px;
   color: #C97070; margin-bottom: 10px; line-height: 1.5;
+  background: rgba(201,112,112,0.08); border-radius: 8px;
+  padding: 8px 12px; border-left: 2.5px solid rgba(201,112,112,0.4);
+}
+.auth-ok {
+  font-family: 'DM Sans', sans-serif; font-size: 12px;
+  color: #4A8C5C; margin-bottom: 10px; line-height: 1.5;
+  background: rgba(74,140,92,0.08); border-radius: 8px;
+  padding: 8px 12px; border-left: 2.5px solid rgba(74,140,92,0.4);
 }
 .logout-btn {
-  margin-top: 8px; background: none; border: none; cursor: pointer;
-  font-family: 'DM Sans', sans-serif; font-size: 11px;
-  color: rgba(92,58,28,0.4); letter-spacing: .04em;
-  transition: color .18s;
+  position: fixed; top: 14px; right: 16px; z-index: 100;
+  background: rgba(255,255,255,0.55); backdrop-filter: blur(6px);
+  border: 1px solid rgba(92,58,28,0.14); border-radius: 20px;
+  padding: 5px 12px 5px 9px;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 400;
+  color: rgba(92,58,28,0.5); letter-spacing: .03em;
+  display: flex; align-items: center; gap: 6px;
+  transition: all .2s;
+  box-shadow: 0 1px 6px rgba(92,58,28,0.08);
+  max-width: 180px; overflow: hidden;
+  white-space: nowrap; text-overflow: ellipsis;
 }
-.logout-btn:hover { color: rgba(92,58,28,0.75); }
+.logout-btn:hover {
+  background: rgba(255,255,255,0.9);
+  color: rgba(92,58,28,0.75);
+  box-shadow: 0 2px 10px rgba(92,58,28,0.12);
+}
+.logout-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: rgba(92,58,28,0.22); flex-shrink: 0;
+}
 .db-loading {
   font-family: 'DM Sans', sans-serif; font-size: 11px;
-  color: rgba(92,58,28,0.4); letter-spacing: .08em;
+  color: rgba(92,58,28,0.35); letter-spacing: .08em;
   text-align: center; margin-top: -8px; margin-bottom: 6px;
   animation: pulse 1.4s ease-in-out infinite;
 }
@@ -770,11 +873,63 @@ body {
   .handle    { display: none; }
   .mob-sheet { display: none !important; }
   .ph {
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    height: 100%; min-height: 320px; text-align: center; padding: 40px; gap: 14px;
+    display: flex; flex-direction: column;
+    height: 100%; padding: 32px 28px 40px;
+    justify-content: space-between;
   }
-  .ph-icon { font-size: 44px; opacity: .2; }
-  .ph-txt  { font-family: 'DM Sans', sans-serif; font-size: 14px; color: #9A7050; line-height: 1.8; font-style: italic; }
+  .ph-top { display: flex; flex-direction: column; gap: 28px; }
+  .ph-greeting {
+    font-family: 'Satisfy', cursive; font-size: 22px; color: #3B2410;
+    line-height: 1.4;
+  }
+  .ph-greeting-sub {
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 13px; color: rgba(92,58,28,0.5); letter-spacing: .1em;
+    margin-top: 4px;
+  }
+  .ph-tip-card {
+    background: linear-gradient(135deg, rgba(92,58,28,0.04), rgba(92,58,28,0.07));
+    border: 1px solid rgba(92,58,28,0.09);
+    border-radius: 12px; padding: 16px 18px;
+    box-shadow: inset 0 1px 2px rgba(255,255,255,0.6);
+  }
+  .ph-tip-label {
+    font-family: 'DM Sans', sans-serif; font-size: 9px; font-weight: 500;
+    letter-spacing: .16em; text-transform: uppercase;
+    color: rgba(92,58,28,0.4); margin-bottom: 8px;
+  }
+  .ph-tip-text {
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 15px; color: #5C3A1C; line-height: 1.65;
+    letter-spacing: .01em;
+  }
+  .ph-recent { display: flex; flex-direction: column; gap: 6px; }
+  .ph-recent-label {
+    font-family: 'DM Sans', sans-serif; font-size: 9px; font-weight: 500;
+    letter-spacing: .16em; text-transform: uppercase;
+    color: rgba(92,58,28,0.4); margin-bottom: 4px;
+  }
+  .ph-recent-empty {
+    font-family: 'DM Sans', sans-serif; font-size: 12px;
+    color: rgba(92,58,28,0.35); font-style: italic;
+  }
+  .ph-bottom {
+    display: flex; align-items: center; gap: 10px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(92,58,28,0.08);
+  }
+  .ph-arrow {
+    font-size: 18px; color: rgba(92,58,28,0.25);
+    animation: phArrow 2s ease-in-out infinite;
+  }
+  @keyframes phArrow {
+    0%,100% { transform: translateX(0); opacity: 0.4; }
+    50%      { transform: translateX(-4px); opacity: 0.8; }
+  }
+  .ph-hint {
+    font-family: 'DM Sans', sans-serif; font-size: 12px;
+    color: rgba(92,58,28,0.38); font-style: italic; line-height: 1.5;
+  }
 }
 @media (max-width: 767px) {
   .right-col { display: none; }
@@ -812,7 +967,9 @@ function AuthScreen({ onAuth }) {
   return (
     <div className="auth-wrap">
       <div className="auth-card">
-        <div className="logo-mark" style={{justifyContent:"center", marginBottom:6}}>
+
+        {/* Logo */}
+        <div className="logo-mark" style={{justifyContent:"center", marginBottom:4}}>
           <div className="logo-icon">
             <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M7 22 C9 16, 16 10, 23 5" stroke="rgba(92,58,28,0.5)" strokeWidth="1" strokeLinecap="round"/>
@@ -822,29 +979,147 @@ function AuthScreen({ onAuth }) {
           </div>
           <div className="logo-text">Urjour</div>
         </div>
-        <div className="logo-tagline" style={{textAlign:"center", marginBottom:28}}>your everyday journal</div>
 
-        <div className="auth-tabs">
-          <button className={"auth-tab"+(mode==="login"?" active":"")} onClick={() => { setMode("login"); setErr(""); }}>Log In</button>
-          <button className={"auth-tab"+(mode==="register"?" active":"")} onClick={() => { setMode("register"); setErr(""); }}>Register</button>
+        {/* Tagline + headline */}
+        <div className="auth-headline">
+          a quiet space for your thoughts,<br />
+          memories, and feelings.
         </div>
 
+        {/* Tab switcher */}
+        <div className="auth-tabs">
+          <button className={"auth-tab"+(mode==="login"?" active":"")}
+            onClick={() => { setMode("login"); setErr(""); }}>Sign In</button>
+          <button className={"auth-tab"+(mode==="register"?" active":"")}
+            onClick={() => { setMode("register"); setErr(""); }}>Create Account</button>
+        </div>
+
+        {/* Fields */}
         <div className="auth-field">
           <div className="elabel">Email</div>
-          <input className="word-in" type="email" value={email} onChange={e => setEmail(e.target.value)}
-            placeholder="your@email.com" onKeyDown={e => e.key === "Enter" && submit()} />
+          <input className="word-in" type="email" value={email}
+            onChange={e => setEmail(e.target.value)}
+            placeholder="your@email.com"
+            onKeyDown={e => e.key === "Enter" && submit()} />
         </div>
         <div className="auth-field">
           <div className="elabel">Password</div>
-          <input className="word-in" type="password" value={pass} onChange={e => setPass(e.target.value)}
-            placeholder="••••••••" onKeyDown={e => e.key === "Enter" && submit()} />
+          <input className="word-in" type="password" value={pass}
+            onChange={e => setPass(e.target.value)}
+            placeholder="••••••••"
+            onKeyDown={e => e.key === "Enter" && submit()} />
         </div>
 
-        {err && <div className="auth-err">{err}</div>}
+        {/* Feedback */}
+        {err && (
+          <div className={err.includes("email") || err.includes("confirm") ? "auth-ok" : "auth-err"}>
+            {err}
+          </div>
+        )}
 
-        <button className="sbtn" style={{marginTop:8}} onClick={submit} disabled={busy}>
-          {busy ? "..." : mode === "login" ? "Log In" : "Create Account"}
+        <button className="sbtn" style={{marginTop:12}} onClick={submit} disabled={busy}>
+          <span className="sbtn-label">
+            {busy ? "…" : mode === "login" ? "Sign In" : "Create Account"}
+          </span>
         </button>
+
+        <div className="auth-divider"><span>or</span></div>
+        <div style={{textAlign:"center", fontFamily:"'Cormorant Garamond',serif", fontStyle:"italic", fontSize:"12px", color:"rgba(92,58,28,0.38)", letterSpacing:".06em"}}>
+          {mode === "login" ? "New here? " : "Already have an account? "}
+          <span
+            onClick={() => { setMode(mode === "login" ? "register" : "login"); setErr(""); }}
+            style={{color:"#7A5030", cursor:"pointer", textDecoration:"underline", textUnderlineOffset:"3px"}}
+          >
+            {mode === "login" ? "Create an account" : "Sign in"}
+          </span>
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
+// ─── Writing prompts ──────────────────────────────────────────────────────────
+const PROMPTS = [
+  "What made you smile today?",
+  "Describe today in three words.",
+  "What are you grateful for right now?",
+  "What was the highlight of your day?",
+  "How did your body feel today?",
+  "What do you want to remember about today?",
+  "What surprised you today?",
+  "Who made a difference in your day?",
+];
+
+function RightPlaceholder({ entMap, month, year }) {
+  const today = new Date();
+  const isCurrentMonth = today.getFullYear() === year && today.getMonth() === month;
+  const totalEntries = Object.keys(entMap).length;
+  const daysInMonth  = getDaysInMonth(year, month);
+
+  // Pick a prompt based on day of month so it feels curated, not random
+  const prompt = PROMPTS[today.getDate() % PROMPTS.length];
+
+  const greeting = isCurrentMonth
+    ? "Hello,\nwhat's on your mind?"
+    : `${MONTHS[month]} ${year}`;
+
+  return (
+    <div className="ph">
+      <div className="ph-top">
+        {/* Greeting */}
+        <div>
+          {greeting.split("\n").map((line, i) => (
+            <div key={i} className="ph-greeting">{line}</div>
+          ))}
+          <div className="ph-greeting-sub">
+            {isCurrentMonth
+              ? `${totalEntries} of ${today.getDate()} days logged`
+              : `${totalEntries} of ${daysInMonth} days logged`
+            }
+          </div>
+        </div>
+
+        {/* Writing prompt */}
+        {isCurrentMonth && (
+          <div className="ph-tip-card">
+            <div className="ph-tip-label">today's prompt</div>
+            <div className="ph-tip-text">"{prompt}"</div>
+          </div>
+        )}
+
+        {/* Recent entries summary */}
+        <div className="ph-recent">
+          <div className="ph-recent-label">this month</div>
+          {totalEntries === 0 ? (
+            <div className="ph-recent-empty">No entries yet — start with today ✨</div>
+          ) : (
+            <div style={{display:"flex", flexWrap:"wrap", gap:"6px"}}>
+              {Object.entries(entMap)
+                .sort((a,b) => b[0]-a[0])
+                .slice(0,5)
+                .map(([d, e]) => (
+                  <div key={d} style={{
+                    display:"flex", alignItems:"center", gap:"5px",
+                    background:"rgba(92,58,28,0.06)", borderRadius:"8px",
+                    padding:"5px 10px",
+                    fontFamily:"'DM Sans',sans-serif", fontSize:"12px", color:"#7A5030"
+                  }}>
+                    <span style={{fontFamily:"'Cormorant Garamond',serif", fontStyle:"italic"}}>{d}</span>
+                    {e.mood && <span style={{fontSize:"14px"}}>{e.mood}</span>}
+                    {e.word && <span style={{color:"#9C7448", fontSize:"11px"}}>· {e.word}</span>}
+                  </div>
+                ))
+              }
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Bottom hint */}
+      <div className="ph-bottom">
+        <div className="ph-arrow">←</div>
+        <div className="ph-hint">Tap any date on the calendar<br />to write your entry</div>
       </div>
     </div>
   );
@@ -1014,8 +1289,13 @@ export default function CozyJournal() {
           </div>
           <div className="logo-tagline">your everyday journal</div>
           <div className="logo-line"><span className="logo-line-diamond" /></div>
-          <button className="logout-btn" onClick={handleLogout} title="Log out">↩ {user.email}</button>
         </div>
+
+        {/* Logout — fixed top right, tidak ganggu logo */}
+        <button className="logout-btn" onClick={handleLogout} title="Log out">
+          <span className="logout-dot" />
+          {user.email.split("@")[0]}
+        </button>
 
         {/* Loading overlay */}
         {loading && <div className="db-loading">syncing…</div>}
@@ -1151,10 +1431,7 @@ export default function CozyJournal() {
                   <EntryPanel {...ep} />
                 </div>
               ) : (
-                <div className="ph">
-                  <div className="ph-icon">📖</div>
-                  <div className="ph-txt">Tap a date<br />to write your memory</div>
-                </div>
+                <RightPlaceholder entMap={entMap} month={month} year={year} />
               )}
             </div>
 
@@ -1171,6 +1448,7 @@ export default function CozyJournal() {
           {selDay && <EntryPanel {...ep} />}
         </div>
       </div>
+      <div className="bsheet-fade" />
     </>
   );
 }
@@ -1223,11 +1501,13 @@ function EntryPanel({ dayName, selDay, month, year, entry, setEntry, saved, hand
       <div className="elabel">How are you feeling?</div>
       <div className="mood-row">
         {MOODS.map(mo => (
-          <button
-            key={mo.emoji}
-            className={"mbtn"+(entry.mood===mo.emoji?" sel":"")}
-            onClick={() => setEntry(p => ({...p, mood: p.mood===mo.emoji ? null : mo.emoji}))}
-          >{mo.emoji}</button>
+          <div key={mo.emoji} className="mbtn-wrap">
+            <div className="mbtn-tip">{mo.label}</div>
+            <button
+              className={"mbtn"+(entry.mood===mo.emoji?" sel":"")}
+              onClick={() => setEntry(p => ({...p, mood: p.mood===mo.emoji ? null : mo.emoji}))}
+            >{mo.emoji}</button>
+          </div>
         ))}
       </div>
 
