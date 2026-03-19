@@ -329,13 +329,15 @@ body {
 
 /* ── PAGE TURN OVERLAY ───────────────────────────────────────────────────────
 
-  Kedua arah pakai konsep yang sama: halaman baru DATANG dari sisi hinge,
-  landing di atas konten yang sudah diganti.
+  Konsep baru yang bersih — KEDUA arah identik:
+  - Overlay halaman muncul di atas konten (flat, terlihat)
+  - Berputar ke edge-on (90°) di titik tengah — konten ganti di sini
+  - Landing flat di sisi lain
 
-  PREV: hinge KIRI  — halaman masuk dari balik spine kiri  (-180° → 0°)
-  NEXT: hinge KANAN — halaman masuk dari balik sisi kanan  (180° → 0°)
+  NEXT: hinge kiri, 0° → -180°  (halaman pergi ke kiri)
+  PREV: hinge kiri, 0° → +180°  (halaman pergi ke kanan — mirror)
 
-  Keduanya identik secara fisika, cuma cerminan horizontal.
+  Konten selalu ganti saat halaman edge-on (tidak terlihat) = zero jump.
 
   ──────────────────────────────────────────────────────────────────────────── */
 
@@ -348,31 +350,26 @@ body {
   pointer-events: none;
   z-index: 50;
   perspective: 2400px;
+  perspective-origin: 50% 36%;
   overflow: visible;
   border-radius: 2px 14px 14px 2px;
 }
 
-/* Perspective origin SAMA untuk kedua arah */
-.page-turn-stage.turning-prev { perspective-origin: 18% 36%; }
-.page-turn-stage.turning-next { perspective-origin: 18% 36%; }
-
 .page-flap {
   position: absolute;
   inset: 0;
+  transform-origin: left center;
   transform-style: preserve-3d;
   will-change: transform;
 }
 
-/* Kedua arah hinge kiri */
-.page-turn-stage.turning-prev .page-flap {
-  transform-origin: left center;
-  /* Mulai dari -90° bukan -180° supaya tidak ada jump saat muncul,
-     lalu landing smooth dengan ease-out yang panjang */
-  animation: flipPrev 0.9s cubic-bezier(0.15, 0.0, 0.0, 1.0) forwards;
-}
+/* NEXT: pergi ke kiri */
 .page-turn-stage.turning-next .page-flap {
-  transform-origin: left center;
-  animation: flipNext 1.0s cubic-bezier(0.55, 0.0, 0.1, 1.0) forwards;
+  animation: flipNext 0.85s cubic-bezier(0.4, 0.0, 0.2, 1.0) forwards;
+}
+/* PREV: pergi ke kanan (mirror) */
+.page-turn-stage.turning-prev .page-flap {
+  animation: flipPrev 0.85s cubic-bezier(0.4, 0.0, 0.2, 1.0) forwards;
 }
 
 /* ── Face textures ── */
@@ -411,76 +408,64 @@ body {
   opacity: 0;
 }
 
-/* PREV — back face: shadow kanan, pelan muncul lalu hilang di tengah */
-.page-turn-stage.turning-prev .page-flap-back::after {
+/* NEXT front: shadow di kiri saat halaman pergi ke kiri */
+.page-turn-stage.turning-next .page-flap-front::after {
   background: linear-gradient(to left, rgba(20,8,2,0.22) 0%, rgba(20,8,2,0.06) 30%, transparent 60%);
-  animation: shadowBackPrev 1.1s ease-in-out forwards;
+  animation: shadowLift 0.85s ease-in-out forwards;
 }
-/* PREV — front face: shadow kiri, muncul mulus saat landing */
-.page-turn-stage.turning-prev .page-flap-front::after {
-  background: linear-gradient(to right, rgba(20,8,2,0.18) 0%, rgba(20,8,2,0.04) 32%, transparent 60%);
-  animation: shadowFrontPrev 1.1s ease-in-out forwards;
+/* NEXT back: shadow saat landing */
+.page-turn-stage.turning-next .page-flap-back::after {
+  background: linear-gradient(to right, rgba(20,8,2,0.16) 0%, rgba(20,8,2,0.04) 35%, transparent 65%);
+  animation: shadowLand 0.85s ease-in-out forwards;
 }
 
-/* NEXT — halaman pergi ke kiri, shadow cerminan dari prev */
-.page-turn-stage.turning-next .page-flap-front::after {
-  background: linear-gradient(to left, rgba(20,8,2,0.28) 0%, rgba(20,8,2,0.08) 25%, transparent 55%);
-  animation: shadowBack 1.0s ease-in-out forwards;
+/* PREV front: shadow di kanan saat halaman pergi ke kanan */
+.page-turn-stage.turning-prev .page-flap-front::after {
+  background: linear-gradient(to right, rgba(20,8,2,0.22) 0%, rgba(20,8,2,0.06) 30%, transparent 60%);
+  animation: shadowLift 0.85s ease-in-out forwards;
 }
-.page-turn-stage.turning-next .page-flap-back::after {
-  background: linear-gradient(to right, rgba(20,8,2,0.22) 0%, rgba(20,8,2,0.06) 28%, transparent 55%);
-  animation: shadowFront 1.0s ease-in-out forwards;
+/* PREV back: shadow saat landing */
+.page-turn-stage.turning-prev .page-flap-back::after {
+  background: linear-gradient(to left, rgba(20,8,2,0.16) 0%, rgba(20,8,2,0.04) 35%, transparent 65%);
+  animation: shadowLand 0.85s ease-in-out forwards;
 }
 
 /* ── Keyframes ── */
 
-/* PREV: mulai dari -90° (sudah setengah jalan, tidak ada jump),
-   lalu sweep ke 0° dengan landing yang smooth */
-@keyframes flipPrev {
-  0%   { transform: rotateY(-90deg); }
-  100% { transform: rotateY(0deg);   }
-}
 /* NEXT: 0° → -180° */
 @keyframes flipNext {
   0%   { transform: rotateY(0deg);    }
   100% { transform: rotateY(-180deg); }
 }
 
-/* PREV back shadow: sudah ada dari awal (halaman dari -90°), hilang smooth */
-@keyframes shadowBackPrev {
-  0%   { opacity: 0.45; }
-  40%  { opacity: 0.20; }
-  65%  { opacity: 0;    }
-  100% { opacity: 0;    }
+/* PREV: 0° → +180° (mirror dari next) */
+@keyframes flipPrev {
+  0%   { transform: rotateY(0deg);   }
+  100% { transform: rotateY(180deg); }
 }
-/* PREV front shadow: muncul halus saat landing */
-@keyframes shadowFrontPrev {
+
+/* Shadow naik saat halaman terangkat, hilang di 90° */
+@keyframes shadowLift {
   0%   { opacity: 0;    }
-  30%  { opacity: 0;    }
-  60%  { opacity: 0.40; }
-  85%  { opacity: 0.15; }
+  20%  { opacity: 0.80; }
+  45%  { opacity: 0.50; }
+  55%  { opacity: 0;    }
   100% { opacity: 0;    }
 }
 
-/* NEXT shadows (tidak diubah) */
-@keyframes shadowBack {
-  0%   { opacity: 0.65; }
-  30%  { opacity: 0.40; }
-  52%  { opacity: 0;    }
+/* Shadow landing: muncul setelah 90°, hilang saat flat */
+@keyframes shadowLand {
+  0%   { opacity: 0;    }
+  50%  { opacity: 0;    }
+  70%  { opacity: 0.55; }
+  88%  { opacity: 0.20; }
   100% { opacity: 0;    }
 }
-@keyframes shadowFront {
-  0%   { opacity: 0;   }
-  48%  { opacity: 0;   }
-  68%  { opacity: 0.6; }
-  86%  { opacity: 0.25;}
-  100% { opacity: 0;   }
-}
 
-/* Card content crossfade */
+/* Card content crossfade — ganti saat halaman edge-on */
 .card-content {
   width: 100%;
-  transition: opacity 0.10s ease-in-out;
+  transition: opacity 0.08s ease-in-out;
 }
 .card-content.fading { opacity: 0; }
 
@@ -912,33 +897,29 @@ export default function CozyJournal() {
   const flipNav = (dir) => {
     if (turning) return;
     playFlip();
-
+    setTurning(dir);
     if (cardRef.current) cardRef.current.classList.add("is-flipping");
 
-    if (dir === "next") {
-      // Next: ganti bulan langsung, animasi kertas pergi di atasnya
-      if (month === 11) { setYear(y => y + 1); setMonth(0); }
-      else setMonth(m => m + 1);
+    // Halaman edge-on (tidak terlihat) di ~42% dari 850ms ≈ 355ms
+    // Swap konten tepat di situ — tidak ada jump karena halaman sedang tegak
+    setTimeout(() => setFading(true), 330);
+    setTimeout(() => {
+      if (dir === "next") {
+        if (month === 11) { setYear(y => y + 1); setMonth(0); }
+        else setMonth(m => m + 1);
+      } else {
+        if (month === 0) { setYear(y => y - 1); setMonth(11); }
+        else setMonth(m => m - 1);
+      }
       setSelDay(null);
       setSheetOpen(false);
-      setTurning("next");
-      setTimeout(() => {
-        setTurning("");
-        if (cardRef.current) cardRef.current.classList.remove("is-flipping");
-      }, 1060);
-    } else {
-      // Prev: ganti bulan DULU sebelum animasi, lalu halaman landing di atas konten baru
-      // Tidak perlu fade karena halaman menutup konten saat swap terjadi
-      if (month === 0) { setYear(y => y - 1); setMonth(11); }
-      else setMonth(m => m - 1);
-      setSelDay(null);
-      setSheetOpen(false);
-      setTurning("prev");
-      setTimeout(() => {
-        setTurning("");
-        if (cardRef.current) cardRef.current.classList.remove("is-flipping");
-      }, 940);
-    }
+      setFading(false);
+    }, 380);
+
+    setTimeout(() => {
+      setTurning("");
+      if (cardRef.current) cardRef.current.classList.remove("is-flipping");
+    }, 900);
   };
 
   const swipeRef = useRef({ x: 0, t: 0 });
