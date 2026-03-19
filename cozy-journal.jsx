@@ -4,7 +4,7 @@ import { createClient } from "@supabase/supabase-js";
 // ─── Supabase Config ──────────────────────────────────────────────────────────
 // Ganti dua nilai ini dengan milik kamu dari Supabase dashboard
 const SUPABASE_URL  = "https://pymdlenbgoylrvowtolz.supabase.co";
-const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB5bWRsZW5iZ295bHJ2b3d0b2x6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NDkxMjcsImV4cCI6MjA4OTQyNTEyN30.-VNyzSPc4W6-hYXioR8FL7xcsfZgzq9mKldsqHS64qo";
+const SUPABASE_ANON = "sb_publishable_ub5QDi6uE7M14g_7ZzjS_A_cdiuo8iD";
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON);
 
 // ─── Constants ────────────────────────────────────────────────────────────────
