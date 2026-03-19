@@ -366,8 +366,9 @@ body {
 /* Kedua arah hinge kiri */
 .page-turn-stage.turning-prev .page-flap {
   transform-origin: left center;
-  /* ease-out murni: mulai lambat keluar dari spine, makin cepat, landing smooth */
-  animation: flipPrev 1.1s cubic-bezier(0.22, 0.0, 0.08, 1.0) forwards;
+  /* Mulai dari -90° bukan -180° supaya tidak ada jump saat muncul,
+     lalu landing smooth dengan ease-out yang panjang */
+  animation: flipPrev 0.9s cubic-bezier(0.15, 0.0, 0.0, 1.0) forwards;
 }
 .page-turn-stage.turning-next .page-flap {
   transform-origin: left center;
@@ -433,10 +434,11 @@ body {
 
 /* ── Keyframes ── */
 
-/* PREV: -180° → 0°, pelan di awal (halaman baru keluar dari spine), landing lembut */
+/* PREV: mulai dari -90° (sudah setengah jalan, tidak ada jump),
+   lalu sweep ke 0° dengan landing yang smooth */
 @keyframes flipPrev {
-  0%   { transform: rotateY(-180deg); }
-  100% { transform: rotateY(0deg);    }
+  0%   { transform: rotateY(-90deg); }
+  100% { transform: rotateY(0deg);   }
 }
 /* NEXT: 0° → -180° */
 @keyframes flipNext {
@@ -444,20 +446,19 @@ body {
   100% { transform: rotateY(-180deg); }
 }
 
-/* PREV back shadow: muncul pelan, hilang smooth sebelum 50% */
+/* PREV back shadow: sudah ada dari awal (halaman dari -90°), hilang smooth */
 @keyframes shadowBackPrev {
-  0%   { opacity: 0;    }
-  10%  { opacity: 0.50; }
-  35%  { opacity: 0.30; }
-  55%  { opacity: 0;    }
+  0%   { opacity: 0.45; }
+  40%  { opacity: 0.20; }
+  65%  { opacity: 0;    }
   100% { opacity: 0;    }
 }
-/* PREV front shadow: muncul halus saat front face landing */
+/* PREV front shadow: muncul halus saat landing */
 @keyframes shadowFrontPrev {
   0%   { opacity: 0;    }
-  50%  { opacity: 0;    }
-  72%  { opacity: 0.55; }
-  90%  { opacity: 0.20; }
+  30%  { opacity: 0;    }
+  60%  { opacity: 0.40; }
+  85%  { opacity: 0.15; }
   100% { opacity: 0;    }
 }
 
@@ -926,18 +927,17 @@ export default function CozyJournal() {
         if (cardRef.current) cardRef.current.classList.remove("is-flipping");
       }, 1060);
     } else {
-      // Prev: swap bulan di ~65% animasi (715ms dari 1100ms) saat kertas hampir landing
+      // Prev: ganti bulan DULU sebelum animasi, lalu halaman landing di atas konten baru
+      // Tidak perlu fade karena halaman menutup konten saat swap terjadi
+      if (month === 0) { setYear(y => y - 1); setMonth(11); }
+      else setMonth(m => m - 1);
+      setSelDay(null);
+      setSheetOpen(false);
       setTurning("prev");
-      setTimeout(() => setFading(true), 680);
       setTimeout(() => {
-        if (month === 0) { setYear(y => y - 1); setMonth(11); }
-        else setMonth(m => m - 1);
-        setSelDay(null);
-        setSheetOpen(false);
-        setFading(false);
         setTurning("");
         if (cardRef.current) cardRef.current.classList.remove("is-flipping");
-      }, 760);
+      }, 940);
     }
   };
 
