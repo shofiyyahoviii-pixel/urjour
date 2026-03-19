@@ -698,7 +698,7 @@ body {
 }
 /* Big opening quote mark — vintage editorial style */
 .qcard-ins::before {
-  content: '\201C';
+  content: '“';
   position: absolute;
   left: 4px; top: 6px;
   font-family: 'Cormorant Garamond', serif;
@@ -708,7 +708,7 @@ body {
 }
 /* Closing quote mark at bottom right */
 .qcard-ins::after {
-  content: '\201D';
+  content: '”';
   position: absolute;
   right: 4px; bottom: 0px;
   font-family: 'Cormorant Garamond', serif;
