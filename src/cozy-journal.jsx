@@ -335,6 +335,17 @@ body {
 /* Allow 3D children to escape the card bounds during flip */
 .card.is-flipping { overflow: visible; }
 
+/* Paper aging vignette — warm brown glow at all four corners */
+.card-age {
+  position: absolute; inset: 0; pointer-events: none; z-index: 3;
+  border-radius: 2px 16px 16px 2px;
+  background:
+    radial-gradient(ellipse 55% 35% at 0% 0%,   rgba(120,75,30,0.09) 0%, transparent 70%),
+    radial-gradient(ellipse 55% 35% at 100% 0%,  rgba(120,75,30,0.07) 0%, transparent 70%),
+    radial-gradient(ellipse 55% 35% at 0% 100%,  rgba(120,75,30,0.08) 0%, transparent 70%),
+    radial-gradient(ellipse 55% 35% at 100% 100%,rgba(120,75,30,0.07) 0%, transparent 70%);
+}
+
 /* spine */
 .card::before {
   content: '';
@@ -535,9 +546,8 @@ body {
 .cal-cell.has-e  {
   background: rgba(201,112,112,0.09);
   border-radius: 6px;
-  box-shadow: inset 2px 0 0 rgba(201,112,112,0.45);
 }
-.cal-cell.has-e:hover { background: rgba(92,58,28,0.08); box-shadow: none; }
+.cal-cell.has-e:hover { background: rgba(92,58,28,0.08); }
 .cal-cell.future { opacity: 0.3; cursor: not-allowed; pointer-events: none; }
 
 .cal-num {
@@ -549,14 +559,25 @@ body {
 .cal-cell.today .cal-num {
   background: linear-gradient(135deg, #2A3860 0%, #3D5080 100%);
   color: #FAF5EC; font-weight: 500;
+  /* Ink bleed: main shadow + soft feathered outer glow, seperti tinta meresap ke kertas */
   box-shadow:
-    0 2px 8px rgba(42,56,96,0.35),
-    0 0 0 3px rgba(42,56,96,0.10);
+    0 2px 6px rgba(42,56,96,0.40),
+    0 0 0 2px rgba(42,56,96,0.12),
+    0 0 0 5px rgba(42,56,96,0.06),
+    0 0 12px rgba(42,56,96,0.14);
+  /* Slight blur at the edge — efek tinta yang slightly feathered */
+  filter: drop-shadow(0 0 3px rgba(42,56,96,0.20));
   animation: todayPulse 3s ease-in-out infinite;
 }
 @keyframes todayPulse {
-  0%, 100% { box-shadow: 0 2px 8px rgba(42,56,96,0.35), 0 0 0 3px rgba(42,56,96,0.10); }
-  50%       { box-shadow: 0 2px 8px rgba(42,56,96,0.35), 0 0 0 5px rgba(42,56,96,0.18); }
+  0%, 100% {
+    box-shadow: 0 2px 6px rgba(42,56,96,0.40), 0 0 0 2px rgba(42,56,96,0.12), 0 0 0 5px rgba(42,56,96,0.06), 0 0 12px rgba(42,56,96,0.14);
+    filter: drop-shadow(0 0 3px rgba(42,56,96,0.20));
+  }
+  50% {
+    box-shadow: 0 2px 6px rgba(42,56,96,0.40), 0 0 0 2px rgba(42,56,96,0.16), 0 0 0 7px rgba(42,56,96,0.08), 0 0 16px rgba(42,56,96,0.20);
+    filter: drop-shadow(0 0 5px rgba(42,56,96,0.28));
+  }
 }
 /* Warm gold dot above today's number */
 .cal-cell.today::before {
@@ -586,16 +607,21 @@ body {
   background: rgba(250,245,236,0.92); border-radius: 50%;
   width: 15px; height: 15px; display: flex; align-items: center; justify-content: center;
 }
-.cal-moji-only { font-size: 14px; margin-top: 3px; line-height: 1; }
+.cal-moji-only {
+  font-size: 16px; margin-top: 2px; line-height: 1;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.12));
+}
 
 .legend {
-  display: flex; gap: 12px; padding: 8px 16px 4px 22px; flex-wrap: wrap;
+  display: flex; gap: 10px; padding: 6px 16px 2px 24px; flex-wrap: wrap;
+  opacity: 0.6;
 }
 .leg-item {
-  display: flex; align-items: center; gap: 5px;
-  font-family: 'DM Sans', sans-serif; font-size: 11px; color: #8C6840; font-weight: 400;
+  display: flex; align-items: center; gap: 4px;
+  font-family: 'DM Sans', sans-serif; font-size: 10px; color: #9C7448; font-weight: 400;
+  letter-spacing: .03em;
 }
-.leg-dot { width: 8px; height: 8px; border-radius: 50%; }
+.leg-dot { width: 6px; height: 6px; border-radius: 50%; }
 
 /* ── DIVIDER ────────────────────────────────────── */
 .divdr {
@@ -631,7 +657,19 @@ body {
   border-radius: 99px; padding: 4px 11px 4px 7px; font-size: 14px;
 }
 .mood-chip-count { font-family: 'DM Sans', sans-serif; font-size: 12px; color: #3B2410; font-weight: 500; }
-.no-e { font-family: 'DM Sans', sans-serif; font-size: 13px; color: #A88860; text-align: center; padding: 8px 0; font-style: italic; }
+.no-e {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 16px 8px; gap: 8px; text-align: center;
+}
+.no-e-svg { opacity: 0.35; }
+.no-e-text {
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: 14px; color: #9C7448; line-height: 1.6;
+}
+.no-e-sub {
+  font-family: 'DM Sans', sans-serif; font-size: 11px;
+  color: rgba(92,58,28,0.35); letter-spacing: .04em;
+}
 
 .dom-card {
   background: linear-gradient(135deg, rgba(92,58,28,0.04) 0%, rgba(92,58,28,0.07) 100%);
@@ -649,24 +687,67 @@ body {
 }
 
 .qcard-ins {
-  background: rgba(42,56,96,0.04);
-  border-radius: 10px;
-  border-left: 2.5px solid rgba(201,112,112,0.55);
-  padding: 12px 14px;
-  box-shadow: inset 0 1px 3px rgba(255,255,255,0.5);
-  transition: border-color .2s;
+  background: transparent;
+  border-radius: 0;
+  border: none;
+  border-top: 1px solid rgba(92,58,28,0.14);
+  border-bottom: 1px solid rgba(92,58,28,0.14);
+  padding: 14px 8px 14px 36px;
+  position: relative;
+  transition: none;
 }
-.qcard-ins:focus-within {
-  border-left-color: #C97070;
+/* Big opening quote mark — vintage editorial style */
+.qcard-ins::before {
+  content: '\201C';
+  position: absolute;
+  left: 4px; top: 6px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 56px; font-weight: 300; line-height: 1;
+  color: rgba(201,112,112,0.30);
+  pointer-events: none;
 }
+/* Closing quote mark at bottom right */
+.qcard-ins::after {
+  content: '\201D';
+  position: absolute;
+  right: 4px; bottom: 0px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 56px; font-weight: 300; line-height: 1;
+  color: rgba(201,112,112,0.20);
+  pointer-events: none;
+}
+.qcard-ins:focus-within::before { color: rgba(201,112,112,0.50); }
 .qta-ins {
   width: 100%; border: none; outline: none; background: transparent;
-  font-family: 'Caveat', cursive; font-size: 17px; color: #3B2410;
-  resize: none; min-height: 62px; line-height: 1.6;
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: 16px; color: #3B2410;
+  resize: none; min-height: 54px; line-height: 1.7;
+  letter-spacing: .02em;
 }
-.qta-ins::placeholder { color: #A89070; }
+.qta-ins::placeholder { color: rgba(92,58,28,0.35); font-style: italic; }
 
-/* ── BACKDROP ───────────────────────────────────── */
+/* ── SKELETON LOADING ───────────────────────────── */
+.skeleton {
+  background: linear-gradient(90deg,
+    rgba(92,58,28,0.06) 25%,
+    rgba(92,58,28,0.12) 50%,
+    rgba(92,58,28,0.06) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+  border-radius: 6px;
+}
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+.sk-title  { height: 28px; width: 65%; margin-bottom: 6px; }
+.sk-sub    { height: 12px; width: 40%; margin-bottom: 24px; }
+.sk-photo  { width: 100%; aspect-ratio: 4/3; border-radius: 4px; margin-bottom: 22px; max-width: 220px; }
+.sk-label  { height: 10px; width: 30%; margin-bottom: 10px; }
+.sk-moods  { height: 48px; width: 100%; border-radius: 24px; margin-bottom: 22px; }
+.sk-word   { height: 28px; width: 100%; margin-bottom: 22px; }
+.sk-btn    { height: 50px; width: 100%; border-radius: 10px; }
 .backdrop {
   position: fixed; inset: 0; background: rgba(59,36,16,.35);
   z-index: 100; opacity: 0; pointer-events: none; transition: opacity .3s;
@@ -684,6 +765,16 @@ body {
   box-shadow: 0 -4px 24px rgba(92,58,28,0.14);
 }
 .bsheet.open { transform: translateX(-50%) translateY(0); }
+/* Fade gradient pinned to bottom of sheet */
+.bsheet-fade {
+  position: fixed; bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 100%; max-width: 500px;
+  height: 80px; pointer-events: none; z-index: 102;
+  background: linear-gradient(to top, #FAF5EC 20%, transparent 100%);
+  opacity: 0; transition: opacity .38s cubic-bezier(.22,.68,0,1.2);
+}
+.bsheet.open ~ .bsheet-fade { opacity: 1; }
 .handle { width: 40px; height: 4px; background: rgba(92,58,28,0.18); border-radius: 99px; margin: 12px auto 0; }
 .shinner { padding: 20px 20px 50px; }
 
@@ -718,9 +809,21 @@ body {
   transform: rotate(-1.5deg); max-width: 220px; width: 100%;
   cursor: pointer; transition: transform .2s;
   border: 1px solid rgba(92,58,28,0.08);
+  position: relative;
 }
 .pol:hover { transform: rotate(-.5deg) scale(1.02); }
 .pol img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; }
+/* Remove photo button */
+.pol-remove {
+  position: absolute; top: 8px; right: 8px;
+  width: 24px; height: 24px; border-radius: 50%;
+  background: rgba(59,36,16,0.65); color: #FAF5EC;
+  border: none; cursor: pointer; font-size: 10px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .18s; z-index: 5;
+  backdrop-filter: blur(4px);
+}
+.pol-remove:hover { background: rgba(201,112,112,0.85); }
 .up-area {
   width: 100%; aspect-ratio: 4/3; background: rgba(92,58,28,0.04);
   border: 1.5px dashed rgba(92,58,28,0.2); border-radius: 4px;
@@ -771,26 +874,53 @@ body {
   width: 48px; height: 48px; border-radius: 50%;
   border: 1.5px solid transparent;
   background: rgba(92,58,28,0.07); cursor: pointer; font-size: 22px;
-  display: flex; align-items: center; justify-content: center; transition: all .2s;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .2s, border-color .2s, box-shadow .2s;
+  position: relative; overflow: hidden;
 }
 .mbtn:hover { transform: scale(1.12); background: rgba(92,58,28,0.12); }
 .mbtn.sel {
   background: rgba(201,112,112,0.12); border-color: #C97070;
-  transform: scale(1.18);
   box-shadow: 0 3px 10px rgba(201,112,112,0.28);
+  animation: moodBounce 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+@keyframes moodBounce {
+  0%   { transform: scale(1);    }
+  40%  { transform: scale(1.28); }
+  70%  { transform: scale(1.12); }
+  100% { transform: scale(1.18); }
+}
+/* Ripple on selection */
+.mbtn.sel::after {
+  content: '';
+  position: absolute; inset: 0; border-radius: 50%;
+  background: rgba(201,112,112,0.25);
+  animation: moodRipple 0.5s ease-out forwards;
+}
+@keyframes moodRipple {
+  0%   { transform: scale(0.5); opacity: 0.8; }
+  100% { transform: scale(2.2); opacity: 0; }
 }
 
-.word-wrap { margin-bottom: 22px; }
+.word-wrap { margin-bottom: 22px; position: relative; }
+/* decorative opening quote */
+.word-wrap::before {
+  content: '"';
+  position: absolute; left: 0; top: -2px;
+  font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 300;
+  color: rgba(92,58,28,0.15); line-height: 1;
+  pointer-events: none;
+}
 .word-in {
   width: 100%; border: none; outline: none;
   border-bottom: 1px solid rgba(92,58,28,0.18);
   background: transparent;
-  font-family: 'Cormorant Garamond', serif; font-size: 18px; color: #3B2410;
-  padding: 6px 0; transition: border-color .25s;
-  letter-spacing: .02em;
+  font-family: 'Cormorant Garamond', serif; font-size: 20px; color: #3B2410;
+  padding: 6px 0 6px 18px; transition: border-color .25s;
+  letter-spacing: .04em; font-style: italic;
 }
 .word-in:focus { border-bottom-color: #7A5030; border-bottom-width: 1.5px; }
-.word-in::placeholder { color: #B8987A; font-size: 15px; font-style: italic; }
+.word-in::placeholder { color: #C4A882; font-size: 16px; font-style: italic; letter-spacing: .02em; }
 
 .sbtn {
   width: 100%; height: 50px; border: none; border-radius: 10px;
@@ -942,11 +1072,28 @@ body {
   color: #7A5030; cursor: pointer;
   text-decoration: underline; text-underline-offset: 3px;
 }
-/* Mobile: stack vertically, hide left panel */
+/* Mobile: stack vertically, hide left panel, show mini header */
 @media (max-width: 640px) {
-  .auth-inner { grid-template-columns: 1fr; }
+  .auth-inner { grid-template-columns: 1fr; max-width: 420px; }
   .auth-left  { display: none; }
-  .auth-right { padding: 44px 28px 36px; }
+  .auth-right { padding: 44px 28px 36px; border-radius: 20px; }
+  /* Show a mini top bar on mobile */
+  .auth-right::before {
+    content: 'Urjour';
+    display: block;
+    font-family: 'Cormorant Garamond', serif; font-weight: 300;
+    font-size: 28px; letter-spacing: 0.24em; color: #3B2410;
+    text-transform: uppercase; text-align: center;
+    margin-bottom: 4px;
+  }
+  .auth-right::after {
+    content: 'your everyday journal';
+    display: block;
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 12px; letter-spacing: 0.14em; color: rgba(92,58,28,0.45);
+    text-align: center; margin-bottom: 28px;
+  }
+  .auth-right-title { margin-top: 0; }
 }
 .logout-btn {
   position: fixed; top: 14px; right: 16px; z-index: 100;
@@ -1354,6 +1501,7 @@ export default function CozyJournal() {
   const [entMap,    setEntMap]    = useState({});
   const [saved,     setSaved]     = useState(false);
   const [loading,   setLoading]   = useState(false);
+  const [entryLoading, setEntryLoading] = useState(false);
   const [turning,   setTurning]   = useState("");
   const [fading,    setFading]    = useState(false);
 
@@ -1386,9 +1534,11 @@ export default function CozyJournal() {
     const todayMid = new Date(today.getFullYear(), today.getMonth(), today.getDate());
     if (clicked > todayMid) return;
     setSelDay(d);
+    setSheetOpen(true);
+    setEntryLoading(true);
     const e = await dbLoadEntry(user.id, year, month, d);
     setEntry(e || { photo: null, mood: null, word: "", caption: "" });
-    setSheetOpen(true);
+    setEntryLoading(false);
   };
 
   const handleSave = async () => {
@@ -1465,7 +1615,7 @@ export default function CozyJournal() {
   const selDate = selDay ? new Date(year, month, selDay) : null;
   const dayName = selDate ? ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][selDate.getDay()] : "";
 
-  const ep = { dayName, selDay, month, year, entry, setEntry, saved, handleSave };
+  const ep = { dayName, selDay, month, year, entry, setEntry, saved, handleSave, entryLoading };
 
   // Belum tahu status auth
   if (!authReady) return (
@@ -1522,6 +1672,9 @@ export default function CozyJournal() {
           onTouchEnd={onTouchEnd}
         >
           <div className="card" ref={cardRef}>
+            {/* Paper aging vignette */}
+            <div className="card-age" />
+
             {/* PAGE TURN OVERLAY — sits on top, animates, card content stays still */}
             {turning && (
               <div className={"page-turn-stage turning-" + turning}>
@@ -1593,7 +1746,25 @@ export default function CozyJournal() {
                 <div className="slabel">Mood Overview</div>
 
                 {totalMoods === 0 ? (
-                  <div className="no-e">Start logging your days to see patterns ✨</div>
+                  <div className="no-e">
+                    <svg className="no-e-svg" width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      {/* Open book */}
+                      <path d="M26 14 C20 14 12 16 8 20 L8 40 C12 37 20 36 26 36 C32 36 40 37 44 40 L44 20 C40 16 32 14 26 14Z" fill="rgba(92,58,28,0.12)" stroke="rgba(92,58,28,0.3)" strokeWidth="1.2" strokeLinejoin="round"/>
+                      <line x1="26" y1="14" x2="26" y2="36" stroke="rgba(92,58,28,0.25)" strokeWidth="1.2"/>
+                      {/* Lines on pages */}
+                      <line x1="13" y1="23" x2="23" y2="22" stroke="rgba(92,58,28,0.18)" strokeWidth="1" strokeLinecap="round"/>
+                      <line x1="13" y1="27" x2="23" y2="26" stroke="rgba(92,58,28,0.18)" strokeWidth="1" strokeLinecap="round"/>
+                      <line x1="13" y1="31" x2="21" y2="30" stroke="rgba(92,58,28,0.18)" strokeWidth="1" strokeLinecap="round"/>
+                      <line x1="29" y1="22" x2="39" y2="23" stroke="rgba(92,58,28,0.18)" strokeWidth="1" strokeLinecap="round"/>
+                      <line x1="29" y1="26" x2="39" y2="27" stroke="rgba(92,58,28,0.18)" strokeWidth="1" strokeLinecap="round"/>
+                      <line x1="29" y1="30" x2="37" y2="31" stroke="rgba(92,58,28,0.18)" strokeWidth="1" strokeLinecap="round"/>
+                      {/* Pen */}
+                      <path d="M38 8 L44 14 L30 28 L26 30 L28 26 Z" fill="rgba(196,149,58,0.25)" stroke="rgba(196,149,58,0.6)" strokeWidth="1" strokeLinejoin="round"/>
+                      <line x1="38" y1="8" x2="44" y2="14" stroke="rgba(196,149,58,0.5)" strokeWidth="1"/>
+                    </svg>
+                    <div className="no-e-text">Your story starts here.<br />Begin with today.</div>
+                    <div className="no-e-sub">tap any date to write your first entry</div>
+                  </div>
                 ) : (
                   <div className="mood-chips">
                     {MOODS.filter(mo => moodStats[mo.emoji] > 0).map(mo => (
@@ -1669,7 +1840,7 @@ export default function CozyJournal() {
 }
 
 // ─── Entry Panel ──────────────────────────────────────────────────────────────
-function EntryPanel({ dayName, selDay, month, year, entry, setEntry, saved, handleSave }) {
+function EntryPanel({ dayName, selDay, month, year, entry, setEntry, saved, handleSave, entryLoading }) {
   const fileRef = useRef(null);
 
   const onFile = (e) => {
@@ -1683,6 +1854,22 @@ function EntryPanel({ dayName, selDay, month, year, entry, setEntry, saved, hand
 
   const pad = n => String(n).padStart(2,"0");
 
+  // Skeleton while loading
+  if (entryLoading) return (
+    <div style={{padding:"0 0 24px"}}>
+      <div className="skeleton sk-title" />
+      <div className="skeleton sk-sub" />
+      <div style={{display:"flex", justifyContent:"center", marginBottom:22}}>
+        <div className="skeleton sk-photo" />
+      </div>
+      <div className="skeleton sk-label" />
+      <div className="skeleton sk-moods" />
+      <div className="skeleton sk-label" style={{marginTop:8}} />
+      <div className="skeleton sk-word" />
+      <div className="skeleton sk-btn" />
+    </div>
+  );
+
   return (
     <>
       <input ref={fileRef} type="file" accept="image/*" style={{display:"none"}} onChange={onFile} />
@@ -1692,10 +1879,16 @@ function EntryPanel({ dayName, selDay, month, year, entry, setEntry, saved, hand
 
       <div className="elabel">Memory</div>
       <div className="pol-wrap">
-        <div className="pol" onClick={() => fileRef.current?.click()}>
+        <div className="pol" onClick={() => !entry.photo && fileRef.current?.click()}>
           {entry.photo ? (
             <>
               <img src={entry.photo} alt="memory" />
+              {/* Remove photo button */}
+              <button
+                className="pol-remove"
+                onClick={e => { e.stopPropagation(); setEntry(p => ({...p, photo: null, caption: ""})); }}
+                title="Remove photo"
+              >✕</button>
               <textarea
                 className="pol-cap" value={entry.caption} rows={1}
                 onChange={e => setEntry(p => ({...p, caption: e.target.value}))}
