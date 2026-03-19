@@ -273,6 +273,46 @@ body {
 .book-stage {
   width: calc(100% - 24px); max-width: 500px;
   position: relative; z-index: 2;
+  animation: cardEntrance 0.7s cubic-bezier(0.22, 0.0, 0.08, 1.0) 0.15s both;
+}
+@keyframes cardEntrance {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Stagger children inside insights */
+.ins-wrap > * {
+  animation: fadeSlideUp 0.5s ease both;
+}
+.ins-wrap > *:nth-child(1) { animation-delay: 0.05s; }
+.ins-wrap > *:nth-child(2) { animation-delay: 0.10s; }
+.ins-wrap > *:nth-child(3) { animation-delay: 0.15s; }
+.ins-wrap > *:nth-child(4) { animation-delay: 0.20s; }
+.ins-wrap > *:nth-child(5) { animation-delay: 0.25s; }
+.ins-wrap > *:nth-child(6) { animation-delay: 0.30s; }
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Cal grid cells fade in staggered */
+.cal-cell {
+  animation: cellFadeIn 0.4s ease both;
+}
+.cal-cell:nth-child(1)  { animation-delay: 0.02s; }
+.cal-cell:nth-child(2)  { animation-delay: 0.03s; }
+.cal-cell:nth-child(3)  { animation-delay: 0.04s; }
+.cal-cell:nth-child(4)  { animation-delay: 0.05s; }
+.cal-cell:nth-child(5)  { animation-delay: 0.06s; }
+.cal-cell:nth-child(6)  { animation-delay: 0.07s; }
+.cal-cell:nth-child(7)  { animation-delay: 0.08s; }
+.cal-cell:nth-child(n+8)  { animation-delay: 0.10s; }
+.cal-cell:nth-child(n+15) { animation-delay: 0.14s; }
+.cal-cell:nth-child(n+22) { animation-delay: 0.18s; }
+.cal-cell:nth-child(n+29) { animation-delay: 0.22s; }
+@keyframes cellFadeIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
 }
 
 /* ── BOOK CARD ──────────────────────────────────── */
@@ -303,15 +343,26 @@ body {
   pointer-events: none;
 }
 
-/* ruled lines — very subtle */
+/* ruled lines + margin line — lebih mirip buku tulis asli */
 .card::after {
   content: '';
   position: absolute; inset: 0; pointer-events: none; z-index: 1;
-  background-image: repeating-linear-gradient(
-    transparent, transparent 29px,
-    rgba(180,148,100,0.1) 29px, rgba(180,148,100,0.1) 30px
-  );
-  background-position: 0 52px;
+  background-image:
+    /* Ruled horizontal lines */
+    repeating-linear-gradient(
+      transparent, transparent 29px,
+      rgba(180,148,100,0.09) 29px, rgba(180,148,100,0.09) 30px
+    ),
+    /* Margin line merah tipis di kiri — khas buku tulis */
+    linear-gradient(
+      to right,
+      transparent 30px,
+      rgba(201,112,112,0.12) 30px, rgba(201,112,112,0.12) 31px,
+      transparent 31px
+    ),
+    /* Subtle grain di tepi kanan — paper edge variation */
+    radial-gradient(ellipse 30% 100% at 98% 50%, rgba(150,120,80,0.04) 0%, transparent 100%);
+  background-position: 0 52px, 0 0, 0 0;
 }
 
 /* ── PAGE TURN OVERLAY ───────────────────────────────────────────────────────
@@ -481,8 +532,12 @@ body {
 }
 .cal-cell:hover { background: rgba(92,58,28,0.06); }
 .cal-cell.empty  { pointer-events: none; }
-.cal-cell.has-e  { background: rgba(210,130,120,0.07); }
-.cal-cell.has-e:hover { background: rgba(92,58,28,0.08); }
+.cal-cell.has-e  {
+  background: rgba(201,112,112,0.09);
+  border-radius: 6px;
+  box-shadow: inset 2px 0 0 rgba(201,112,112,0.45);
+}
+.cal-cell.has-e:hover { background: rgba(92,58,28,0.08); box-shadow: none; }
 .cal-cell.future { opacity: 0.3; cursor: not-allowed; pointer-events: none; }
 
 .cal-num {
@@ -492,8 +547,30 @@ body {
   border-radius: 50%; flex-shrink: 0; transition: all .15s;
 }
 .cal-cell.today .cal-num {
-  background: #2A3860; color: #FAF5EC; font-weight: 500;
-  box-shadow: 0 2px 8px rgba(42,56,96,0.3);
+  background: linear-gradient(135deg, #2A3860 0%, #3D5080 100%);
+  color: #FAF5EC; font-weight: 500;
+  box-shadow:
+    0 2px 8px rgba(42,56,96,0.35),
+    0 0 0 3px rgba(42,56,96,0.10);
+  animation: todayPulse 3s ease-in-out infinite;
+}
+@keyframes todayPulse {
+  0%, 100% { box-shadow: 0 2px 8px rgba(42,56,96,0.35), 0 0 0 3px rgba(42,56,96,0.10); }
+  50%       { box-shadow: 0 2px 8px rgba(42,56,96,0.35), 0 0 0 5px rgba(42,56,96,0.18); }
+}
+/* Warm gold dot above today's number */
+.cal-cell.today::before {
+  content: '';
+  display: block;
+  width: 4px; height: 4px; border-radius: 50%;
+  background: #C4953A;
+  margin-bottom: 1px;
+  flex-shrink: 0;
+  animation: todayDot 3s ease-in-out infinite;
+}
+@keyframes todayDot {
+  0%,100% { opacity: 0.6; transform: scale(1); }
+  50%     { opacity: 1;   transform: scale(1.3); }
 }
 .cal-cell.sel .cal-num {
   background: #C97070; color: #FAF5EC;
@@ -747,47 +824,87 @@ body {
   min-height: 100vh; width: 100%;
   display: flex; align-items: center; justify-content: center;
   padding: 24px;
+  background:
+    radial-gradient(ellipse 70% 50% at 15% 10%, rgba(220,190,148,0.40) 0%, transparent 58%),
+    radial-gradient(ellipse 55% 45% at 88% 88%, rgba(42,58,100,0.10) 0%, transparent 52%),
+    linear-gradient(158deg, #EAD9C0 0%, #E0D1B5 28%, #E5D6BD 58%, #DACAAC 100%);
 }
-.auth-card {
-  width: 100%; max-width: 360px;
-  background: linear-gradient(170deg, #FBF6EE 0%, #F5EDD8 100%);
-  border-radius: 18px; padding: 44px 32px 36px;
-  box-shadow:
-    0 20px 60px rgba(92,58,28,0.18),
-    0 4px 16px rgba(92,58,28,0.10),
-    inset 0 1px 0 rgba(255,255,255,0.8);
+.auth-inner {
+  width: 100%; max-width: 840px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+  border-radius: 20px; overflow: hidden;
+  box-shadow: 0 24px 80px rgba(92,58,28,0.18), 0 4px 20px rgba(92,58,28,0.10);
+  animation: authFadeIn 0.6s ease forwards;
+}
+@keyframes authFadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+/* Left panel — decorative */
+.auth-left {
+  background: linear-gradient(160deg, #3B2410 0%, #5C3A1C 60%, #7A5030 100%);
+  padding: 52px 44px;
+  display: flex; flex-direction: column; justify-content: space-between;
   position: relative; overflow: hidden;
 }
-/* Decorative corner flourish */
-.auth-card::before {
+.auth-left::before {
   content: '';
-  position: absolute; top: 0; right: 0;
-  width: 120px; height: 120px;
-  background: radial-gradient(ellipse at top right, rgba(212,179,140,0.25) 0%, transparent 70%);
-  pointer-events: none;
+  position: absolute; inset: 0;
+  background-image:
+    repeating-linear-gradient(0deg, transparent, transparent 29px, rgba(255,255,255,0.03) 29px, rgba(255,255,255,0.03) 30px);
+  background-position: 0 52px;
 }
-.auth-card::after {
-  content: '';
-  position: absolute; bottom: 0; left: 0;
-  width: 80px; height: 80px;
-  background: radial-gradient(ellipse at bottom left, rgba(42,56,96,0.06) 0%, transparent 70%);
-  pointer-events: none;
+.auth-left-top { position: relative; z-index: 1; }
+.auth-left-logo {
+  font-family: 'Cormorant Garamond', serif; font-weight: 300;
+  font-size: 38px; letter-spacing: 0.28em; color: #FAF5EC;
+  text-transform: uppercase; line-height: 1; margin-bottom: 6px;
 }
-.auth-headline {
+.auth-left-sub {
   font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 300;
-  font-size: 15px; color: rgba(92,58,28,0.5); letter-spacing: .14em;
-  text-align: center; margin-bottom: 28px; line-height: 1.7;
+  font-size: 13px; letter-spacing: 0.18em; color: rgba(250,245,236,0.45);
 }
-.auth-divider {
-  display: flex; align-items: center; gap: 10px; margin: 20px 0;
+.auth-left-divider {
+  width: 32px; height: 1px; margin: 20px 0;
+  background: rgba(250,245,236,0.2);
 }
-.auth-divider::before, .auth-divider::after {
-  content: ''; flex: 1; height: 1px;
-  background: rgba(92,58,28,0.12);
+.auth-left-quote {
+  font-family: 'Caveat', cursive; font-size: 20px;
+  color: rgba(250,245,236,0.75); line-height: 1.55;
+  position: relative; z-index: 1;
 }
-.auth-divider span {
-  font-family: 'Cormorant Garamond', serif; font-style: italic;
-  font-size: 11px; color: rgba(92,58,28,0.35); letter-spacing: .1em;
+.auth-left-quote-attr {
+  font-family: 'DM Sans', sans-serif; font-size: 11px;
+  color: rgba(250,245,236,0.35); letter-spacing: .08em;
+  margin-top: 10px; position: relative; z-index: 1;
+}
+.auth-left-bottom {
+  position: relative; z-index: 1;
+  display: flex; gap: 6px;
+}
+.auth-left-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: rgba(250,245,236,0.2);
+  transition: all 0.3s ease; cursor: pointer;
+}
+.auth-left-dot:hover { background: rgba(250,245,236,0.4); }
+.auth-left-dot.active {
+  background: rgba(250,245,236,0.7);
+  width: 16px; border-radius: 3px;
+}
+/* Right panel — form */
+.auth-right {
+  background: linear-gradient(170deg, #FBF6EE 0%, #F5EDD8 100%);
+  padding: 48px 40px 40px;
+  display: flex; flex-direction: column; justify-content: center;
+}
+.auth-right-title {
+  font-family: 'Satisfy', cursive; font-size: 26px; color: #3B2410;
+  margin-bottom: 4px;
+}
+.auth-right-sub {
+  font-family: 'DM Sans', sans-serif; font-size: 12px;
+  color: rgba(92,58,28,0.45); margin-bottom: 28px; line-height: 1.5;
 }
 .auth-tabs {
   display: flex; gap: 0; margin-bottom: 24px;
@@ -815,6 +932,21 @@ body {
   color: #4A8C5C; margin-bottom: 10px; line-height: 1.5;
   background: rgba(74,140,92,0.08); border-radius: 8px;
   padding: 8px 12px; border-left: 2.5px solid rgba(74,140,92,0.4);
+}
+.auth-switch {
+  text-align: center; margin-top: 18px;
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: 13px; color: rgba(92,58,28,0.42); letter-spacing: .04em;
+}
+.auth-switch-link {
+  color: #7A5030; cursor: pointer;
+  text-decoration: underline; text-underline-offset: 3px;
+}
+/* Mobile: stack vertically, hide left panel */
+@media (max-width: 640px) {
+  .auth-inner { grid-template-columns: 1fr; }
+  .auth-left  { display: none; }
+  .auth-right { padding: 44px 28px 36px; }
 }
 .logout-btn {
   position: fixed; top: 14px; right: 16px; z-index: 100;
@@ -863,6 +995,27 @@ body {
     border-left: 1px solid rgba(92,58,28,0.12);
     background: linear-gradient(to bottom, #FAF5EC 0%, #F2EAD8 100%);
     position: relative; z-index: 2;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(92,58,28,0.15) transparent;
+  }
+  .right-col::-webkit-scrollbar { width: 4px; }
+  .right-col::-webkit-scrollbar-track { background: transparent; }
+  .right-col::-webkit-scrollbar-thumb {
+    background: rgba(92,58,28,0.15); border-radius: 99px;
+  }
+  .right-col::-webkit-scrollbar-thumb:hover { background: rgba(92,58,28,0.28); }
+  /* Fade at top and bottom to hint at scrollable content */
+  .right-col::before, .right-col::after {
+    content: ''; position: sticky; display: block;
+    left: 0; right: 0; height: 28px; pointer-events: none; z-index: 10;
+  }
+  .right-col::before {
+    top: 0;
+    background: linear-gradient(to bottom, #FAF5EC, transparent);
+  }
+  .right-col::after {
+    bottom: 0;
+    background: linear-gradient(to top, #F2EAD8, transparent);
   }
   .bsheet {
     position: static !important; transform: none !important;
@@ -913,6 +1066,13 @@ body {
     font-family: 'DM Sans', sans-serif; font-size: 12px;
     color: rgba(92,58,28,0.35); font-style: italic;
   }
+  .ph-past-empty {
+    display: flex; flex-direction: column; align-items: flex-start;
+    padding: 14px 16px;
+    background: rgba(92,58,28,0.04);
+    border-radius: 12px;
+    border: 1px dashed rgba(92,58,28,0.12);
+  }
   .ph-bottom {
     display: flex; align-items: center; gap: 10px;
     padding-top: 20px;
@@ -937,12 +1097,34 @@ body {
 `;
 
 // ─── Auth Screen ──────────────────────────────────────────────────────────────
+const AUTH_QUOTES = [
+  { text: "The journal is a vehicle for my sense of selfhood.", attr: "Susan Sontag" },
+  { text: "Fill your paper with the breathings of your heart.", attr: "William Wordsworth" },
+  { text: "A journal is your completely unaltered voice.", attr: "Lucy Dacus" },
+  { text: "In the journal I do not just express myself more openly\nthan I could do to any person;\nI create myself.", attr: "Susan Sontag" },
+  { text: "Write hard and clear about what hurts.", attr: "Ernest Hemingway" },
+  { text: "The act of writing is the act of discovering\nwhat you believe.", attr: "David Hare" },
+];
+
 function AuthScreen({ onAuth }) {
-  const [mode,  setMode]  = useState("login"); // "login" | "register"
+  const [mode,  setMode]  = useState("login");
   const [email, setEmail] = useState("");
   const [pass,  setPass]  = useState("");
   const [err,   setErr]   = useState("");
   const [busy,  setBusy]  = useState(false);
+  const [quoteIdx, setQuoteIdx] = useState(() => Math.floor(Math.random() * AUTH_QUOTES.length));
+  const [quoteFade, setQuoteFade] = useState(true);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setQuoteFade(false);
+      setTimeout(() => {
+        setQuoteIdx(i => (i + 1) % AUTH_QUOTES.length);
+        setQuoteFade(true);
+      }, 400);
+    }, 6000);
+    return () => clearInterval(interval);
+  }, []);
 
   const submit = async () => {
     setErr(""); setBusy(true);
@@ -966,72 +1148,93 @@ function AuthScreen({ onAuth }) {
 
   return (
     <div className="auth-wrap">
-      <div className="auth-card">
+      <div className="auth-inner">
 
-        {/* Logo */}
-        <div className="logo-mark" style={{justifyContent:"center", marginBottom:4}}>
-          <div className="logo-icon">
-            <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M7 22 C9 16, 16 10, 23 5" stroke="rgba(92,58,28,0.5)" strokeWidth="1" strokeLinecap="round"/>
-              <path d="M7 22 C10 18, 14 15, 23 5 C20 8, 17 13, 14 18 C12 21, 9 22, 7 22Z" fill="rgba(92,58,28,0.1)" stroke="rgba(92,58,28,0.4)" strokeWidth="0.8"/>
-              <path d="M7 22 L11 17" stroke="rgba(92,58,28,0.35)" strokeWidth="0.8" strokeLinecap="round"/>
-            </svg>
+        {/* LEFT — decorative panel */}
+        <div className="auth-left">
+          <div className="auth-left-top">
+            <div className="auth-left-logo">Urjour</div>
+            <div className="auth-left-sub">your everyday journal</div>
+            <div className="auth-left-divider" />
+            <div className="auth-left-quote" style={{
+              opacity: quoteFade ? 1 : 0,
+              transition: "opacity 0.4s ease",
+            }}>
+              {AUTH_QUOTES[quoteIdx].text.split("\n").map((line, i) => (
+                <span key={i}>{line}<br /></span>
+              ))}
+            </div>
+            <div className="auth-left-quote-attr" style={{
+              opacity: quoteFade ? 1 : 0,
+              transition: "opacity 0.4s ease 0.1s",
+            }}>
+              — {AUTH_QUOTES[quoteIdx].attr}
+            </div>
           </div>
-          <div className="logo-text">Urjour</div>
-        </div>
-
-        {/* Tagline + headline */}
-        <div className="auth-headline">
-          a quiet space for your thoughts,<br />
-          memories, and feelings.
-        </div>
-
-        {/* Tab switcher */}
-        <div className="auth-tabs">
-          <button className={"auth-tab"+(mode==="login"?" active":"")}
-            onClick={() => { setMode("login"); setErr(""); }}>Sign In</button>
-          <button className={"auth-tab"+(mode==="register"?" active":"")}
-            onClick={() => { setMode("register"); setErr(""); }}>Create Account</button>
-        </div>
-
-        {/* Fields */}
-        <div className="auth-field">
-          <div className="elabel">Email</div>
-          <input className="word-in" type="email" value={email}
-            onChange={e => setEmail(e.target.value)}
-            placeholder="your@email.com"
-            onKeyDown={e => e.key === "Enter" && submit()} />
-        </div>
-        <div className="auth-field">
-          <div className="elabel">Password</div>
-          <input className="word-in" type="password" value={pass}
-            onChange={e => setPass(e.target.value)}
-            placeholder="••••••••"
-            onKeyDown={e => e.key === "Enter" && submit()} />
-        </div>
-
-        {/* Feedback */}
-        {err && (
-          <div className={err.includes("email") || err.includes("confirm") ? "auth-ok" : "auth-err"}>
-            {err}
+          <div className="auth-left-bottom">
+            {AUTH_QUOTES.map((_, i) => (
+              <div
+                key={i}
+                className={"auth-left-dot"+(i===quoteIdx?" active":"")}
+                onClick={() => { setQuoteFade(false); setTimeout(() => { setQuoteIdx(i); setQuoteFade(true); }, 400); }}
+                style={{cursor:"pointer"}}
+              />
+            ))}
           </div>
-        )}
+        </div>
 
-        <button className="sbtn" style={{marginTop:12}} onClick={submit} disabled={busy}>
-          <span className="sbtn-label">
-            {busy ? "…" : mode === "login" ? "Sign In" : "Create Account"}
-          </span>
-        </button>
+        {/* RIGHT — form panel */}
+        <div className="auth-right">
+          <div className="auth-right-title">
+            {mode === "login" ? "Welcome back" : "Start your journal"}
+          </div>
+          <div className="auth-right-sub">
+            {mode === "login"
+              ? "Sign in to continue your journey"
+              : "Create an account to begin recording your days"}
+          </div>
 
-        <div className="auth-divider"><span>or</span></div>
-        <div style={{textAlign:"center", fontFamily:"'Cormorant Garamond',serif", fontStyle:"italic", fontSize:"12px", color:"rgba(92,58,28,0.38)", letterSpacing:".06em"}}>
-          {mode === "login" ? "New here? " : "Already have an account? "}
-          <span
-            onClick={() => { setMode(mode === "login" ? "register" : "login"); setErr(""); }}
-            style={{color:"#7A5030", cursor:"pointer", textDecoration:"underline", textUnderlineOffset:"3px"}}
-          >
-            {mode === "login" ? "Create an account" : "Sign in"}
-          </span>
+          <div className="auth-tabs">
+            <button className={"auth-tab"+(mode==="login"?" active":"")}
+              onClick={() => { setMode("login"); setErr(""); }}>Sign In</button>
+            <button className={"auth-tab"+(mode==="register"?" active":"")}
+              onClick={() => { setMode("register"); setErr(""); }}>Register</button>
+          </div>
+
+          <div className="auth-field">
+            <div className="elabel">Email</div>
+            <input className="word-in" type="email" value={email}
+              onChange={e => setEmail(e.target.value)}
+              placeholder="your@email.com"
+              onKeyDown={e => e.key === "Enter" && submit()} />
+          </div>
+          <div className="auth-field">
+            <div className="elabel">Password</div>
+            <input className="word-in" type="password" value={pass}
+              onChange={e => setPass(e.target.value)}
+              placeholder="••••••••"
+              onKeyDown={e => e.key === "Enter" && submit()} />
+          </div>
+
+          {err && (
+            <div className={err.includes("email") || err.includes("confirm") ? "auth-ok" : "auth-err"}>
+              {err}
+            </div>
+          )}
+
+          <button className="sbtn" style={{marginTop:8}} onClick={submit} disabled={busy}>
+            <span className="sbtn-label">
+              {busy ? "…" : mode === "login" ? "Sign In" : "Create Account"}
+            </span>
+          </button>
+
+          <div className="auth-switch">
+            {mode === "login" ? "New here? " : "Already have an account? "}
+            <span className="auth-switch-link"
+              onClick={() => { setMode(mode === "login" ? "register" : "login"); setErr(""); }}>
+              {mode === "login" ? "Create an account" : "Sign in"}
+            </span>
+          </div>
         </div>
 
       </div>
@@ -1090,9 +1293,21 @@ function RightPlaceholder({ entMap, month, year }) {
 
         {/* Recent entries summary */}
         <div className="ph-recent">
-          <div className="ph-recent-label">this month</div>
+          <div className="ph-recent-label">{isCurrentMonth ? "this month" : MONTHS[month].toLowerCase()}</div>
           {totalEntries === 0 ? (
-            <div className="ph-recent-empty">No entries yet — start with today ✨</div>
+            isCurrentMonth ? (
+              <div className="ph-recent-empty">No entries yet — start with today ✨</div>
+            ) : (
+              <div className="ph-past-empty">
+                <div style={{fontSize:28, marginBottom:8, opacity:0.4}}>🕰️</div>
+                <div style={{fontFamily:"'Cormorant Garamond',serif", fontStyle:"italic", fontSize:15, color:"#7A5030", lineHeight:1.6}}>
+                  No memories recorded<br />for this month.
+                </div>
+                <div style={{fontFamily:"'DM Sans',sans-serif", fontSize:11, color:"rgba(92,58,28,0.38)", marginTop:8, lineHeight:1.6}}>
+                  You can still tap any past date<br />to add a memory retroactively.
+                </div>
+              </div>
+            )
           ) : (
             <div style={{display:"flex", flexWrap:"wrap", gap:"6px"}}>
               {Object.entries(entMap)
