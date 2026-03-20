@@ -189,27 +189,27 @@ body {
   display: flex; flex-direction: column; align-items: center;
   padding-bottom: 60px;
   background:
-    radial-gradient(ellipse 80% 55% at 12% 8%,  rgba(220,190,148,0.40) 0%, transparent 58%),
-    radial-gradient(ellipse 55% 45% at 88% 88%,  rgba(42,58,100,0.10)  0%, transparent 52%),
-    radial-gradient(ellipse 40% 30% at 50% 50%,  rgba(210,175,130,0.12) 0%, transparent 70%),
-    linear-gradient(158deg, #EAD9C0 0%, #E0D1B5 28%, #E5D6BD 58%, #DACAAC 100%);
+    radial-gradient(ellipse 90% 60% at 10% 5%,   rgba(230,195,140,0.50) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 50% at 88% 90%,   rgba(180,130,70,0.18)  0%, transparent 50%),
+    radial-gradient(ellipse 50% 35% at 50% 100%,  rgba(200,155,90,0.12)  0%, transparent 60%),
+    linear-gradient(162deg, #EDD9B2 0%, #E4CFA0 25%, #DFCA9C 55%, #D8C090 100%);
   position: relative;
 }
 
-/* subtle linen texture */
+/* warm linen grain */
 .app::before {
   content: '';
   position: fixed; inset: 0; pointer-events: none; z-index: 0;
   background-image:
-    repeating-linear-gradient(0deg,  transparent, transparent 3px, rgba(180,150,110,0.035) 3px, rgba(180,150,110,0.035) 4px),
-    repeating-linear-gradient(90deg, transparent, transparent 3px, rgba(180,150,110,0.025) 3px, rgba(180,150,110,0.025) 4px);
+    repeating-linear-gradient(0deg,  transparent, transparent 3px, rgba(160,120,60,0.028) 3px, rgba(160,120,60,0.028) 4px),
+    repeating-linear-gradient(90deg, transparent, transparent 3px, rgba(160,120,60,0.018) 3px, rgba(160,120,60,0.018) 4px);
 }
 
-/* soft vignette around edges */
+/* soft amber vignette */
 .app::after {
   content: '';
   position: fixed; inset: 0; pointer-events: none; z-index: 0;
-  background: radial-gradient(ellipse 90% 90% at 50% 50%, transparent 60%, rgba(100,65,25,0.08) 100%);
+  background: radial-gradient(ellipse 85% 85% at 50% 50%, transparent 55%, rgba(120,75,20,0.10) 100%);
 }
 
 /* ── URJOUR LOGO ─────────────────────────────────── */
@@ -344,21 +344,20 @@ body {
 /* ── BOOK CARD ──────────────────────────────────── */
 .card {
   width: 100%;
-  background: linear-gradient(170deg, #FBF6EE 0%, #F7F0E4 100%);
+  background: linear-gradient(172deg, #FDF8F0 0%, #F8F0E0 50%, #F3E8D2 100%);
   border-radius: 2px 16px 16px 2px;
   position: relative;
   overflow: hidden;
   transform-origin: center center;
   will-change: transform, opacity;
   box-shadow:
-    -6px 0 0 0 #8B6040,
-    -9px 0 0 0 #6B4828,
-    -12px 2px 10px rgba(0,0,0,0.20),
-    0 12px 40px rgba(92,58,28,0.16),
-    0 3px 10px rgba(92,58,28,0.10),
-    inset 8px 0 20px rgba(92,58,28,0.04);
+    -6px 0 0 0 #96693A,
+    -10px 0 0 0 #6E4520,
+    -14px 3px 14px rgba(0,0,0,0.22),
+    0 16px 48px rgba(80,45,10,0.18),
+    0 4px 12px rgba(80,45,10,0.10),
+    inset 10px 0 24px rgba(100,60,15,0.05);
 }
-/* Allow 3D children to escape the card bounds during flip */
 .card.is-flipping { overflow: visible; }
 
 /* Paper aging vignette — warm brown glow at all four corners */
@@ -391,11 +390,12 @@ body {
   background: linear-gradient(225deg, rgba(180,148,100,0.20) 50%, transparent 50%);
 }
 
-/* spine */
+/* spine — richer amber-brown */
 .card::before {
   content: '';
-  position: absolute; left: 0; top: 0; bottom: 0; width: 7px; z-index: 20;
-  background: linear-gradient(to right, #4A2810, #7A5030 45%, #9A6A40 60%, #6A3E20);
+  position: absolute; left: 0; top: 0; bottom: 0; width: 8px; z-index: 20;
+  background: linear-gradient(to right,
+    #3D1E08 0%, #6B3A18 30%, #96693A 55%, #7A4E28 75%, #5A3018 100%);
   pointer-events: none;
 }
 
@@ -436,8 +436,8 @@ body {
   inset: 0;
   pointer-events: none;
   z-index: 50;
-  perspective: 2800px;
-  perspective-origin: 18% 36%;
+  perspective: 3200px;
+  perspective-origin: 22% 38%;
   overflow: visible;
   border-radius: 2px 16px 16px 2px;
 }
@@ -451,13 +451,13 @@ body {
   border-radius: 2px 16px 16px 2px;
 }
 
-/* NEXT: pergi ke kiri */
+/* NEXT: pergi ke kiri — accelerate out, decelerate landing */
 .page-turn-stage.turning-next .page-flap {
-  animation: flipNext 0.75s cubic-bezier(0.35, 0.0, 0.15, 1.0) forwards;
+  animation: flipNext 0.80s cubic-bezier(0.32, 0.0, 0.10, 1.0) forwards;
 }
-/* PREV: pergi ke kanan (mirror) */
+/* PREV: pergi ke kanan */
 .page-turn-stage.turning-prev .page-flap {
-  animation: flipPrev 0.75s cubic-bezier(0.35, 0.0, 0.15, 1.0) forwards;
+  animation: flipPrev 0.80s cubic-bezier(0.32, 0.0, 0.10, 1.0) forwards;
 }
 
 /* ── Face textures ── */
@@ -471,108 +471,126 @@ body {
   overflow: hidden;
 }
 .page-flap-front {
-  background: linear-gradient(170deg, #FBF6EE 0%, #F7F0E4 100%);
+  background: linear-gradient(172deg, #FDF8F0 0%, #F8F0E0 50%, #F3E8D2 100%);
   background-image: repeating-linear-gradient(
     transparent, transparent 29px,
-    rgba(180,148,100,0.09) 29px, rgba(180,148,100,0.09) 30px
+    rgba(170,130,75,0.08) 29px, rgba(170,130,75,0.08) 30px
   );
   background-position: 0 52px;
-  /* Simulasi paper aging di sudut */
-  box-shadow:
-    inset -2px 0 8px rgba(92,58,28,0.05),
-    inset 0 -2px 8px rgba(92,58,28,0.03);
 }
 .page-flap-back {
-  background: linear-gradient(170deg, #F0E8D6 0%, #E8DCC8 100%);
+  background: linear-gradient(172deg, #EEE4D0 0%, #E6D8BE 55%, #DECFAC 100%);
   background-image: repeating-linear-gradient(
     transparent, transparent 29px,
-    rgba(140,108,65,0.07) 29px, rgba(140,108,65,0.07) 30px
+    rgba(130,95,45,0.07) 29px, rgba(130,95,45,0.07) 30px
   );
   background-position: 0 52px;
   transform: rotateY(180deg);
-  box-shadow:
-    inset 2px 0 8px rgba(92,58,28,0.06),
-    inset 0 -2px 8px rgba(92,58,28,0.03);
+}
+
+/* ── Lift glow — kertas terasa terangkat dari buku ── */
+.page-flap-front::before,
+.page-flap-back::before {
+  content: '';
+  position: absolute; inset: 0;
+  pointer-events: none; opacity: 0;
+  border-radius: 2px 16px 16px 2px;
+  transition: opacity 0.1s;
+}
+.page-turn-stage.turning-next .page-flap-front::before,
+.page-turn-stage.turning-prev .page-flap-front::before {
+  background: linear-gradient(to bottom,
+    rgba(255,240,200,0.18) 0%, transparent 40%);
+  animation: paperLift 0.80s ease forwards;
 }
 
 /* ── Shadows ── */
 .page-flap-front::after,
 .page-flap-back::after {
   content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0;
+  position: absolute; inset: 0;
+  pointer-events: none; opacity: 0;
   border-radius: 2px 16px 16px 2px;
 }
 
-/* NEXT front: shadow di kiri saat halaman pergi ke kiri */
 .page-turn-stage.turning-next .page-flap-front::after {
-  background: linear-gradient(to left,
-    rgba(20,8,2,0.28) 0%,
-    rgba(20,8,2,0.12) 20%,
-    rgba(20,8,2,0.04) 50%,
-    transparent 70%);
-  animation: shadowLift 0.75s ease-in-out forwards;
+  background:
+    linear-gradient(to left,
+      rgba(10,4,0,0.32) 0%,
+      rgba(10,4,0,0.14) 18%,
+      rgba(10,4,0,0.04) 42%,
+      transparent 65%),
+    linear-gradient(to bottom,
+      rgba(10,4,0,0.06) 0%,
+      transparent 30%);
+  animation: shadowLift 0.80s ease-in-out forwards;
 }
-/* NEXT back: shadow saat landing */
 .page-turn-stage.turning-next .page-flap-back::after {
   background: linear-gradient(to right,
-    rgba(20,8,2,0.20) 0%,
-    rgba(20,8,2,0.08) 25%,
-    rgba(20,8,2,0.02) 55%,
-    transparent 75%);
-  animation: shadowLand 0.75s ease-in-out forwards;
+    rgba(10,4,0,0.22) 0%,
+    rgba(10,4,0,0.08) 22%,
+    rgba(10,4,0,0.02) 50%,
+    transparent 72%);
+  animation: shadowLand 0.80s ease-in-out forwards;
 }
-
-/* PREV front: shadow di kanan */
 .page-turn-stage.turning-prev .page-flap-front::after {
-  background: linear-gradient(to right,
-    rgba(20,8,2,0.28) 0%,
-    rgba(20,8,2,0.12) 20%,
-    rgba(20,8,2,0.04) 50%,
-    transparent 70%);
-  animation: shadowLift 0.75s ease-in-out forwards;
+  background:
+    linear-gradient(to right,
+      rgba(10,4,0,0.32) 0%,
+      rgba(10,4,0,0.14) 18%,
+      rgba(10,4,0,0.04) 42%,
+      transparent 65%),
+    linear-gradient(to bottom,
+      rgba(10,4,0,0.06) 0%,
+      transparent 30%);
+  animation: shadowLift 0.80s ease-in-out forwards;
 }
-/* PREV back: shadow saat landing */
 .page-turn-stage.turning-prev .page-flap-back::after {
   background: linear-gradient(to left,
-    rgba(20,8,2,0.20) 0%,
-    rgba(20,8,2,0.08) 25%,
-    rgba(20,8,2,0.02) 55%,
-    transparent 75%);
-  animation: shadowLand 0.75s ease-in-out forwards;
+    rgba(10,4,0,0.22) 0%,
+    rgba(10,4,0,0.08) 22%,
+    rgba(10,4,0,0.02) 50%,
+    transparent 72%);
+  animation: shadowLand 0.80s ease-in-out forwards;
 }
 
 /* ── Keyframes ── */
-
-/* NEXT: 0° → -180°, sedikit overshoot biar terasa natural */
 @keyframes flipNext {
-  0%   { transform: rotateY(0deg);     }
-  100% { transform: rotateY(-180deg);  }
+  0%   { transform: rotateY(0deg); }
+  /* Sedikit pause di awal — kertas 'terangkat' dulu */
+  8%   { transform: rotateY(-6deg); }
+  100% { transform: rotateY(-180deg); }
 }
-
-/* PREV: 0° → +180° */
 @keyframes flipPrev {
-  0%   { transform: rotateY(0deg);    }
-  100% { transform: rotateY(180deg);  }
+  0%   { transform: rotateY(0deg); }
+  8%   { transform: rotateY(6deg); }
+  100% { transform: rotateY(180deg); }
 }
 
-/* Shadow naik saat terangkat, peak di ~30%, hilang di 50% */
+/* Paper lift glow — muncul saat terangkat */
+@keyframes paperLift {
+  0%   { opacity: 0; }
+  12%  { opacity: 1; }
+  45%  { opacity: 0; }
+  100% { opacity: 0; }
+}
+
+/* Shadow naik — peak di 25%, hilang di 50% */
 @keyframes shadowLift {
   0%   { opacity: 0;    }
-  15%  { opacity: 0.75; }
-  40%  { opacity: 0.40; }
-  52%  { opacity: 0;    }
+  10%  { opacity: 0.55; }
+  25%  { opacity: 0.85; }
+  48%  { opacity: 0.30; }
+  55%  { opacity: 0;    }
   100% { opacity: 0;    }
 }
 
-/* Shadow landing: muncul setelah 50°, halus hilang */
+/* Shadow landing — muncul setelah 55%, fade out lembut */
 @keyframes shadowLand {
   0%   { opacity: 0;    }
-  50%  { opacity: 0;    }
-  65%  { opacity: 0.50; }
-  85%  { opacity: 0.20; }
+  52%  { opacity: 0;    }
+  68%  { opacity: 0.55; }
+  88%  { opacity: 0.18; }
   100% { opacity: 0;    }
 }
 
@@ -587,8 +605,8 @@ body {
 .cal-wrap { padding: 28px 16px 14px 24px; position: relative; z-index: 2; }
 .cal-big {
   font-family: 'Satisfy', cursive;
-  font-size: 42px; color: #3B2410; line-height: 1;
-  text-shadow: 0 1px 3px rgba(92,58,28,0.08);
+  font-size: 42px; color: #3A1E08; line-height: 1;
+  text-shadow: 0 1px 4px rgba(80,40,5,0.10);
 }
 .cal-yr {
   font-family: 'Cormorant Garamond', serif; font-weight: 300;
@@ -638,7 +656,7 @@ body {
   border-radius: 50%; flex-shrink: 0; transition: all .15s;
 }
 .cal-cell.today .cal-num {
-  background: linear-gradient(135deg, #2A3860 0%, #3D5080 100%);
+  background: linear-gradient(135deg, #2A3860 0%, #344E80 100%);
   color: #FAF5EC; font-weight: 500;
   /* Ink bleed: main shadow + soft feathered outer glow, seperti tinta meresap ke kertas */
   box-shadow:
@@ -685,9 +703,11 @@ body {
 }
 .cal-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .cal-moji-over {
-  position: absolute; bottom: 1px; right: 1px; font-size: 9px;
-  background: rgba(250,245,236,0.92); border-radius: 50%;
-  width: 15px; height: 15px; display: flex; align-items: center; justify-content: center;
+  position: absolute; bottom: 2px; right: 2px; font-size: 14px;
+  background: rgba(253,248,240,0.92); border-radius: 50%;
+  width: 22px; height: 22px; display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.10));
 }
 .cal-moji-only {
   font-size: 20px; margin-top: 2px; line-height: 1;
@@ -753,6 +773,42 @@ body {
   border-radius: 99px; padding: 4px 11px 4px 7px; font-size: 14px;
 }
 .mood-chip-count { font-family: 'DM Sans', sans-serif; font-size: 12px; color: #3B2410; font-weight: 500; }
+
+/* Mood trend chart */
+.mood-trend {
+  margin-top: 14px; margin-bottom: 4px;
+}
+.mood-trend-label {
+  font-family: 'DM Sans', sans-serif; font-size: 9px; font-weight: 500;
+  letter-spacing: .14em; text-transform: uppercase; color: #2A3860;
+  margin-bottom: 8px;
+}
+.mood-trend-bars {
+  display: flex; gap: 4px; align-items: flex-end; height: 44px;
+}
+.mood-trend-week {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; gap: 4px;
+}
+.mood-trend-bar-wrap {
+  flex: 1; width: 100%; display: flex; align-items: flex-end;
+  border-radius: 4px; overflow: hidden;
+  background: rgba(92,58,28,0.05);
+  min-height: 6px;
+}
+.mood-trend-bar {
+  width: 100%; border-radius: 4px;
+  transition: height 0.6s cubic-bezier(0.34,1.56,0.64,1);
+  min-height: 4px;
+}
+.mood-trend-emoji {
+  font-size: 12px; line-height: 1;
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,0.08));
+}
+.mood-trend-wk {
+  font-family: 'DM Sans', sans-serif; font-size: 9px;
+  color: rgba(92,58,28,0.35); letter-spacing: .04em;
+}
 .no-e {
   display: flex; flex-direction: column; align-items: center;
   padding: 16px 8px; gap: 8px; text-align: center;
@@ -781,6 +837,16 @@ body {
   font-style: italic; color: #7A5030; text-align: center; margin-top: 14px;
   letter-spacing: .06em;
 }
+
+/* Nomor halaman di pojok bawah kanan card */
+.page-num {
+  position: absolute; bottom: 14px; right: 18px; z-index: 10;
+  font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 300;
+  font-size: 12px; color: rgba(92,58,28,0.30); letter-spacing: .12em;
+  pointer-events: none; user-select: none;
+  transition: opacity 0.25s ease;
+}
+.page-num.fading { opacity: 0; }
 
 .qcard-ins {
   background: transparent;
@@ -855,7 +921,7 @@ body {
   position: fixed; bottom: 0; left: 50%;
   transform: translateX(-50%) translateY(100%);
   width: 100%; max-width: 500px;
-  background: #FAF5EC; border-radius: 22px 22px 0 0;
+  background: linear-gradient(180deg, #FDF8F0 0%, #F8F0E0 100%); border-radius: 22px 22px 0 0;
   max-height: 90vh; overflow-y: auto; z-index: 101;
   transition: transform .38s cubic-bezier(.22,.68,0,1.2);
   box-shadow: 0 -4px 24px rgba(92,58,28,0.14);
@@ -1081,7 +1147,7 @@ body {
 }
 /* Left panel — decorative */
 .auth-left {
-  background: linear-gradient(160deg, #3B2410 0%, #5C3A1C 60%, #7A5030 100%);
+  background: linear-gradient(158deg, #2E1A08 0%, #4E2E10 45%, #6E4218 75%, #5A3210 100%);
   padding: 52px 44px;
   display: flex; flex-direction: column; justify-content: space-between;
   position: relative; overflow: hidden;
@@ -1258,7 +1324,55 @@ body {
   width: 6px; height: 6px; border-radius: 50%;
   background: rgba(92,58,28,0.22); flex-shrink: 0;
 }
-/* ── TOAST NOTIFICATION ─────────────────────────── */
+/* ── LIGHTBOX ───────────────────────────────────── */
+.lightbox {
+  position: fixed; inset: 0; z-index: 400;
+  background: rgba(10,6,2,0.92); backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+  animation: lightboxIn 0.22s ease forwards;
+  cursor: zoom-out;
+}
+@keyframes lightboxIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.lightbox img {
+  max-width: 92vw; max-height: 88vh;
+  object-fit: contain; border-radius: 4px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  animation: lightboxImg 0.28s cubic-bezier(0.34,1.56,0.64,1) forwards;
+}
+@keyframes lightboxImg {
+  from { transform: scale(0.88); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+.lightbox-close {
+  position: absolute; top: 18px; right: 18px;
+  width: 36px; height: 36px; border-radius: 50%;
+  background: rgba(255,255,255,0.12); border: none;
+  color: rgba(255,255,255,0.8); font-size: 18px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .18s;
+}
+.lightbox-close:hover { background: rgba(255,255,255,0.22); }
+.lightbox-caption {
+  position: absolute; bottom: 24px; left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Caveat', cursive; font-size: 16px;
+  color: rgba(255,255,255,0.55); letter-spacing: .04em;
+  white-space: nowrap;
+}
+.confetti-wrap {
+  position: fixed; inset: 0; pointer-events: none; z-index: 300; overflow: hidden;
+}
+@keyframes confettiFall {
+  0%   { transform: translateY(-20px) rotate(0deg);   opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+.confetti-piece {
+  position: absolute; top: 0;
+  animation: confettiFall linear forwards;
+}
 .toast-wrap {
   position: fixed; bottom: 28px; left: 50%;
   transform: translateX(-50%);
@@ -1343,7 +1457,7 @@ body {
   .right-col {
     overflow-y: auto; max-height: 88vh;
     border-left: 1px solid rgba(92,58,28,0.12);
-    background: linear-gradient(to bottom, #FAF5EC 0%, #F2EAD8 100%);
+    background: linear-gradient(to bottom, #FDF8F0 0%, #F3E8D4 100%);
     position: relative; z-index: 2;
     scrollbar-width: thin;
     scrollbar-color: rgba(92,58,28,0.15) transparent;
@@ -1716,6 +1830,68 @@ function RightPlaceholder({ entMap, month, year }) {
   );
 }
 
+// Warna per mood untuk chart
+const MOOD_COLORS = {
+  "😊": "#F5C842", "😢": "#6B9FD4", "😡": "#E06B6B",
+  "😴": "#9B8DC4", "😰": "#E0936B", "🥰": "#E87DA8",
+  "😌": "#7DC48E", "🤒": "#B0C4DE", "😵‍💫": "#C4A882",
+};
+
+function MoodTrendChart({ entMap, year, month }) {
+  const daysInMonth = getDaysInMonth(year, month);
+  // Bagi ke minggu (maks 5 minggu)
+  const weeks = [];
+  for (let w = 0; w < 5; w++) {
+    const start = w * 7 + 1;
+    const end   = Math.min(start + 6, daysInMonth);
+    if (start > daysInMonth) break;
+    const entries = [];
+    for (let d = start; d <= end; d++) {
+      if (entMap[d]?.mood) entries.push(entMap[d].mood);
+    }
+    weeks.push({ label: `M${w+1}`, entries });
+  }
+
+  if (weeks.every(w => w.entries.length === 0)) return null;
+
+  const maxCount = Math.max(...weeks.map(w => w.entries.length), 1);
+
+  // Mood dominan per minggu
+  const dominant = (entries) => {
+    if (!entries.length) return null;
+    const counts = {};
+    entries.forEach(m => { counts[m] = (counts[m]||0) + 1; });
+    return Object.entries(counts).sort((a,b) => b[1]-a[1])[0][0];
+  };
+
+  return (
+    <div className="mood-trend">
+      <div className="mood-trend-label">Trend per Minggu</div>
+      <div className="mood-trend-bars">
+        {weeks.map((w, i) => {
+          const dom = dominant(w.entries);
+          const pct = w.entries.length / maxCount;
+          const color = dom ? (MOOD_COLORS[dom] || "#C4A882") : "rgba(92,58,28,0.08)";
+          return (
+            <div key={i} className="mood-trend-week">
+              <div className="mood-trend-bar-wrap">
+                <div className="mood-trend-bar" style={{
+                  height: w.entries.length ? `${Math.max(pct * 100, 15)}%` : "15%",
+                  background: w.entries.length
+                    ? `linear-gradient(to top, ${color}CC, ${color}66)`
+                    : "rgba(92,58,28,0.05)",
+                }} />
+              </div>
+              {dom && <div className="mood-trend-emoji">{dom}</div>}
+              <div className="mood-trend-wk">{w.label}</div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 // ─── Daily Quote ──────────────────────────────────────────────────────────────
 const DAILY_QUOTES = [
   { text: "Jurnal adalah kendaraan untuk rasa diri kita.", attr: "Susan Sontag" },
@@ -1771,12 +1947,24 @@ export default function CozyJournal() {
   const [toast,     setToast]     = useState(null); // {msg, type, out}
   const toastTimer = useRef(null);
   const [realStreak, setRealStreak] = useState(0);
+  const [confetti,   setConfetti]   = useState(false);
+  const prevStreakRef = useRef(0);
+  const [lightbox,   setLightbox]   = useState(null); // {src, caption}
   const autoSaveTimer = useRef(null);
   const [autoSaving, setAutoSaving] = useState(false);
 
   // Hitung streak lintas bulan setiap kali data berubah
   useEffect(() => {
-    if (user) calcStreak(user.id).then(setRealStreak);
+    if (!user) return;
+    calcStreak(user.id).then(s => {
+      const milestones = [7, 14, 30, 60, 100];
+      if (milestones.includes(s) && s > prevStreakRef.current) {
+        setConfetti(true);
+        setTimeout(() => setConfetti(false), 3500);
+      }
+      prevStreakRef.current = s;
+      setRealStreak(s);
+    });
   }, [user, entMap]);
 
   // Auto-save: simpan otomatis 2 detik setelah user berhenti ngetik
@@ -1882,7 +2070,7 @@ export default function CozyJournal() {
       if (["INPUT","TEXTAREA"].includes(e.target.tagName)) return;
       if (e.key === "ArrowLeft")  flipNav("prev");
       if (e.key === "ArrowRight") flipNav("next");
-      if (e.key === "Escape") { setSheetOpen(false); setSelDay(null); }
+      if (e.key === "Escape") { setSheetOpen(false); setSelDay(null); setLightbox(null); }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -1896,8 +2084,8 @@ export default function CozyJournal() {
     setTurning(dir);
     if (cardRef.current) cardRef.current.classList.add("is-flipping");
 
-    // Halaman edge-on di ~42% dari 750ms ≈ 315ms
-    setTimeout(() => setFading(true), 290);
+    // Halaman edge-on di ~42% dari 800ms ≈ 336ms
+    setTimeout(() => setFading(true), 310);
     setTimeout(() => {
       if (dir === "next") {
         if (month === 11) { setYear(y => y + 1); setMonth(0); }
@@ -1909,12 +2097,12 @@ export default function CozyJournal() {
       setSelDay(null);
       setSheetOpen(false);
       setFading(false);
-    }, 330);
+    }, 355);
 
     setTimeout(() => {
       setTurning("");
       if (cardRef.current) cardRef.current.classList.remove("is-flipping");
-    }, 780);
+    }, 820);
   };
 
   const swipeRef = useRef({ x: 0, t: 0 });
@@ -1938,10 +2126,14 @@ export default function CozyJournal() {
   const { mood: domMood, count: domCt } = getDominant(moodStats);
   const streak      = realStreak;
 
+  // Nomor halaman — dihitung dari bulan signup user
+  const signupDate  = user?.created_at ? new Date(user.created_at) : new Date(year, month);
+  const pageNum     = (year - signupDate.getFullYear()) * 12 + (month - signupDate.getMonth()) + 1;
+
   const selDate = selDay ? new Date(year, month, selDay) : null;
   const dayName = selDate ? ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"][selDate.getDay()] : "";
 
-  const ep = { dayName, selDay, month, year, entry, setEntry, saved, handleSave, entryLoading, autoSaving };
+  const ep = { dayName, selDay, month, year, entry, setEntry, saved, handleSave, entryLoading, autoSaving, setLightbox };
 
   // Belum tahu status auth
   if (!authReady) return (
@@ -2002,6 +2194,8 @@ export default function CozyJournal() {
             <div className="card-age" />
             {/* Corner fold */}
             <div className="card-fold" />
+            {/* Nomor halaman */}
+            <div className={"page-num"+(fading?" fading":"")}>hal. {pageNum}</div>
 
             {/* PAGE TURN OVERLAY — sits on top, animates, card content stays still */}
             {turning && (
@@ -2109,6 +2303,7 @@ export default function CozyJournal() {
                       </div>
                     ))}
                   </div>
+                  <MoodTrendChart entMap={entMap} year={year} month={month} />
                 )}
 
                 <div className="dom-card">
@@ -2182,12 +2377,44 @@ export default function CozyJournal() {
           </div>
         </div>
       )}
+
+      {/* LIGHTBOX */}
+      {lightbox && (
+        <div className="lightbox" onClick={() => setLightbox(null)}>
+          <button className="lightbox-close" onClick={() => setLightbox(null)}>✕</button>
+          <img src={lightbox.src} alt="memory" onClick={e => e.stopPropagation()} />
+          {lightbox.caption && (
+            <div className="lightbox-caption">{lightbox.caption}</div>
+          )}
+        </div>
+      )}
+      {confetti && (
+        <div className="confetti-wrap">
+          {Array.from({length: 40}).map((_, i) => {
+            const colors = ["#F5C842","#E87DA8","#6B9FD4","#7DC48E","#E06B6B","#C4A882","#9B8DC4"];
+            const color  = colors[i % colors.length];
+            const left   = `${Math.random() * 100}%`;
+            const size   = 6 + Math.random() * 8;
+            const dur    = 2 + Math.random() * 1.5;
+            const delay  = Math.random() * 0.8;
+            const shape  = i % 3 === 0 ? "50%" : i % 3 === 1 ? "2px" : "50% 0";
+            return (
+              <div key={i} className="confetti-piece" style={{
+                left, width: size, height: size * (i%2===0 ? 1 : 1.6),
+                background: color, borderRadius: shape,
+                animationDuration: `${dur}s`,
+                animationDelay: `${delay}s`,
+              }} />
+            );
+          })}
+        </div>
+      )}
     </>
   );
 }
 
 // ─── Entry Panel ──────────────────────────────────────────────────────────────
-function EntryPanel({ dayName, selDay, month, year, entry, setEntry, saved, handleSave, entryLoading, autoSaving }) {
+function EntryPanel({ dayName, selDay, month, year, entry, setEntry, saved, handleSave, entryLoading, autoSaving, setLightbox }) {
   const fileRef = useRef(null);
 
   const onFile = (e) => {
@@ -2236,7 +2463,11 @@ function EntryPanel({ dayName, selDay, month, year, entry, setEntry, saved, hand
         <div className="pol" onClick={() => !entry.photo && fileRef.current?.click()}>
           {entry.photo ? (
             <>
-              <img src={entry.photo} alt="memory" />
+              <img
+                src={entry.photo} alt="memory"
+                onClick={e => { e.stopPropagation(); setLightbox?.({ src: entry.photo, caption: entry.caption }); }}
+                style={{cursor:"zoom-in"}}
+              />
               <button
                 className="pol-remove"
                 onClick={e => { e.stopPropagation(); setEntry(p => ({...p, photo: null, caption: ""})); }}
