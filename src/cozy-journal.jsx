@@ -1041,7 +1041,15 @@ body {
   text-align: center; background: transparent; margin-top: 4px; resize: none;
 }
 
-.mood-row { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 0; padding: 6px 0 14px; margin-bottom: 22px; }
+.mood-row-wrap { position: relative; margin-bottom: 22px; }
+.mood-label-display {
+  height: 18px; margin-bottom: 4px;
+  font-family: 'DM Sans', sans-serif; font-size: 11px;
+  color: rgba(92,58,28,0.50); letter-spacing: .06em;
+  font-style: italic; text-align: center;
+  transition: opacity .15s ease;
+}
+.mood-row { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 0; padding: 6px 0 6px; }
 
 /* Wrapper buat tooltip */
 .mbtn-wrap {
@@ -1049,31 +1057,7 @@ body {
   display: flex; flex-direction: column; align-items: center;
   overflow: visible;
 }
-.mbtn-tip {
-  position: absolute; bottom: calc(100% + 7px);
-  left: 50%; transform: translateX(-50%);
-  background: #3B2410; color: #FAF5EC;
-  font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 400;
-  letter-spacing: .06em; white-space: nowrap;
-  padding: 4px 8px; border-radius: 6px;
-  pointer-events: none;
-  opacity: 0; transform: translateX(-50%) translateY(4px);
-  transition: opacity 0.15s ease, transform 0.15s ease;
-  z-index: 10;
-}
-/* tiny caret */
-.mbtn-tip::after {
-  content: '';
-  position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
-  border: 4px solid transparent;
-  border-top-color: #3B2410;
-}
-.mbtn-wrap:hover .mbtn-tip,
-.mbtn-wrap:focus-within .mbtn-tip {
-  opacity: 1; transform: translateX(-50%) translateY(0);
-}
-
-.mbtn {
+.mbtn-tip { display: none; }.mbtn {
   width: 44px; height: 44px; border-radius: 50%;
   border: 1.5px solid transparent;
   background: rgba(92,58,28,0.07); cursor: pointer; font-size: 20px;
@@ -1618,7 +1602,7 @@ body {
 }
 .tour-backdrop {
   position: fixed; inset: 0;
-  background: rgba(30,15,5,0.38);
+  background: rgba(30,15,5,0.42);
   backdrop-filter: blur(1.5px);
   pointer-events: all;
   animation: tourFadeIn 0.35s ease forwards;
@@ -1631,10 +1615,13 @@ body {
   position: fixed;
   border-radius: 10px;
   box-shadow:
-    0 0 0 9999px rgba(30,15,5,0.38),
-    0 0 0 2px rgba(196,149,58,0.55),
-    0 0 20px rgba(196,149,58,0.22);
-  transition: all 0.38s cubic-bezier(0.22, 0.0, 0.08, 1.0);
+    0 0 0 9999px rgba(30,15,5,0.42),
+    0 0 0 2.5px rgba(196,149,58,0.65),
+    0 0 24px rgba(196,149,58,0.28);
+  transition: top 0.38s cubic-bezier(0.22,0,0.08,1),
+              left 0.38s cubic-bezier(0.22,0,0.08,1),
+              width 0.38s cubic-bezier(0.22,0,0.08,1),
+              height 0.38s cubic-bezier(0.22,0,0.08,1);
   pointer-events: none;
   z-index: 1001;
   animation: tourFadeIn 0.35s ease forwards;
@@ -1647,52 +1634,59 @@ body {
   border: 1px solid rgba(196,149,58,0.30);
   border-radius: 12px;
   padding: 16px 18px 14px;
-  max-width: 260px;
+  width: 256px;
   box-shadow:
-    0 8px 28px rgba(80,40,10,0.18),
+    0 8px 28px rgba(80,40,10,0.20),
     0 2px 8px rgba(80,40,10,0.10);
-  transition: all 0.38s cubic-bezier(0.22, 0.0, 0.08, 1.0);
-  animation: tooltipPop 0.38s cubic-bezier(0.22,0,0.08,1) forwards;
+  animation: tooltipPop 0.32s cubic-bezier(0.22,0,0.08,1) forwards;
 }
 @keyframes tooltipPop {
-  from { opacity: 0; transform: translateY(6px) scale(0.96); }
+  from { opacity: 0; transform: translateY(8px) scale(0.95); }
   to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 .tour-tooltip::before {
   content: '';
   position: absolute;
-  width: 8px; height: 8px;
-  background: #F5EDD8;
+  width: 9px; height: 9px;
+  background: #F8F2E4;
   border-left: 1px solid rgba(196,149,58,0.30);
   border-top: 1px solid rgba(196,149,58,0.30);
+  left: var(--arrow-offset, 20px);
+}
+.tour-tooltip.arrow-top::before {
+  top: -5px;
   transform: rotate(45deg);
 }
-.tour-tooltip.arrow-top::before    { top: -5px; left: 22px; }
-.tour-tooltip.arrow-bottom::before { bottom: -5px; left: 22px; transform: rotate(225deg); border-left: none; border-top: none; border-right: 1px solid rgba(196,149,58,0.30); border-bottom: 1px solid rgba(196,149,58,0.30); }
-.tour-tooltip.arrow-right::before  { right: -5px; top: 18px; transform: rotate(135deg); border-left: none; border-top: none; border-right: 1px solid rgba(196,149,58,0.30); border-bottom: 1px solid rgba(196,149,58,0.30); }
+.tour-tooltip.arrow-bottom::before {
+  bottom: -5px;
+  transform: rotate(225deg);
+  border-left: none; border-top: none;
+  border-right: 1px solid rgba(196,149,58,0.30);
+  border-bottom: 1px solid rgba(196,149,58,0.30);
+}
 .tour-step-label {
   font-family: 'DM Sans', sans-serif; font-size: 10px;
   color: rgba(196,149,58,0.75); letter-spacing: .12em; text-transform: uppercase;
   margin-bottom: 6px; font-weight: 500;
 }
 .tour-title {
-  font-family: 'Cormorant Garamond', serif; font-size: 17px;
-  color: #3B2410; font-weight: 400; line-height: 1.2;
+  font-family: 'Cormorant Garamond', serif; font-size: 18px;
+  color: #3B2410; font-weight: 400; line-height: 1.25;
   margin-bottom: 6px;
 }
 .tour-desc {
   font-family: 'DM Sans', sans-serif; font-size: 12.5px;
-  color: rgba(59,36,16,0.68); line-height: 1.6;
+  color: rgba(59,36,16,0.68); line-height: 1.65;
 }
 .tour-actions {
   display: flex; align-items: center; justify-content: space-between;
-  margin-top: 14px;
+  margin-top: 14px; gap: 8px;
 }
 .tour-skip {
   background: none; border: none; cursor: pointer;
   font-family: 'DM Sans', sans-serif; font-size: 11px;
-  color: rgba(92,58,28,0.40); padding: 0;
-  letter-spacing: .04em; transition: color .18s;
+  color: rgba(92,58,28,0.38); padding: 0;
+  letter-spacing: .04em; transition: color .18s; flex-shrink: 0;
 }
 .tour-skip:hover { color: rgba(92,58,28,0.65); }
 .tour-next {
@@ -1701,7 +1695,7 @@ body {
   font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500;
   padding: 7px 16px; border-radius: 20px; letter-spacing: .06em;
   box-shadow: 0 2px 8px rgba(164,116,42,0.30);
-  transition: all .18s;
+  transition: all .18s; flex-shrink: 0;
 }
 .tour-next:hover {
   background: linear-gradient(135deg, #D4A545 0%, #B88838 100%);
@@ -1709,11 +1703,11 @@ body {
   transform: translateY(-1px);
 }
 .tour-dots {
-  display: flex; gap: 5px; align-items: center;
+  display: flex; gap: 5px; align-items: center; flex: 1; justify-content: center;
 }
 .tour-dot {
   width: 5px; height: 5px; border-radius: 50%;
-  background: rgba(196,149,58,0.22); transition: all .22s;
+  background: rgba(196,149,58,0.22); transition: all .25s;
 }
 .tour-dot.active {
   background: #C4953A; width: 14px; border-radius: 3px;
@@ -1762,70 +1756,116 @@ const TOUR_STEPS = [
 
 function GuidedTour({ step, onNext, onSkip }) {
   const [rect, setRect] = useState(null);
-  const PAD = 8;
+  const [visible, setVisible] = useState(false);
+  const PAD = 10;
+  const TOOLTIP_W = 256;
+  const TOOLTIP_H = 180; // estimate
 
-  useEffect(() => {
+  const measure = useCallback(() => {
     const cfg = TOUR_STEPS[step];
     if (!cfg) return;
+    let el = document.querySelector(`[data-tour="${cfg.target}"]`);
+    if (!el) el = document.querySelector(`.${cfg.target}`);
+    if (!el) return;
 
-    const findEl = () => {
-      let el = document.querySelector(`[data-tour="${cfg.target}"]`);
-      if (!el) el = document.querySelector(`.${cfg.target}`);
-      if (el) {
-        const r = el.getBoundingClientRect();
-        setRect({ top: r.top - PAD, left: r.left - PAD, width: r.width + PAD*2, height: r.height + PAD*2 });
-      }
-    };
+    // Scroll element ke tengah viewport supaya kelihatan
+    el.scrollIntoView({ behavior: "smooth", block: "center" });
 
-    findEl();
-    const t = setTimeout(findEl, 200);
-    return () => clearTimeout(t);
+    // Tunggu scroll selesai baru ukur
+    setTimeout(() => {
+      const r = el.getBoundingClientRect();
+      setRect({
+        top:    r.top    - PAD,
+        left:   r.left   - PAD,
+        width:  r.width  + PAD * 2,
+        height: r.height + PAD * 2,
+        bottom: r.bottom + PAD,
+        right:  r.right  + PAD,
+      });
+      setVisible(true);
+    }, 320);
   }, [step]);
 
-  if (!rect) return null;
+  useEffect(() => {
+    setVisible(false);
+    const t = setTimeout(measure, 60);
+    return () => clearTimeout(t);
+  }, [step, measure]);
+
+  // Re-measure on resize
+  useEffect(() => {
+    const onResize = () => measure();
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [measure]);
+
   const cfg = TOUR_STEPS[step];
+  if (!rect || !cfg) return null;
 
-  // Tooltip position: below spotlight if there's room, else above
-  const viewH = window.innerHeight;
-  const spaceBelow = viewH - (rect.top + rect.height);
-  const placedBelow = spaceBelow > 160;
+  const vW = window.innerWidth;
+  const vH = window.innerHeight;
 
-  const tooltipTop = placedBelow
-    ? rect.top + rect.height + 14
-    : rect.top - 14 - 180; // rough estimate
+  // Decide tooltip placement: below / above / center-bottom
+  const spaceBelow = vH - rect.bottom;
+  const spaceAbove = rect.top;
 
-  const tooltipLeft = Math.min(
-    Math.max(rect.left, 12),
-    window.innerWidth - 272
-  );
+  let placement, tooltipTop, tooltipLeft, arrowClass;
+
+  if (spaceBelow >= TOOLTIP_H + 16) {
+    placement  = "below";
+    tooltipTop = rect.bottom + 12;
+    arrowClass = "arrow-top";
+  } else if (spaceAbove >= TOOLTIP_H + 16) {
+    placement  = "above";
+    tooltipTop = rect.top - TOOLTIP_H - 12;
+    arrowClass = "arrow-bottom";
+  } else {
+    // fallback: pin near bottom of screen
+    placement  = "below";
+    tooltipTop = vH - TOOLTIP_H - 24;
+    arrowClass = "arrow-top";
+  }
+
+  // Horizontal: align to spotlight left, clamp to screen
+  tooltipLeft = Math.max(12, Math.min(rect.left, vW - TOOLTIP_W - 12));
+
+  // Arrow horizontal offset relative to tooltip
+  const arrowOffset = Math.max(16, Math.min(
+    rect.left + rect.width / 2 - tooltipLeft - 8,
+    TOOLTIP_W - 32
+  ));
 
   return (
-    <div className="tour-overlay">
+    <div className="tour-overlay" key={step}>
       <div className="tour-backdrop" onClick={onSkip} />
-      <div
-        className="tour-spotlight"
-        style={{ top: rect.top, left: rect.left, width: rect.width, height: rect.height }}
-      />
-      <div
-        className={`tour-tooltip arrow-${placedBelow ? "top" : "bottom"}`}
-        style={{ top: tooltipTop, left: tooltipLeft }}
-        onClick={e => e.stopPropagation()}
-      >
-        <div className="tour-step-label">Langkah {step + 1} / {TOUR_STEPS.length}</div>
-        <div className="tour-title">{cfg.title}</div>
-        <div className="tour-desc">{cfg.desc}</div>
-        <div className="tour-actions">
-          <button className="tour-skip" onClick={onSkip}>Lewati</button>
-          <div className="tour-dots">
-            {TOUR_STEPS.map((_, i) => (
-              <div key={i} className={`tour-dot${i === step ? " active" : ""}`} />
-            ))}
+      {visible && (
+        <>
+          <div
+            className="tour-spotlight"
+            style={{ top: rect.top, left: rect.left, width: rect.width, height: rect.height }}
+          />
+          <div
+            className={`tour-tooltip ${arrowClass}`}
+            style={{ top: tooltipTop, left: tooltipLeft, "--arrow-offset": `${arrowOffset}px` }}
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="tour-step-label">Langkah {step + 1} / {TOUR_STEPS.length}</div>
+            <div className="tour-title">{cfg.title}</div>
+            <div className="tour-desc">{cfg.desc}</div>
+            <div className="tour-actions">
+              <button className="tour-skip" onClick={onSkip}>Lewati</button>
+              <div className="tour-dots">
+                {TOUR_STEPS.map((_, i) => (
+                  <div key={i} className={`tour-dot${i === step ? " active" : ""}`} />
+                ))}
+              </div>
+              <button className="tour-next" onClick={onNext}>
+                {step === TOUR_STEPS.length - 1 ? "Mulai ✓" : "Lanjut →"}
+              </button>
+            </div>
           </div>
-          <button className="tour-next" onClick={onNext}>
-            {step === TOUR_STEPS.length - 1 ? "Mulai ✓" : "Lanjut →"}
-          </button>
-        </div>
-      </div>
+        </>
+      )}
     </div>
   );
 }
@@ -2241,20 +2281,23 @@ export default function CozyJournal() {
   const handleTourNext = () => {
     if (tourStep >= TOUR_STEPS.length - 1) {
       handleTourDone();
-    } else {
-      // Kalau step berikutnya butuh sheet terbuka (mood, word, foto, save)
-      // pastikan sheet terbuka dulu
-      if (tourStep === 1 && !sheetOpen) {
-        // Open sheet dengan hari ini
-        const d = today.getDate();
-        if (today.getFullYear() === year && today.getMonth() === month) {
-          setSelDay(d);
-          setSheetOpen(true);
-        }
-        setTimeout(() => setTourStep(s => s + 1), 350);
-      } else {
-        setTourStep(s => s + 1);
+      return;
+    }
+
+    const nextStep = tourStep + 1;
+    // Step 2+ butuh bottom sheet terbuka (mood-row, word-wrap, pol-wrap, sbtn)
+    const needsSheet = nextStep >= 2;
+
+    if (needsSheet && !sheetOpen) {
+      const d = today.getDate();
+      if (today.getFullYear() === year && today.getMonth() === month) {
+        setSelDay(d);
+        setSheetOpen(true);
       }
+      // Tunggu sheet slide up dulu baru advance step
+      setTimeout(() => setTourStep(nextStep), 450);
+    } else {
+      setTourStep(nextStep);
     }
   };
 
@@ -2436,16 +2479,29 @@ export default function CozyJournal() {
     }, dur + 60);
   };
 
-  const swipeRef = useRef({ x: 0, t: 0 });
+  const swipeRef = useRef({ x: 0, y: 0, t: 0 });
 
   const onTouchStart = (e) => {
-    swipeRef.current = { x: e.touches[0].clientX, t: Date.now() };
+    swipeRef.current = {
+      x: e.touches[0].clientX,
+      y: e.touches[0].clientY,
+      t: Date.now()
+    };
   };
   const onTouchEnd = (e) => {
     if (turning) return;
     const dx = e.changedTouches[0].clientX - swipeRef.current.x;
+    const dy = e.changedTouches[0].clientY - swipeRef.current.y;
     const dt = Date.now() - swipeRef.current.t;
-    if (Math.abs(dx) > 35 && dt < 500) {
+
+    const absDx = Math.abs(dx);
+    const absDy = Math.abs(dy);
+
+    // Hanya trigger kalau:
+    // 1. Horizontal cukup jauh (>50px)
+    // 2. Lebih horizontal dari vertikal (rasio 2:1)
+    // 3. Cepat (< 400ms)
+    if (absDx > 50 && absDx > absDy * 2 && dt < 400) {
       flipNav(dx < 0 ? "next" : "prev");
     }
   };
@@ -2794,6 +2850,40 @@ export default function CozyJournal() {
 }
 
 // ─── Entry Panel ──────────────────────────────────────────────────────────────
+// ─── Mood Picker ──────────────────────────────────────────────────────────────
+function MoodPicker({ entry, setEntry }) {
+  const [hovered, setHovered] = useState(null);
+
+  const active = hovered
+    ? MOODS.find(m => m.emoji === hovered)
+    : entry.mood
+    ? MOODS.find(m => m.emoji === entry.mood)
+    : null;
+
+  return (
+    <div className="mood-row-wrap" data-tour="mood-row">
+      <div className="mood-label-display" style={{ opacity: active ? 1 : 0 }}>
+        {active ? active.label : "—"}
+      </div>
+      <div className="mood-row">
+        {MOODS.map(mo => (
+          <div key={mo.emoji} className="mbtn-wrap">
+            <button
+              className={"mbtn" + (entry.mood === mo.emoji ? " sel" : "")}
+              onClick={() => setEntry(p => ({ ...p, mood: p.mood === mo.emoji ? null : mo.emoji }))}
+              onMouseEnter={() => setHovered(mo.emoji)}
+              onMouseLeave={() => setHovered(null)}
+              onFocus={() => setHovered(mo.emoji)}
+              onBlur={() => setHovered(null)}
+            >{mo.emoji}</button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── Entry Panel ──────────────────────────────────────────────────────────────
 function EntryPanel({ dayName, selDay, month, year, entry, setEntry, saved, handleSave, handleDelete, entryLoading, autoSaving, setLightbox }) {
   const fileRef = useRef(null);
 
@@ -2873,17 +2963,7 @@ function EntryPanel({ dayName, selDay, month, year, entry, setEntry, saved, hand
 
       <div className="ep-divider"><span className="ep-divider-dot" /></div>
       <div className="elabel">Bagaimana perasaanmu?</div>
-      <div className="mood-row" data-tour="mood-row">
-        {MOODS.map(mo => (
-          <div key={mo.emoji} className="mbtn-wrap">
-            <div className="mbtn-tip">{mo.label}</div>
-            <button
-              className={"mbtn"+(entry.mood===mo.emoji?" sel":"")}
-              onClick={() => setEntry(p => ({...p, mood: p.mood===mo.emoji ? null : mo.emoji}))}
-            >{mo.emoji}</button>
-          </div>
-        ))}
-      </div>
+      <MoodPicker entry={entry} setEntry={setEntry} />
 
       <div className="ep-divider"><span className="ep-divider-dot" /></div>
       <div className="elabel">Kata Hari Ini</div>
