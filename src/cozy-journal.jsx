@@ -445,6 +445,10 @@ body {
   perspective-origin: 20% 40%;
   overflow: visible;
 }
+/* PREV: perspective dari tengah atas supaya rotateX terlihat natural */
+.page-turn-stage.turning-prev {
+  perspective-origin: 50% -10%;
+}
 
 .page-flap {
   position: absolute; inset: 0;
@@ -452,12 +456,13 @@ body {
   transform-style: preserve-3d;
   will-change: transform;
 }
-/* NEXT: flip ke kiri — cepat keluar, lembut landing */
+/* NEXT: flip ke kiri — cepat keluar, lembut landing (JANGAN DIUBAH) */
 .page-turn-stage.turning-next .page-flap {
   animation: flipNext 0.82s cubic-bezier(0.30, 0.0, 0.08, 1.0) forwards;
 }
-/* PREV: flip dari kiri balik ke kanan — lebih lambat, terasa seperti membuka */
+/* PREV: flip vertikal dari atas ke bawah — seperti membalik kertas ke depan */
 .page-turn-stage.turning-prev .page-flap {
+  transform-origin: center top;
   animation: flipPrev 0.88s cubic-bezier(0.22, 0.0, 0.12, 1.0) forwards;
 }
 
@@ -469,7 +474,6 @@ body {
   position: absolute; inset: 0;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  /* clip-path mensimulasikan border-radius: 2px 16px 16px 2px */
   clip-path: inset(0 0 0 0 round 2px 16px 16px 2px);
 }
 .page-flap-front {
@@ -489,7 +493,11 @@ body {
     ),
     linear-gradient(172deg, #EDE3CF 0%, #E5D8BC 50%, #DCCFAA 100%);
   background-position: 0 52px, 0 0;
+  /* NEXT: back rotasi Y | PREV: back rotasi X */
   transform: rotateY(180deg);
+}
+.page-turn-stage.turning-prev .page-flap-back {
+  transform: rotateX(-180deg);
 }
 
 /* ── Lift glow ── */
@@ -498,9 +506,11 @@ body {
   pointer-events: none; opacity: 0;
   background: linear-gradient(to bottom, rgba(255,240,200,0.16) 0%, transparent 35%);
 }
-.page-turn-stage.turning-next .page-flap-front::before,
-.page-turn-stage.turning-prev .page-flap-front::before {
+.page-turn-stage.turning-next .page-flap-front::before {
   animation: paperLift 0.82s ease forwards;
+}
+.page-turn-stage.turning-prev .page-flap-front::before {
+  animation: paperLift 0.88s ease forwards;
 }
 
 /* ── Shadows ── */
@@ -509,7 +519,7 @@ body {
   content: ''; position: absolute; inset: 0;
   pointer-events: none; opacity: 0;
 }
-/* NEXT — shadow dari kanan saat halaman pergi kiri */
+/* NEXT — shadow horizontal (kanan → kiri) */
 .page-turn-stage.turning-next .page-flap-front::after {
   background: linear-gradient(to left,
     rgba(8,3,0,0.35) 0%, rgba(8,3,0,0.14) 16%,
@@ -522,32 +532,32 @@ body {
     transparent 55%);
   animation: shadowLand 0.82s ease-in-out forwards;
 }
-/* PREV — shadow dari kiri saat halaman datang dari kanan */
+/* PREV — shadow vertikal (atas → bawah) */
 .page-turn-stage.turning-prev .page-flap-front::after {
-  background: linear-gradient(to right,
-    rgba(8,3,0,0.35) 0%, rgba(8,3,0,0.14) 16%,
-    rgba(8,3,0,0.04) 40%, transparent 62%);
+  background: linear-gradient(to bottom,
+    rgba(8,3,0,0.35) 0%, rgba(8,3,0,0.14) 18%,
+    rgba(8,3,0,0.04) 42%, transparent 65%);
   animation: shadowLift 0.88s ease-in-out forwards;
 }
 .page-turn-stage.turning-prev .page-flap-back::after {
-  background: linear-gradient(to left,
+  background: linear-gradient(to top,
     rgba(8,3,0,0.24) 0%, rgba(8,3,0,0.08) 22%,
     transparent 55%);
   animation: shadowLand 0.88s ease-in-out forwards;
 }
 
 /* ── Keyframes ── */
-/* NEXT: hinge kiri, flip ke kiri — awal agresif, akhir lembut */
+/* NEXT: hinge kiri, horizontal — JANGAN DIUBAH */
 @keyframes flipNext {
   0%   { transform: rotateY(0deg);    }
-  6%   { transform: rotateY(-8deg);   }  /* peel off */
+  6%   { transform: rotateY(-8deg);   }
   100% { transform: rotateY(-180deg); }
 }
-/* PREV: hinge kanan, flip ke kanan — terasa seperti membuka halaman */
+/* PREV: hinge atas, vertikal dari atas ke bawah */
 @keyframes flipPrev {
-  0%   { transform: rotateY(0deg);   }
-  6%   { transform: rotateY(8deg);   }  /* peel dari kanan */
-  100% { transform: rotateY(180deg); }
+  0%   { transform: rotateX(0deg);    }
+  6%   { transform: rotateX(8deg);    }
+  100% { transform: rotateX(180deg);  }
 }
 
 /* Paper lift glow */
