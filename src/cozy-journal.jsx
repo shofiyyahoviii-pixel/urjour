@@ -221,7 +221,7 @@ body {
 
 /* ── URJOUR LOGO ─────────────────────────────────── */
 .logo-wrap {
-  width: 100%; max-width: 500px;
+  width: calc(100% - 24px); max-width: 500px;
   display: flex; flex-direction: column; align-items: center;
   padding: 40px 20px 22px;
   position: relative; z-index: 2;
@@ -968,7 +968,7 @@ body {
   position: relative; cursor: pointer; flex-shrink: 0;
 }
 .sheet-close-btn {
-  position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+  position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
   width: 30px; height: 30px; border-radius: 50%;
   background: rgba(92,58,28,0.08); border: none;
   color: rgba(92,58,28,0.55); font-size: 14px;
@@ -1041,8 +1041,7 @@ body {
   text-align: center; background: transparent; margin-top: 4px; resize: none;
 }
 
-.mood-row { display: flex; gap: 8px; overflow-x: auto; padding: 6px 4px 14px; margin-bottom: 22px; scrollbar-width: none; }
-.mood-row::-webkit-scrollbar { display: none; }
+.mood-row { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 0; padding: 6px 0 14px; margin-bottom: 22px; }
 
 /* Wrapper buat tooltip */
 .mbtn-wrap {
@@ -1075,9 +1074,9 @@ body {
 }
 
 .mbtn {
-  width: 48px; height: 48px; border-radius: 50%;
+  width: 44px; height: 44px; border-radius: 50%;
   border: 1.5px solid transparent;
-  background: rgba(92,58,28,0.07); cursor: pointer; font-size: 22px;
+  background: rgba(92,58,28,0.07); cursor: pointer; font-size: 20px;
   display: flex; align-items: center; justify-content: center;
   transition: background .2s, border-color .2s, box-shadow .2s;
   position: relative;
@@ -2207,6 +2206,7 @@ export default function CozyJournal() {
   const [entry,     setEntry]     = useState({ photo: null, mood: null, word: "", caption: "" });
   const [quote,     setQuote]     = useState("");
   const quoteDebounceRef = useRef(null);
+  const [quoteSaved, setQuoteSaved] = useState(false);
   const [entMap,    setEntMap]    = useState({});
   const [saved,     setSaved]     = useState(false);
   const [loading,   setLoading]   = useState(false);
@@ -2670,7 +2670,16 @@ export default function CozyJournal() {
                 </div>
 
                 <div style={{marginTop:16}}>
-                  <div className="slabel">Kutipan Bulan Ini</div>
+                  <div style={{display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:6}}>
+                    <div className="slabel" style={{marginBottom:0}}>Kutipan Bulan Ini</div>
+                    {quoteSaved && (
+                      <div style={{
+                        fontFamily:"'DM Sans',sans-serif", fontSize:10,
+                        color:"rgba(92,58,28,0.45)", letterSpacing:".06em",
+                        fontStyle:"italic", animation:"fadeSlideUp .3s ease"
+                      }}>tersimpan ✓</div>
+                    )}
+                  </div>
                   <div className="qcard-ins">
                     <textarea
                       className="qta-ins"
@@ -2678,14 +2687,19 @@ export default function CozyJournal() {
                       onChange={e => {
                         const val = e.target.value;
                         setQuote(val);
+                        setQuoteSaved(false);
                         clearTimeout(quoteDebounceRef.current);
-                        quoteDebounceRef.current = setTimeout(() => {
-                          dbSaveQuote(user.id, year, month, val);
+                        quoteDebounceRef.current = setTimeout(async () => {
+                          await dbSaveQuote(user.id, year, month, val);
+                          setQuoteSaved(true);
+                          setTimeout(() => setQuoteSaved(false), 2500);
                         }, 1200);
                       }}
-                      onBlur={() => {
+                      onBlur={async () => {
                         clearTimeout(quoteDebounceRef.current);
-                        dbSaveQuote(user.id, year, month, quote);
+                        await dbSaveQuote(user.id, year, month, quote);
+                        setQuoteSaved(true);
+                        setTimeout(() => setQuoteSaved(false), 2500);
                       }}
                       placeholder="sesuatu yang menyentuhmu bulan ini..."
                     />
