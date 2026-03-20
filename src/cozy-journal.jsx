@@ -611,7 +611,7 @@ body {
 }
 .cal-yr {
   font-family: 'Cormorant Garamond', serif; font-weight: 300;
-  font-size: 13px; color: #B0A090; margin-top: 3px; margin-bottom: 18px;
+  font-size: 17px; color: #B0A090; margin-top: 3px; margin-bottom: 18px;
   letter-spacing: .18em; font-style: italic;
 }
 .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
