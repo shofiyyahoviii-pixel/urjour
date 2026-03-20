@@ -442,26 +442,23 @@ body {
   position: absolute; inset: 0;
   pointer-events: none; z-index: 50;
   perspective: 3000px;
-  /* NEXT: pivot kiri | PREV: pivot kanan — beda per arah */
+  perspective-origin: 20% 40%;
   overflow: visible;
 }
-.page-turn-stage.turning-next { perspective-origin: 20% 40%; }
-.page-turn-stage.turning-prev { perspective-origin: 80% 40%; }
 
 .page-flap {
   position: absolute; inset: 0;
+  transform-origin: left center;
   transform-style: preserve-3d;
   will-change: transform;
 }
-/* NEXT: hinge dari kiri, flip ke kiri — lebih cepat keluar, lembut landing */
+/* NEXT: flip ke kiri — cepat keluar, lembut landing */
 .page-turn-stage.turning-next .page-flap {
-  transform-origin: left center;
   animation: flipNext 0.82s cubic-bezier(0.30, 0.0, 0.08, 1.0) forwards;
 }
-/* PREV: hinge dari kanan, flip ke kanan — sedikit lebih lambat, terasa "dibuka" */
+/* PREV: flip dari kiri balik ke kanan — lebih lambat, terasa seperti membuka */
 .page-turn-stage.turning-prev .page-flap {
-  transform-origin: right center;
-  animation: flipPrev 0.88s cubic-bezier(0.25, 0.0, 0.12, 1.0) forwards;
+  animation: flipPrev 0.88s cubic-bezier(0.22, 0.0, 0.12, 1.0) forwards;
 }
 
 /* ── Face textures ──
