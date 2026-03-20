@@ -178,6 +178,29 @@ function playFlip() {
   } catch {}
 }
 
+function playStreak() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    // Ascending celebratory arpeggio: C5 → E5 → G5 → C6
+    const notes = [523.25, 659.25, 783.99, 1046.5];
+    notes.forEach((freq, i) => {
+      const osc  = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = "sine";
+      osc.frequency.value = freq;
+      const t = ctx.currentTime + i * 0.13;
+      gain.gain.setValueAtTime(0, t);
+      gain.gain.linearRampToValueAtTime(0.22, t + 0.04);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.38);
+      osc.start(t);
+      osc.stop(t + 0.4);
+    });
+    setTimeout(() => ctx.close(), 2000);
+  } catch {}
+}
+
 // ─── Styles ───────────────────────────────────────────────────────────────────
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Satisfy&family=Caveat:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap');
@@ -1409,6 +1432,33 @@ body {
   position: absolute; top: 0;
   animation: confettiFall linear forwards;
 }
+.streak-banner {
+  position: fixed; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 301; pointer-events: none;
+  background: linear-gradient(135deg, #FDF8F0 0%, #F5EDD8 100%);
+  border: 1.5px solid rgba(196,149,58,0.40);
+  border-radius: 20px;
+  padding: 24px 36px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(80,40,10,0.22), 0 4px 16px rgba(80,40,10,0.12);
+  animation: streakBannerIn 0.5s cubic-bezier(0.22,0,0.08,1) forwards;
+}
+@keyframes streakBannerIn {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(0.80); }
+  to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+.streak-banner-emoji {
+  font-size: 48px; line-height: 1; margin-bottom: 10px;
+}
+.streak-banner-title {
+  font-family: 'Satisfy', cursive; font-size: 28px; color: #3B2410;
+  margin-bottom: 6px;
+}
+.streak-banner-sub {
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: 15px; color: rgba(92,58,28,0.65); line-height: 1.5;
+}
 .toast-wrap {
   position: fixed; bottom: 28px; left: 50%;
   transform: translateX(-50%);
@@ -2254,8 +2304,9 @@ export default function CozyJournal() {
   const [turning,   setTurning]   = useState("");
   const [toast,     setToast]     = useState(null); // {msg, type, out}
   const toastTimer = useRef(null);
-  const [realStreak, setRealStreak] = useState(0);
-  const [confetti,   setConfetti]   = useState(false);
+  const [realStreak,      setRealStreak]      = useState(0);
+  const [confetti,        setConfetti]        = useState(false);
+  const [streakMilestone, setStreakMilestone] = useState(null); // angka milestone
   const prevStreakRef = useRef(0);
   const [lightbox,   setLightbox]   = useState(null); // {src, caption}
   const autoSaveTimer = useRef(null);
@@ -2310,10 +2361,16 @@ export default function CozyJournal() {
   useEffect(() => {
     if (!user) return;
     calcStreak(user.id).then(s => {
-      const milestones = [7, 14, 30, 60, 100];
-      if (milestones.includes(s) && s > prevStreakRef.current) {
+      const prev = prevStreakRef.current;
+      // Trigger jika streak baru melewati kelipatan 7 yang belum pernah dicapai
+      if (s > 0 && s % 7 === 0 && s > prev) {
+        setStreakMilestone(s);
         setConfetti(true);
-        setTimeout(() => setConfetti(false), 3500);
+        playStreak();
+        setTimeout(() => {
+          setConfetti(false);
+          setStreakMilestone(null);
+        }, 4500);
       }
       prevStreakRef.current = s;
       setRealStreak(s);
@@ -2387,7 +2444,9 @@ export default function CozyJournal() {
   };
 
   const handleSave = async () => {
-    showToast("Menyimpan...", "default", 99999); // tetap sampai selesai
+    // Mobile: tutup sheet langsung, proses jalan di background
+    if (window.innerWidth < 768) setSheetOpen(false);
+    showToast("Menyimpan...", "default", 99999);
     try {
       let finalEntry = { ...entry };
       if (entry.photo && entry.photo.startsWith("data:")) {
@@ -2401,10 +2460,7 @@ export default function CozyJournal() {
       playSave();
       showToast("✓ Catatan tersimpan!", "success", 1800);
       setSaved(true);
-      setTimeout(() => {
-        setSaved(false);
-        if (window.innerWidth < 768) setSheetOpen(false);
-      }, 500);
+      setTimeout(() => setSaved(false), 500);
     } catch {
       showToast("Gagal menyimpan. Coba lagi.", "error", 3000);
     }
@@ -2412,13 +2468,14 @@ export default function CozyJournal() {
 
   const handleDelete = async () => {
     if (!window.confirm("Hapus catatan hari ini?\nTindakan ini tidak bisa dibatalkan.")) return;
+    // Mobile: tutup sheet langsung
+    if (window.innerWidth < 768) setSheetOpen(false);
     showToast("Menghapus...", "default", 99999);
     try {
       await dbDeleteEntry(user.id, year, month, selDay);
       await refresh();
       setEntry({ photo: null, mood: null, word: "", caption: "" });
       showToast("Catatan dihapus.", "success", 1800);
-      if (window.innerWidth < 768) setSheetOpen(false);
     } catch {
       showToast("Gagal menghapus.", "error", 3000);
     }
@@ -2480,6 +2537,8 @@ export default function CozyJournal() {
   };
 
   const swipeRef = useRef({ x: 0, y: 0, t: 0 });
+  const sheetRef = useRef(null);
+  const sheetTouchRef = useRef({ startY: 0, startScrollTop: 0 });
 
   const onTouchStart = (e) => {
     swipeRef.current = {
@@ -2782,7 +2841,24 @@ export default function CozyJournal() {
 
       {/* MOBILE BOTTOM SHEET */}
       <div className={"backdrop"+(sheetOpen?" open":"")} onClick={() => setSheetOpen(false)} />
-      <div className={"bsheet mob-sheet"+(sheetOpen?" open":"")}>
+      <div
+        className={"bsheet mob-sheet"+(sheetOpen?" open":"")}
+        ref={sheetRef}
+        onTouchStart={e => {
+          sheetTouchRef.current = {
+            startY: e.touches[0].clientY,
+            startScrollTop: sheetRef.current?.scrollTop || 0,
+          };
+        }}
+        onTouchMove={e => {
+          const dy = e.touches[0].clientY - sheetTouchRef.current.startY;
+          const atTop = (sheetRef.current?.scrollTop || 0) <= 0;
+          // Kalau sudah di atas dan user tarik ke bawah (dy > 0) lebih dari 60px → tutup
+          if (atTop && dy > 60) {
+            setSheetOpen(false);
+          }
+        }}
+      >
         <div className="handle-bar" onClick={() => setSheetOpen(false)}>
           <div className="handle" />
           <button className="sheet-close-btn" onClick={() => setSheetOpen(false)}>✕</button>
@@ -2817,13 +2893,13 @@ export default function CozyJournal() {
       )}
       {confetti && (
         <div className="confetti-wrap">
-          {Array.from({length: 40}).map((_, i) => {
-            const colors = ["#F5C842","#E87DA8","#6B9FD4","#7DC48E","#E06B6B","#C4A882","#9B8DC4"];
+          {Array.from({length: 80}).map((_, i) => {
+            const colors = ["#F5C842","#E87DA8","#6B9FD4","#7DC48E","#E06B6B","#C4A882","#9B8DC4","#F4A261","#E9C46A"];
             const color  = colors[i % colors.length];
             const left   = `${Math.random() * 100}%`;
-            const size   = 6 + Math.random() * 8;
-            const dur    = 2 + Math.random() * 1.5;
-            const delay  = Math.random() * 0.8;
+            const size   = 5 + Math.random() * 9;
+            const dur    = 1.8 + Math.random() * 2;
+            const delay  = Math.random() * 1.2;
             const shape  = i % 3 === 0 ? "50%" : i % 3 === 1 ? "2px" : "50% 0";
             return (
               <div key={i} className="confetti-piece" style={{
@@ -2834,6 +2910,21 @@ export default function CozyJournal() {
               }} />
             );
           })}
+        </div>
+      )}
+
+      {/* STREAK MILESTONE BANNER */}
+      {streakMilestone && (
+        <div className="streak-banner">
+          <div className="streak-banner-emoji">🔥</div>
+          <div className="streak-banner-title">{streakMilestone} Hari Berturut-turut!</div>
+          <div className="streak-banner-sub">
+            {streakMilestone === 7  && "Satu minggu penuh — luar biasa! 🌟"}
+            {streakMilestone === 14 && "Dua minggu konsisten — kamu hebat! ✨"}
+            {streakMilestone === 21 && "Tiga minggu! Ini sudah jadi kebiasaan 💪"}
+            {streakMilestone === 28 && "Sebulan penuh! Jurnal sudah jadi bagian hidupmu 📖"}
+            {streakMilestone > 28 && streakMilestone % 7 === 0 && `${streakMilestone / 7} minggu tanpa henti! Kamu luar biasa 🎉`}
+          </div>
         </div>
       )}
 
