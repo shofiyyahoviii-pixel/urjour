@@ -2295,15 +2295,17 @@ export default function CozyJournal() {
                     <div className="no-e-sub">tap any date to write your first entry</div>
                   </div>
                 ) : (
-                  <div className="mood-chips">
-                    {MOODS.filter(mo => moodStats[mo.emoji] > 0).map(mo => (
-                      <div className="mood-chip" key={mo.emoji}>
-                        <span>{mo.emoji}</span>
-                        <span className="mood-chip-count">×{moodStats[mo.emoji]}</span>
-                      </div>
-                    ))}
-                  </div>
-                  <MoodTrendChart entMap={entMap} year={year} month={month} />
+                  <>
+                    <div className="mood-chips">
+                      {MOODS.filter(mo => moodStats[mo.emoji] > 0).map(mo => (
+                        <div className="mood-chip" key={mo.emoji}>
+                          <span>{mo.emoji}</span>
+                          <span className="mood-chip-count">×{moodStats[mo.emoji]}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <MoodTrendChart entMap={entMap} year={year} month={month} />
+                  </>
                 )}
 
                 <div className="dom-card">
