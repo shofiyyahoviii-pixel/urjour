@@ -454,18 +454,19 @@ body {
   transform-style: preserve-3d;
   will-change: transform;
 }
-/* NEXT: flip ke kiri — cepat keluar, lembut landing (JANGAN DIUBAH) */
+/* NEXT: halaman ada di depan → dibalik ke kiri melewati spine
+   front terlihat dulu, lalu back face, lalu landing */
 .page-turn-stage.turning-next .page-flap {
   animation: flipNext 0.82s cubic-bezier(0.30, 0.0, 0.08, 1.0) forwards;
 }
-/* PREV: flip ke kanan — sama dengan NEXT tapi arah balik */
+/* PREV: halaman datang dari posisi sudah terbalik → dikembalikan ke depan
+   back face terlihat dulu (halaman datang), lalu front face landing */
 .page-turn-stage.turning-prev .page-flap {
-  animation: flipPrev 0.82s cubic-bezier(0.30, 0.0, 0.08, 1.0) forwards;
+  animation: flipPrev 0.82s cubic-bezier(0.92, 0.0, 0.70, 1.0) forwards;
 }
 
 /* ── Face textures ──
-   PENTING: border-radius TIDAK bisa pakai overflow:hidden di preserve-3d parent
-   Solusi: clip-path inset dengan rounding ──────────────────────────────────── */
+   PENTING: clip-path karena overflow:hidden tidak bisa di preserve-3d ── */
 .page-flap-front,
 .page-flap-back {
   position: absolute; inset: 0;
@@ -493,16 +494,13 @@ body {
   transform: rotateY(180deg);
 }
 
-/* ── Lift glow ── */
+/* ── Lift glow — hanya untuk NEXT (halaman terangkat dari depan) ── */
 .page-flap-front::before {
   content: ''; position: absolute; inset: 0;
   pointer-events: none; opacity: 0;
   background: linear-gradient(to bottom, rgba(255,240,200,0.16) 0%, transparent 35%);
 }
 .page-turn-stage.turning-next .page-flap-front::before {
-  animation: paperLift 0.82s ease forwards;
-}
-.page-turn-stage.turning-prev .page-flap-front::before {
   animation: paperLift 0.82s ease forwards;
 }
 
@@ -512,45 +510,49 @@ body {
   content: ''; position: absolute; inset: 0;
   pointer-events: none; opacity: 0;
 }
-/* NEXT — shadow horizontal (kanan → kiri) */
+
+/* NEXT: shadow di sisi kanan front (halaman dibalik ke kiri) */
 .page-turn-stage.turning-next .page-flap-front::after {
   background: linear-gradient(to left,
     rgba(8,3,0,0.35) 0%, rgba(8,3,0,0.14) 16%,
     rgba(8,3,0,0.04) 40%, transparent 62%);
   animation: shadowLift 0.82s ease-in-out forwards;
 }
+/* NEXT: shadow di sisi kiri back (landing dari kiri) */
 .page-turn-stage.turning-next .page-flap-back::after {
   background: linear-gradient(to right,
     rgba(8,3,0,0.24) 0%, rgba(8,3,0,0.08) 22%,
     transparent 55%);
   animation: shadowLand 0.82s ease-in-out forwards;
 }
-/* PREV — shadow horizontal (kiri → kanan, mirror dari NEXT) */
-.page-turn-stage.turning-prev .page-flap-front::after {
+
+/* PREV: back face datang dari kiri → shadow di sisi kiri back */
+.page-turn-stage.turning-prev .page-flap-back::after {
   background: linear-gradient(to right,
-    rgba(8,3,0,0.35) 0%, rgba(8,3,0,0.14) 16%,
-    rgba(8,3,0,0.04) 40%, transparent 62%);
+    rgba(8,3,0,0.30) 0%, rgba(8,3,0,0.12) 18%,
+    rgba(8,3,0,0.03) 42%, transparent 65%);
   animation: shadowLift 0.82s ease-in-out forwards;
 }
-.page-turn-stage.turning-prev .page-flap-back::after {
+/* PREV: front face landing di kanan → shadow di sisi kanan front */
+.page-turn-stage.turning-prev .page-flap-front::after {
   background: linear-gradient(to left,
-    rgba(8,3,0,0.24) 0%, rgba(8,3,0,0.08) 22%,
+    rgba(8,3,0,0.22) 0%, rgba(8,3,0,0.08) 22%,
     transparent 55%);
   animation: shadowLand 0.82s ease-in-out forwards;
 }
 
 /* ── Keyframes ── */
-/* NEXT: hinge kiri, horizontal — JANGAN DIUBAH */
+/* NEXT: 0° → -180° (halaman pergi ke kiri) */
 @keyframes flipNext {
   0%   { transform: rotateY(0deg);    }
   6%   { transform: rotateY(-8deg);   }
   100% { transform: rotateY(-180deg); }
 }
-/* PREV: hinge kiri, flip ke kanan */
+/* PREV: -180° → 0° (halaman datang dari kiri, landing ke posisi normal) */
 @keyframes flipPrev {
-  0%   { transform: rotateY(0deg);   }
-  6%   { transform: rotateY(8deg);   }
-  100% { transform: rotateY(180deg); }
+  0%   { transform: rotateY(-180deg); }
+  94%  { transform: rotateY(-8deg);   }
+  100% { transform: rotateY(0deg);    }
 }
 
 /* Paper lift glow */
@@ -2150,19 +2152,24 @@ export default function CozyJournal() {
 
     const dur = 820;
 
-    // Swap konten tepat saat kertas edge-on (90°) = 50% dari animasi
-    // Pada titik ini kertas tidak terlihat → tidak ada glitch visual
-    setTimeout(() => {
-      if (dir === "next") {
+    if (dir === "next") {
+      // NEXT: swap di ~50% — kertas edge-on, tidak terlihat
+      setTimeout(() => {
         if (month === 11) { setYear(y => y + 1); setMonth(0); }
         else setMonth(m => m + 1);
-      } else {
+        setSelDay(null);
+        setSheetOpen(false);
+      }, Math.round(dur * 0.50));
+    } else {
+      // PREV: swap di ~8% — animasi mulai dari terbalik (-180°),
+      // konten baru harus sudah ada sebelum back face terlihat
+      setTimeout(() => {
         if (month === 0) { setYear(y => y - 1); setMonth(11); }
         else setMonth(m => m - 1);
-      }
-      setSelDay(null);
-      setSheetOpen(false);
-    }, Math.round(dur * 0.50));
+        setSelDay(null);
+        setSheetOpen(false);
+      }, Math.round(dur * 0.08));
+    }
 
     // Cleanup
     setTimeout(() => {
