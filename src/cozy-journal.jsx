@@ -209,7 +209,7 @@ const CSS = `
 
 body {
   font-family: 'DM Sans', sans-serif;
-  background: #EDE0CC;
+  background: #E8E5E0;
   min-height: 100vh;
 }
 
@@ -222,7 +222,7 @@ body {
     radial-gradient(ellipse 90% 60% at 10% 5%,   rgba(230,195,140,0.50) 0%, transparent 55%),
     radial-gradient(ellipse 60% 50% at 88% 90%,   rgba(180,130,70,0.18)  0%, transparent 50%),
     radial-gradient(ellipse 50% 35% at 50% 100%,  rgba(200,155,90,0.12)  0%, transparent 60%),
-    linear-gradient(162deg, #EDD9B2 0%, #E4CFA0 25%, #DFCA9C 55%, #D8C090 100%);
+    linear-gradient(162deg, #ECEAE6 0%, #E5E2DC 25%, #DEDAD4 55%, #D6D2CC 100%);
   position: relative;
 }
 
@@ -268,7 +268,7 @@ body {
   font-weight: 300;
   font-size: 38px;
   letter-spacing: 0.28em;
-  color: #3B2410;
+  color: #2A2420;
   text-transform: uppercase;
   line-height: 1;
 }
@@ -312,7 +312,7 @@ body {
   border: 1px solid rgba(92,58,28,0.18);
   background: rgba(255,255,255,0.65);
   backdrop-filter: blur(4px);
-  color: #7A5030; font-size: 14px; cursor: pointer;
+  color: #6B6258; font-size: 14px; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   transition: all .22s;
   box-shadow: 0 1px 4px rgba(92,58,28,0.08);
@@ -374,7 +374,7 @@ body {
 /* ── BOOK CARD ──────────────────────────────────── */
 .card {
   width: 100%;
-  background: linear-gradient(172deg, #FDF8F0 0%, #F8F0E0 50%, #F3E8D2 100%);
+  background: linear-gradient(172deg, #F7F5F2 0%, #F0EDE8 50%, #EAEAE4 100%);
   border-radius: 2px 16px 16px 2px;
   position: relative;
   overflow: hidden;
@@ -452,7 +452,7 @@ body {
   perspective-origin: 20% 40%;
   overflow: visible;
   /* Background solid selama flip supaya konten di bawah tidak kelihatan saat swap */
-  background: linear-gradient(172deg, #FDF8F0 0%, #F8F0E0 45%, #F2E8D0 100%);
+  background: linear-gradient(172deg, #F7F5F2 0%, #F0EDE8 45%, #EAEAE4 100%);
 }
 
 .page-flap {
@@ -487,7 +487,7 @@ body {
       transparent, transparent 29px,
       rgba(170,130,75,0.07) 29px, rgba(170,130,75,0.07) 30px
     ),
-    linear-gradient(172deg, #FDF8F0 0%, #F8F0E0 45%, #F2E8D0 100%);
+    linear-gradient(172deg, #F7F5F2 0%, #F0EDE8 45%, #EAEAE4 100%);
   background-position: 0 52px, 0 0;
 }
 .page-flap-back {
@@ -496,7 +496,7 @@ body {
       transparent, transparent 29px,
       rgba(130,95,45,0.07) 29px, rgba(130,95,45,0.07) 30px
     ),
-    linear-gradient(172deg, #EDE3CF 0%, #E5D8BC 50%, #DCCFAA 100%);
+    linear-gradient(172deg, #ECEAE6 0%, #E5E2DC 50%, #DEDAD4 100%);
   background-position: 0 52px, 0 0;
   transform: rotateY(180deg);
 }
@@ -599,12 +599,12 @@ body {
 .cal-wrap { padding: 28px 16px 14px 24px; position: relative; z-index: 2; }
 .cal-big {
   font-family: 'Satisfy', cursive;
-  font-size: 42px; color: #3A1E08; line-height: 1;
+  font-size: 42px; color: #2A2420; line-height: 1;
   text-shadow: 0 1px 4px rgba(80,40,5,0.10);
 }
 .cal-yr {
   font-family: 'Cormorant Garamond', serif; font-weight: 300;
-  font-size: 13px; color: #9C7448; margin-top: 3px; margin-bottom: 18px;
+  font-size: 13px; color: #8C8278; margin-top: 3px; margin-bottom: 18px;
   letter-spacing: .18em; font-style: italic;
 }
 .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
@@ -626,7 +626,7 @@ body {
 .cal-skeleton-cell.empty { background: transparent; animation: none; }
 .cal-dh {
   text-align: center; font-family: 'DM Sans', sans-serif; font-weight: 500;
-  font-size: 10px; color: #2A3860; letter-spacing: .1em;
+  font-size: 10px; color: #6B6258; letter-spacing: .1em;
   padding: 2px 0 8px; text-transform: uppercase;
 }
 .cal-cell {
@@ -657,17 +657,17 @@ body {
 }
 }
 .cal-cell.has-e:hover { background: rgba(92,58,28,0.08); }
-.cal-cell.future { opacity: 0.3; cursor: not-allowed; pointer-events: none; }
+.cal-cell.future { opacity: 0.18; cursor: not-allowed; pointer-events: none; }
 
 .cal-num {
   font-family: 'DM Sans', sans-serif; font-weight: 400;
-  font-size: 13px; color: #3B2410; line-height: 1;
+  font-size: 13px; color: #2A2420; line-height: 1;
   width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
   border-radius: 50%; flex-shrink: 0; transition: all .15s;
 }
 .cal-cell.today .cal-num {
-  background: linear-gradient(135deg, #2A3860 0%, #344E80 100%);
-  color: #FAF5EC; font-weight: 500;
+  background: linear-gradient(135deg, #6B6258 0%, #7A7068 100%);
+  color: #F7F5F2; font-weight: 500;
   /* Ink bleed: main shadow + soft feathered outer glow, seperti tinta meresap ke kertas */
   box-shadow:
     0 2px 6px rgba(42,56,96,0.40),
@@ -693,7 +693,7 @@ body {
   content: '';
   display: block;
   width: 4px; height: 4px; border-radius: 50%;
-  background: #C4953A;
+  background: #8C8278;
   margin-bottom: 1px;
   flex-shrink: 0;
   animation: todayDot 3s ease-in-out infinite;
@@ -703,7 +703,7 @@ body {
   50%     { opacity: 1;   transform: scale(1.3); }
 }
 .cal-cell.sel .cal-num {
-  background: #C97070; color: #FAF5EC;
+  background: #A08880; color: #F7F5F2;
   box-shadow: 0 2px 8px rgba(201,112,112,0.35);
 }
 .cal-thumb {
@@ -727,7 +727,7 @@ body {
     position: absolute; top: 3px; left: 50%;
     transform: translateX(-50%);
     z-index: 2; font-size: 11px; font-weight: 600;
-    color: #FAF5EC; width: 20px; height: 20px;
+    color: #F7F5F2; width: 20px; height: 20px;
     background: rgba(0,0,0,0.35); border-radius: 50%;
     backdrop-filter: blur(2px);
     box-shadow: none;
@@ -775,7 +775,7 @@ body {
 @media (min-width: 768px) { .kbd-hint { display: flex; } }
 .leg-item {
   display: flex; align-items: center; gap: 4px;
-  font-family: 'DM Sans', sans-serif; font-size: 10px; color: #9C7448; font-weight: 400;
+  font-family: 'DM Sans', sans-serif; font-size: 10px; color: #8C8278; font-weight: 400;
   letter-spacing: .03em;
 }
 .leg-dot { width: 6px; height: 6px; border-radius: 50%; }
@@ -800,12 +800,13 @@ body {
 /* ── INSIGHTS ───────────────────────────────────── */
 .ins-wrap { padding: 16px 16px 26px 22px; position: relative; z-index: 2; }
 .ins-title {
-  font-family: 'Satisfy', cursive; font-size: 22px; color: #3B2410;
+  font-family: 'Cormorant Garamond', serif; font-size: 15px; color: rgba(59,36,16,0.45);
+  font-style: italic; font-weight: 400; letter-spacing: .04em; margin-bottom: 10px;
 }
-.ins-sub   { font-family: 'DM Sans', sans-serif; font-size: 12px; color: #8C6840; margin-top: 2px; margin-bottom: 14px; font-weight: 300; }
+.ins-sub   { display: none; }
 .slabel    {
   font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 10px;
-  letter-spacing: .14em; text-transform: uppercase; color: #2A3860; margin-bottom: 9px;
+  letter-spacing: .12em; text-transform: uppercase; color: rgba(92,58,28,0.35); margin-bottom: 9px;
 }
 .mood-chips { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 2px; }
 .mood-chip {
@@ -813,7 +814,7 @@ body {
   background: rgba(92,58,28,0.07); border: 1px solid rgba(92,58,28,0.14);
   border-radius: 99px; padding: 4px 11px 4px 7px; font-size: 14px;
 }
-.mood-chip-count { font-family: 'DM Sans', sans-serif; font-size: 12px; color: #3B2410; font-weight: 500; }
+.mood-chip-count { font-family: 'DM Sans', sans-serif; font-size: 12px; color: #2A2420; font-weight: 500; }
 
 /* Mood trend chart */
 .mood-trend {
@@ -821,7 +822,7 @@ body {
 }
 .mood-trend-label {
   font-family: 'DM Sans', sans-serif; font-size: 9px; font-weight: 500;
-  letter-spacing: .14em; text-transform: uppercase; color: #2A3860;
+  letter-spacing: .14em; text-transform: uppercase; color: #6B6258;
   margin-bottom: 8px;
 }
 .mood-trend-bars {
@@ -857,7 +858,7 @@ body {
 .no-e-svg { opacity: 0.35; }
 .no-e-text {
   font-family: 'Cormorant Garamond', serif; font-style: italic;
-  font-size: 14px; color: #9C7448; line-height: 1.6;
+  font-size: 14px; color: #8C8278; line-height: 1.6;
 }
 .no-e-sub {
   font-family: 'DM Sans', sans-serif; font-size: 11px;
@@ -865,17 +866,15 @@ body {
 }
 
 .dom-card {
-  background: linear-gradient(135deg, rgba(92,58,28,0.04) 0%, rgba(92,58,28,0.07) 100%);
-  border: 1px solid rgba(92,58,28,0.10);
-  border-radius: 14px; padding: 18px 16px; text-align: center; margin-top: 12px;
-  box-shadow: inset 0 1px 2px rgba(255,255,255,0.6), 0 2px 8px rgba(92,58,28,0.05);
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 0; margin-top: 4px;
 }
-.dom-em  { font-size: 44px; line-height: 1; margin-bottom: 6px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.10)); }
-.dom-lbl { font-family: 'Satisfy', cursive; font-size: 20px; color: #3B2410; }
-.dom-sub { font-family: 'DM Sans', sans-serif; font-size: 12px; color: #9C7448; margin-top: 4px; font-weight: 300; letter-spacing: .03em; }
+.dom-em  { font-size: 28px; line-height: 1; }
+.dom-lbl { font-family: 'Cormorant Garamond', serif; font-size: 16px; color: rgba(59,36,16,0.75); font-style: italic; }
+.dom-sub { font-family: 'DM Sans', sans-serif; font-size: 11px; color: rgba(92,58,28,0.35); margin-top: 1px; font-weight: 300; letter-spacing: .03em; }
 .streak  {
   font-family: 'Cormorant Garamond', serif; font-size: 13px; font-weight: 400;
-  font-style: italic; color: #7A5030; text-align: center; margin-top: 14px;
+  font-style: italic; color: #6B6258; text-align: center; margin-top: 14px;
   letter-spacing: .06em;
 }
 
@@ -891,39 +890,16 @@ body {
 
 .qcard-ins {
   background: transparent;
-  border-radius: 0;
-  border: none;
-  border-top: 1px solid rgba(92,58,28,0.14);
-  border-bottom: 1px solid rgba(92,58,28,0.14);
-  padding: 14px 8px 14px 36px;
-  position: relative;
-  transition: none;
+  border-radius: 0; border: none;
+  border-top: 1px solid rgba(92,58,28,0.10);
+  padding: 12px 0; position: relative;
 }
-/* Big opening quote mark — vintage editorial style */
-.qcard-ins::before {
-  content: '“';
-  position: absolute;
-  left: 4px; top: 6px;
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 56px; font-weight: 300; line-height: 1;
-  color: rgba(201,112,112,0.30);
-  pointer-events: none;
-}
-/* Closing quote mark at bottom right */
-.qcard-ins::after {
-  content: '”';
-  position: absolute;
-  right: 4px; bottom: 0px;
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 56px; font-weight: 300; line-height: 1;
-  color: rgba(201,112,112,0.20);
-  pointer-events: none;
-}
-.qcard-ins:focus-within::before { color: rgba(201,112,112,0.50); }
+.qcard-ins::before { display: none; }
+.qcard-ins::after  { display: none; }
 .qta-ins {
   width: 100%; border: none; outline: none; background: transparent;
   font-family: 'Cormorant Garamond', serif; font-style: italic;
-  font-size: 16px; color: #3B2410;
+  font-size: 16px; color: #2A2420;
   resize: none; min-height: 54px; line-height: 1.7;
   letter-spacing: .02em;
 }
@@ -962,7 +938,7 @@ body {
   position: fixed; bottom: 0; left: 50%;
   transform: translateX(-50%) translateY(100%);
   width: 100%; max-width: 500px;
-  background: linear-gradient(180deg, #FDF8F0 0%, #F8F0E0 100%); border-radius: 22px 22px 0 0;
+  background: linear-gradient(180deg, #F7F5F2 0%, #EFECEA 100%); border-radius: 22px 22px 0 0;
   max-height: 90vh; overflow-y: auto; overflow-x: visible; z-index: 101;
   transition: transform .38s cubic-bezier(.22,.68,0,1.2);
   box-shadow: 0 -4px 24px rgba(92,58,28,0.14);
@@ -974,7 +950,7 @@ body {
   transform: translateX(-50%);
   width: 100%; max-width: 500px;
   height: 80px; pointer-events: none; z-index: 102;
-  background: linear-gradient(to top, #FAF5EC 20%, transparent 100%);
+  background: linear-gradient(to top, #F7F5F2 20%, transparent 100%);
   opacity: 0; transition: opacity .38s cubic-bezier(.22,.68,0,1.2);
 }
 .bsheet.open ~ .bsheet-fade { opacity: 1; }
@@ -1008,7 +984,7 @@ body {
   transform: translateX(-50%);
   width: 100%; max-width: 500px;
   height: 80px;
-  background: linear-gradient(to top, #FAF5EC 30%, transparent 100%);
+  background: linear-gradient(to top, #F7F5F2 30%, transparent 100%);
   pointer-events: none; z-index: 102;
   opacity: 0; transition: opacity .38s;
 }
@@ -1017,13 +993,13 @@ body {
 /* ── ENTRY PANEL ────────────────────────────────── */
 .ep-date {
   font-family: 'Satisfy', cursive; font-size: 28px;
-  color: #3B2410; line-height: 1.2;
+  color: #2A2420; line-height: 1.2;
 }
-.ep-sub { font-family: 'DM Sans', sans-serif; font-size: 12px; color: #8C6840; margin-top: 3px; margin-bottom: 20px; font-weight: 300; }
+.ep-sub { font-family: 'DM Sans', sans-serif; font-size: 12px; color: #8C8278; margin-top: 3px; margin-bottom: 20px; font-weight: 300; }
 .elabel {
   font-family: 'DM Sans', sans-serif; font-weight: 500;
   font-size: 10px; letter-spacing: .14em; text-transform: uppercase;
-  color: #2A3860; margin-bottom: 9px;
+  color: #6B6258; margin-bottom: 9px;
 }
 
 .pol-wrap { display: flex; justify-content: center; margin-bottom: 22px; }
@@ -1042,13 +1018,13 @@ body {
   position: absolute; top: 14px; right: 14px;
   width: 26px; height: 26px; border-radius: 50%;
   background: rgba(59,36,16,0.72); backdrop-filter: blur(4px);
-  color: #FAF5EC; border: none; cursor: pointer; font-size: 10px;
+  color: #F7F5F2; border: none; cursor: pointer; font-size: 10px;
   display: flex; align-items: center; justify-content: center;
   transition: all .18s; z-index: 5;
   opacity: 0;
 }
 .pol:hover .pol-remove { opacity: 1; }
-.pol-remove:hover { background: #C97070; transform: scale(1.12); }
+.pol-remove:hover { background: #A08880; transform: scale(1.12); }
 /* Tombol ganti foto dihapus */
 .up-area {
   width: 100%; aspect-ratio: 4/3; background: rgba(92,58,28,0.04);
@@ -1056,11 +1032,11 @@ body {
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 7px; cursor: pointer;
 }
 .up-icon  { font-size: 28px; opacity: .4; }
-.up-title { font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; color: #5C3A1C; }
-.up-sub   { font-family: 'DM Sans', sans-serif; font-size: 11px; color: #8C6840; }
+.up-title { font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; color: #6B6258; }
+.up-sub   { font-family: 'DM Sans', sans-serif; font-size: 11px; color: #8C8278; }
 .pol-cap  {
   width: 100%; border: none; outline: none;
-  font-family: 'Caveat', cursive; font-size: 14px; color: #7A5030;
+  font-family: 'Caveat', cursive; font-size: 14px; color: #6B6258;
   text-align: center; background: transparent; margin-top: 4px; resize: none;
 }
 
@@ -1090,7 +1066,7 @@ body {
 }
 .mbtn:hover { transform: scale(1.12); background: rgba(92,58,28,0.12); }
 .mbtn.sel {
-  background: rgba(201,112,112,0.12); border-color: #C97070;
+  background: rgba(140,100,90,0.10); border-color: #A08880;
   box-shadow: 0 3px 10px rgba(201,112,112,0.28);
   animation: moodBounce 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
@@ -1125,11 +1101,11 @@ body {
   width: 100%; border: none; outline: none;
   border-bottom: 1px solid rgba(92,58,28,0.18);
   background: transparent;
-  font-family: 'Cormorant Garamond', serif; font-size: 20px; color: #3B2410;
+  font-family: 'Cormorant Garamond', serif; font-size: 20px; color: #2A2420;
   padding: 6px 0 6px 18px; transition: border-color .25s;
   letter-spacing: .04em; font-style: italic;
 }
-.word-in:focus { border-bottom-color: #7A5030; border-bottom-width: 1.5px; }
+.word-in:focus { border-bottom-color: #6B6258; border-bottom-width: 1.5px; }
 .word-in::placeholder { color: #C4A882; font-size: 16px; font-style: italic; letter-spacing: .02em; }
 
 /* Section divider di entry panel */
@@ -1149,25 +1125,25 @@ body {
   background: rgba(92,58,28,0.18); flex-shrink: 0;
 }
 .del-btn {
-  width: 100%; height: 38px; border: 1px solid rgba(201,112,112,0.30);
+  width: 100%; height: 38px; border: 1px solid rgba(140,100,90,0.25);
   border-radius: 10px; background: transparent; color: rgba(201,112,112,0.70);
   font-family: 'DM Sans', sans-serif; font-size: 12px; letter-spacing: .06em;
   cursor: pointer; margin-top: 10px;
   transition: all .2s;
 }
-.del-btn:hover { background: rgba(201,112,112,0.08); border-color: #C97070; color: #C97070; }
+.del-btn:hover { background: rgba(140,100,90,0.08); border-color: #A08880; color: #A08880; }
 .sbtn {
   width: 100%; height: 50px; border: none; border-radius: 10px;
-  background: #3B2410; color: #FAF5EC;
+  background: #8C8278; color: #F7F5F2;
   font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
   cursor: pointer;
   transition: background 0.4s ease, box-shadow 0.4s ease, opacity 0.2s, transform 0.2s;
   display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 4px 14px rgba(59,36,16,0.25);
+  box-shadow: 0 4px 14px rgba(80,70,60,0.20);
   letter-spacing: .1em; text-transform: uppercase;
   overflow: hidden; position: relative;
 }
-.sbtn.ok  { background: #C97070; box-shadow: 0 4px 14px rgba(201,112,112,0.3); }
+.sbtn.ok  { background: #7A7068; box-shadow: 0 4px 14px rgba(80,70,60,0.22); }
 .sbtn:hover { opacity: .9; transform: translateY(-2px); }
 
 /* Teks tombol fade in saat ganti */
@@ -1191,7 +1167,7 @@ body {
   background:
     radial-gradient(ellipse 70% 50% at 15% 10%, rgba(220,190,148,0.40) 0%, transparent 58%),
     radial-gradient(ellipse 55% 45% at 88% 88%, rgba(42,58,100,0.10) 0%, transparent 52%),
-    linear-gradient(158deg, #EAD9C0 0%, #E0D1B5 28%, #E5D6BD 58%, #DACAAC 100%);
+    linear-gradient(158deg, #F0EDE8 0%, #E8E5E0 28%, #ECEAE6 58%, #E5E2DC 100%);
 }
 .auth-inner {
   width: 100%; max-width: 840px;
@@ -1206,7 +1182,7 @@ body {
 }
 /* Left panel — decorative */
 .auth-left {
-  background: linear-gradient(158deg, #2E1A08 0%, #4E2E10 45%, #6E4218 75%, #5A3210 100%);
+  background: linear-gradient(158deg, #2A2420 0%, #3A3430 45%, #4A4440 75%, #3A3430 100%);
   padding: 52px 44px;
   display: flex; flex-direction: column; justify-content: space-between;
   position: relative; overflow: hidden;
@@ -1221,7 +1197,7 @@ body {
 .auth-left-top { position: relative; z-index: 1; }
 .auth-left-logo {
   font-family: 'Cormorant Garamond', serif; font-weight: 300;
-  font-size: 38px; letter-spacing: 0.28em; color: #FAF5EC;
+  font-size: 38px; letter-spacing: 0.28em; color: #F7F5F2;
   text-transform: uppercase; line-height: 1; margin-bottom: 6px;
 }
 .auth-left-sub {
@@ -1258,12 +1234,12 @@ body {
 }
 /* Right panel — form */
 .auth-right {
-  background: linear-gradient(170deg, #FBF6EE 0%, #F5EDD8 100%);
+  background: linear-gradient(170deg, #F7F5F2 0%, #EFECEA 100%);
   padding: 48px 40px 40px;
   display: flex; flex-direction: column; justify-content: center;
 }
 .auth-right-title {
-  font-family: 'Satisfy', cursive; font-size: 26px; color: #3B2410;
+  font-family: 'Satisfy', cursive; font-size: 26px; color: #2A2420;
   margin-bottom: 4px;
 }
 .auth-right-sub {
@@ -1281,14 +1257,14 @@ body {
   border-radius: 8px; transition: all .22s;
 }
 .auth-tab.active {
-  background: #FAF5EC; color: #3B2410; font-weight: 500;
+  background: #F7F5F2; color: #2A2420; font-weight: 500;
   box-shadow: 0 1px 6px rgba(92,58,28,0.12);
 }
 .auth-field { margin-bottom: 18px; }
 .auth-err {
   font-family: 'DM Sans', sans-serif; font-size: 12px;
-  color: #C97070; margin-bottom: 10px; line-height: 1.5;
-  background: rgba(201,112,112,0.08); border-radius: 8px;
+  color: #A08880; margin-bottom: 10px; line-height: 1.5;
+  background: rgba(140,100,90,0.08); border-radius: 8px;
   padding: 8px 12px; border-left: 2.5px solid rgba(201,112,112,0.4);
 }
 .auth-ok {
@@ -1303,7 +1279,7 @@ body {
   font-size: 13px; color: rgba(92,58,28,0.42); letter-spacing: .04em;
 }
 .auth-switch-link {
-  color: #7A5030; cursor: pointer;
+  color: #6B6258; cursor: pointer;
   text-decoration: underline; text-underline-offset: 3px;
 }
 /* Mobile: stack vertically, hide left panel, show mini header */
@@ -1328,7 +1304,7 @@ body {
 }
 .auth-mobile-logo {
   font-family: 'Cormorant Garamond', serif; font-weight: 300;
-  font-size: 30px; letter-spacing: 0.26em; color: #3B2410;
+  font-size: 30px; letter-spacing: 0.26em; color: #2A2420;
   text-transform: uppercase; margin-bottom: 2px;
 }
 .auth-mobile-sub {
@@ -1436,8 +1412,8 @@ body {
   position: fixed; top: 50%; left: 50%;
   transform: translate(-50%, -50%);
   z-index: 301; pointer-events: none;
-  background: linear-gradient(135deg, #FDF8F0 0%, #F5EDD8 100%);
-  border: 1.5px solid rgba(196,149,58,0.40);
+  background: linear-gradient(135deg, #F7F5F2 0%, #EFECEA 100%);
+  border: 1.5px solid rgba(100,90,80,0.18);
   border-radius: 20px;
   padding: 24px 36px;
   text-align: center;
@@ -1452,7 +1428,7 @@ body {
   font-size: 48px; line-height: 1; margin-bottom: 10px;
 }
 .streak-banner-title {
-  font-family: 'Satisfy', cursive; font-size: 28px; color: #3B2410;
+  font-family: 'Satisfy', cursive; font-size: 28px; color: #2A2420;
   margin-bottom: 6px;
 }
 .streak-banner-sub {
@@ -1467,7 +1443,7 @@ body {
 }
 .toast {
   display: flex; align-items: center; gap: 10px;
-  background: #3B2410; color: #FAF5EC;
+  background: #2A2420; color: #F7F5F2;
   padding: 10px 18px 10px 14px;
   border-radius: 30px;
   font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 400;
@@ -1479,8 +1455,8 @@ body {
 .toast.toast-out {
   animation: toastOut 0.25s ease-in forwards;
 }
-.toast.toast-success { background: #4A6840; }
-.toast.toast-error   { background: #8B3A2A; }
+.toast.toast-success { background: #5A7268; }
+.toast.toast-error   { background: #8C7268; }
 .toast-icon { font-size: 15px; flex-shrink: 0; }
 .toast-spinner {
   width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0;
@@ -1500,38 +1476,39 @@ body {
 
 /* ── DAILY GREETING QUOTE ───────────────────────── */
 .daily-quote-wrap {
-  width: calc(100% - 24px); max-width: 500px;
+  width: 100%; max-width: 500px;
+  padding: 0 12px 14px;
+  position: relative; z-index: 2;
+  animation: fadeSlideUp 0.6s ease 0.3s both;
+}
+.daily-quote-wrap {
+  width: 100%; max-width: 500px;
   padding: 0 12px 14px;
   position: relative; z-index: 2;
   animation: fadeSlideUp 0.6s ease 0.3s both;
 }
 .daily-quote-inner {
   background: rgba(255,255,255,0.35);
-  border-radius: 12px; padding: 10px 14px;
+  border-radius: 12px; padding: 12px 16px;
   border: 1px solid rgba(92,58,28,0.08);
-  display: flex; gap: 8px; align-items: center;
-  overflow: hidden;
+  display: flex; gap: 10px; align-items: flex-start;
 }
 .daily-quote-mark {
-  font-family: 'Cormorant Garamond', serif; font-size: 22px;
-  font-weight: 300; line-height: 1;
-  color: rgba(201,112,112,0.40); flex-shrink: 0;
+  font-family: 'Cormorant Garamond', serif; font-size: 28px;
+  font-weight: 300; line-height: 0.8;
+  color: rgba(140,100,90,0.35); flex-shrink: 0; margin-top: 4px;
 }
 .daily-quote-text {
   font-family: 'Cormorant Garamond', serif; font-style: italic;
-  font-size: 13px; color: rgba(59,36,16,0.65);
+  font-size: 13px; color: rgba(59,36,16,0.65); line-height: 1.6;
   letter-spacing: .02em;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .daily-quote-attr {
-  display: none;
+  font-family: 'DM Sans', sans-serif; font-size: 10px;
+  color: rgba(92,58,28,0.35); margin-top: 5px; letter-spacing: .06em;
 }
 @media (min-width: 768px) {
   .daily-quote-wrap { max-width: 960px; }
-  .daily-quote-text { white-space: normal; overflow: visible; text-overflow: clip; line-height: 1.6; }
-  .daily-quote-attr { display: block; }
-  .daily-quote-inner { align-items: flex-start; }
-  .daily-quote-mark { font-size: 28px; line-height: 0.8; margin-top: 4px; }
 }
 @media (min-width: 768px) {
   .logo-wrap  { max-width: 960px; padding: 40px 0 22px; }
@@ -1548,7 +1525,7 @@ body {
   .right-col {
     overflow-y: auto; max-height: 88vh;
     border-left: 1px solid rgba(92,58,28,0.12);
-    background: linear-gradient(to bottom, #FDF8F0 0%, #F3E8D4 100%);
+    background: linear-gradient(to bottom, #F7F5F2 0%, #EAEAE4 100%);
     position: relative; z-index: 2;
     scrollbar-width: thin;
     scrollbar-color: rgba(92,58,28,0.15) transparent;
@@ -1566,11 +1543,11 @@ body {
   }
   .right-col::before {
     top: 0;
-    background: linear-gradient(to bottom, #FAF5EC, transparent);
+    background: linear-gradient(to bottom, #F7F5F2, transparent);
   }
   .right-col::after {
     bottom: 0;
-    background: linear-gradient(to top, #F2EAD8, transparent);
+    background: linear-gradient(to top, #EAEAE4, transparent);
   }
   .bsheet {
     position: static !important; transform: none !important;
@@ -1587,7 +1564,7 @@ body {
   }
   .ph-top { display: flex; flex-direction: column; gap: 28px; }
   .ph-greeting {
-    font-family: 'Satisfy', cursive; font-size: 22px; color: #3B2410;
+    font-family: 'Satisfy', cursive; font-size: 22px; color: #2A2420;
     line-height: 1.4;
   }
   .ph-greeting-sub {
@@ -1608,7 +1585,7 @@ body {
   }
   .ph-tip-text {
     font-family: 'Cormorant Garamond', serif; font-style: italic;
-    font-size: 15px; color: #5C3A1C; line-height: 1.65;
+    font-size: 15px; color: #6B6258; line-height: 1.65;
     letter-spacing: .01em;
   }
   .ph-recent { display: flex; flex-direction: column; gap: 6px; }
@@ -1650,6 +1627,53 @@ body {
   .right-col { display: none; }
 }
 
+/* ── CONFIRM MODAL ───────────────────────────────── */
+.confirm-backdrop {
+  position: fixed; inset: 0; z-index: 500;
+  background: rgba(30,15,5,0.45);
+  backdrop-filter: blur(2px);
+  display: flex; align-items: center; justify-content: center;
+  animation: tourFadeIn 0.2s ease forwards;
+}
+.confirm-box {
+  background: linear-gradient(160deg, #F7F5F2 0%, #EFECEA 100%);
+  border: 1px solid rgba(196,149,58,0.25);
+  border-radius: 18px;
+  padding: 24px 24px 20px;
+  width: calc(100% - 48px); max-width: 320px;
+  box-shadow: 0 16px 48px rgba(80,40,10,0.22);
+  animation: tooltipPop 0.28s cubic-bezier(0.22,0,0.08,1) forwards;
+}
+.confirm-msg {
+  font-family: 'Satisfy', cursive; font-size: 20px;
+  color: #2A2420; margin-bottom: 6px;
+}
+.confirm-sub {
+  font-family: 'DM Sans', sans-serif; font-size: 13px;
+  color: rgba(59,36,16,0.55); line-height: 1.5; margin-bottom: 20px;
+}
+.confirm-actions {
+  display: flex; gap: 10px;
+}
+.confirm-cancel {
+  flex: 1; padding: 10px;
+  background: rgba(92,58,28,0.07); border: 1px solid rgba(92,58,28,0.12);
+  border-radius: 12px; cursor: pointer;
+  font-family: 'DM Sans', sans-serif; font-size: 13px;
+  color: rgba(59,36,16,0.6); transition: all .18s;
+}
+.confirm-cancel:hover { background: rgba(92,58,28,0.12); }
+.confirm-ok {
+  flex: 1; padding: 10px;
+  background: linear-gradient(135deg, #A08880 0%, #8C7268 100%);
+  border: none; border-radius: 12px; cursor: pointer;
+  font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+  color: #F7F5F2;
+  box-shadow: 0 2px 8px rgba(180,80,80,0.28);
+  transition: all .18s;
+}
+.confirm-ok:hover { opacity: 0.9; transform: translateY(-1px); }
+
 /* ── GUIDED TOUR ─────────────────────────────────── */
 .tour-overlay {
   position: fixed; inset: 0; z-index: 999;
@@ -1685,7 +1709,7 @@ body {
   position: fixed;
   z-index: 1002;
   pointer-events: all;
-  background: linear-gradient(160deg, #FDF8F0 0%, #F5EDD8 100%);
+  background: linear-gradient(160deg, #F7F5F2 0%, #EFECEA 100%);
   border: 1px solid rgba(196,149,58,0.30);
   border-radius: 12px;
   padding: 16px 18px 14px;
@@ -1703,7 +1727,7 @@ body {
   content: '';
   position: absolute;
   width: 9px; height: 9px;
-  background: #F8F2E4;
+  background: #F0EDE8;
   border-left: 1px solid rgba(196,149,58,0.30);
   border-top: 1px solid rgba(196,149,58,0.30);
   left: var(--arrow-offset, 20px);
@@ -1726,7 +1750,7 @@ body {
 }
 .tour-title {
   font-family: 'Cormorant Garamond', serif; font-size: 18px;
-  color: #3B2410; font-weight: 400; line-height: 1.25;
+  color: #2A2420; font-weight: 400; line-height: 1.25;
   margin-bottom: 6px;
 }
 .tour-desc {
@@ -1745,15 +1769,15 @@ body {
 }
 .tour-skip:hover { color: rgba(92,58,28,0.65); }
 .tour-next {
-  background: linear-gradient(135deg, #C4953A 0%, #A87830 100%);
-  border: none; cursor: pointer; color: #FDF8F0;
+  background: linear-gradient(135deg, #8C8278 0%, #7A7068 100%);
+  border: none; cursor: pointer; color: #F7F5F2;
   font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500;
   padding: 7px 16px; border-radius: 20px; letter-spacing: .06em;
   box-shadow: 0 2px 8px rgba(164,116,42,0.30);
   transition: all .18s; flex-shrink: 0;
 }
 .tour-next:hover {
-  background: linear-gradient(135deg, #D4A545 0%, #B88838 100%);
+  background: linear-gradient(135deg, #8C8278 0%, #7A7068 100%);
   box-shadow: 0 4px 12px rgba(164,116,42,0.38);
   transform: translateY(-1px);
 }
@@ -1765,7 +1789,7 @@ body {
   background: rgba(196,149,58,0.22); transition: all .25s;
 }
 .tour-dot.active {
-  background: #C4953A; width: 14px; border-radius: 3px;
+  background: #8C8278; width: 14px; border-radius: 3px;
 }
 `;
 
@@ -1927,12 +1951,12 @@ function GuidedTour({ step, onNext, onSkip }) {
 
 // ─── Auth Screen ──────────────────────────────────────────────────────────────
 const AUTH_QUOTES = [
-  { text: "The journal is a vehicle for my sense of selfhood.", attr: "Susan Sontag" },
-  { text: "Fill your paper with the breathings of your heart.", attr: "William Wordsworth" },
-  { text: "A journal is your completely unaltered voice.", attr: "Lucy Dacus" },
-  { text: "In the journal I do not just express myself more openly\nthan I could do to any person;\nI create myself.", attr: "Susan Sontag" },
-  { text: "Write hard and clear about what hurts.", attr: "Ernest Hemingway" },
-  { text: "The act of writing is the act of discovering\nwhat you believe.", attr: "David Hare" },
+  { text: "Jurnal adalah tempat kamu paling jujur\npada diri sendiri.", attr: "" },
+  { text: "Tuliskan hatimu —\nsatu kata sudah cukup.", attr: "" },
+  { text: "Mencatat bukan tentang sempurna,\ntapi tentang hadir.", attr: "" },
+  { text: "Setiap hari ada cerita kecil\nyang layak diingat.", attr: "" },
+  { text: "Dalam tulisan,\nkamu menemukan dirimu sendiri.", attr: "" },
+  { text: "Jurnalmu adalah teman\nyang tidak pernah menghakimi.", attr: "" },
 ];
 
 function AuthScreen({ onAuth }) {
@@ -2152,7 +2176,7 @@ function RightPlaceholder({ entMap, month, year }) {
             ) : (
               <div className="ph-past-empty">
                 <div style={{fontSize:28, marginBottom:8, opacity:0.4}}>🕰️</div>
-                <div style={{fontFamily:"'Cormorant Garamond',serif", fontStyle:"italic", fontSize:15, color:"#7A5030", lineHeight:1.6}}>
+                <div style={{fontFamily:"'Cormorant Garamond',serif", fontStyle:"italic", fontSize:15, color:"#6B6258", lineHeight:1.6}}>
                   Belum ada kenangan<br />yang tercatat bulan ini.
                 </div>
                 <div style={{fontFamily:"'DM Sans',sans-serif", fontSize:11, color:"rgba(92,58,28,0.38)", marginTop:8, lineHeight:1.6}}>
@@ -2170,11 +2194,11 @@ function RightPlaceholder({ entMap, month, year }) {
                     display:"flex", alignItems:"center", gap:"5px",
                     background:"rgba(92,58,28,0.06)", borderRadius:"8px",
                     padding:"5px 10px",
-                    fontFamily:"'DM Sans',sans-serif", fontSize:"12px", color:"#7A5030"
+                    fontFamily:"'DM Sans',sans-serif", fontSize:"12px", color:"#6B6258"
                   }}>
                     <span style={{fontFamily:"'Cormorant Garamond',serif", fontStyle:"italic"}}>{d}</span>
                     {e.mood && <span style={{fontSize:"14px"}}>{e.mood}</span>}
-                    {e.word && <span style={{color:"#9C7448", fontSize:"11px"}}>· {e.word}</span>}
+                    {e.word && <span style={{color:"#8C8278", fontSize:"11px"}}>· {e.word}</span>}
                   </div>
                 ))
               }
@@ -2256,18 +2280,18 @@ function MoodTrendChart({ entMap, year, month }) {
 
 // ─── Daily Quote ──────────────────────────────────────────────────────────────
 const DAILY_QUOTES = [
-  { text: "Jurnal adalah kendaraan untuk rasa diri kita.", attr: "Susan Sontag" },
-  { text: "Tuliskan hatimu di atas kertas dengan sepenuh jiwa.", attr: "William Wordsworth" },
-  { text: "Sebuah jurnal adalah suaramu yang paling jujur.", attr: "Lucy Dacus" },
-  { text: "Menulis adalah cara menemukan apa yang kamu percaya.", attr: "David Hare" },
-  { text: "Dalam jurnal, aku tidak hanya mengungkapkan diri — aku menciptakan diriku.", attr: "Susan Sontag" },
-  { text: "Tulislah dengan keras dan jujur tentang apa yang menyakitkan.", attr: "Ernest Hemingway" },
-  { text: "Setiap hari adalah halaman baru yang menunggu untuk ditulis.", attr: "" },
-  { text: "Kenangan yang dituliskan adalah kenangan yang tidak terlupakan.", attr: "" },
-  { text: "Satu kalimat hari ini lebih berarti dari diam seribu hari.", attr: "" },
-  { text: "Catatan kecil hari ini adalah harta besar di masa depan.", attr: "" },
-  { text: "Hidupmu layak untuk diceritakan, mulailah dari hari ini.", attr: "" },
-  { text: "Jurnal bukan tentang menulis dengan sempurna, tapi menulis dengan jujur.", attr: "" },
+  { text: "Tuliskan hatimu, satu kata cukup.", attr: "" },
+  { text: "Setiap hari layak untuk dicatat.", attr: "" },
+  { text: "Jurnal adalah cermin jiwamu.", attr: "" },
+  { text: "Mulailah dari hari ini.", attr: "" },
+  { text: "Satu kalimat lebih baik dari diam.", attr: "" },
+  { text: "Hidupmu layak untuk diceritakan.", attr: "" },
+  { text: "Menulis adalah cara mengenali diri.", attr: "" },
+  { text: "Catatan kecil, kenangan besar.", attr: "" },
+  { text: "Hari ini ada cerita yang menunggumu.", attr: "" },
+  { text: "Tulislah jujur, walau sepatah kata.", attr: "" },
+  { text: "Setiap perasaan pantas diabadikan.", attr: "" },
+  { text: "Jurnalmu, versi terbaikmu.", attr: "" },
 ];
 
 function DailyQuote() {
@@ -2314,6 +2338,7 @@ export default function CozyJournal() {
   const [streakMilestone, setStreakMilestone] = useState(null); // angka milestone
   const prevStreakRef = useRef(0);
   const [lightbox,   setLightbox]   = useState(null); // {src, caption}
+  const [confirmModal, setConfirmModal] = useState(null); // {msg, sub, onOk}
   const autoSaveTimer = useRef(null);
   const [autoSaving, setAutoSaving] = useState(false);
 
@@ -2472,24 +2497,34 @@ export default function CozyJournal() {
   };
 
   const handleDelete = async () => {
-    if (!window.confirm("Hapus catatan hari ini?\nTindakan ini tidak bisa dibatalkan.")) return;
-    // Mobile: tutup sheet langsung
-    if (window.innerWidth < 768) setSheetOpen(false);
-    showToast("Menghapus...", "default", 99999);
-    try {
-      await dbDeleteEntry(user.id, year, month, selDay);
-      await refresh();
-      setEntry({ photo: null, mood: null, word: "", caption: "" });
-      showToast("Catatan dihapus.", "success", 1800);
-    } catch {
-      showToast("Gagal menghapus.", "error", 3000);
-    }
+    setConfirmModal({
+      msg: "Hapus catatan ini?",
+      sub: "Tindakan ini tidak bisa dibatalkan.",
+      onOk: async () => {
+        setConfirmModal(null);
+        if (window.innerWidth < 768) setSheetOpen(false);
+        showToast("Menghapus...", "default", 99999);
+        try {
+          await dbDeleteEntry(user.id, year, month, selDay);
+          await refresh();
+          setEntry({ photo: null, mood: null, word: "", caption: "" });
+          showToast("Catatan dihapus.", "success", 1800);
+        } catch {
+          showToast("Gagal menghapus.", "error", 3000);
+        }
+      }
+    });
   };
 
   const handleLogout = () => {
-    if (window.confirm("Keluar dari Urjour?\nSemua catatan kamu sudah tersimpan dengan aman.")) {
-      supabase.auth.signOut();
-    }
+    setConfirmModal({
+      msg: "Keluar dari Urjour?",
+      sub: "Semua catatan kamu sudah tersimpan dengan aman.",
+      onOk: async () => {
+        setConfirmModal(null);
+        await supabase.auth.signOut();
+      }
+    });
   };
 
   // Keyboard navigation
@@ -2591,7 +2626,7 @@ export default function CozyJournal() {
     <>
       <style>{CSS}</style>
       <div className="app" style={{alignItems:"center", justifyContent:"center"}}>
-        <div style={{fontFamily:"DM Sans,sans-serif", color:"#8C6840", fontSize:14}}>Memuat…</div>
+        <div style={{fontFamily:"DM Sans,sans-serif", color:"#8C8278", fontSize:14}}>Memuat…</div>
       </div>
     </>
   );
@@ -2714,11 +2749,7 @@ export default function CozyJournal() {
                 </div>
                 )}
 
-                <div className="legend">
-                  <div className="leg-item"><div className="leg-dot" style={{background:"#2A3860"}} />Hari ini</div>
-                  <div className="leg-item"><div className="leg-dot" style={{background:"#C97070"}} />Dipilih</div>
-                  <div className="leg-item">📷 Memory</div>
-                </div>
+
                 <div className="kbd-hint">
                   <span className="kbd">←</span><span className="kbd">→</span>
                   <span>navigasi bulan</span>
@@ -2733,8 +2764,6 @@ export default function CozyJournal() {
               {/* INSIGHTS */}
               <div className="ins-wrap">
                 <div className="ins-title">Perasaan Bulan Ini</div>
-                <div className="ins-sub">berdasarkan catatanmu</div>
-                <div className="slabel">Ringkasan Mood</div>
 
                 {totalMoods === 0 ? (
                   <div className="no-e">
@@ -2753,8 +2782,8 @@ export default function CozyJournal() {
                       <path d="M38 8 L44 14 L30 28 L26 30 L28 26 Z" fill="rgba(196,149,58,0.25)" stroke="rgba(196,149,58,0.6)" strokeWidth="1" strokeLinejoin="round"/>
                       <line x1="38" y1="8" x2="44" y2="14" stroke="rgba(196,149,58,0.5)" strokeWidth="1"/>
                     </svg>
-                    <div className="no-e-text">Your story starts here.<br />Begin with today.</div>
-                    <div className="no-e-sub">tap any date to write your first entry</div>
+                    <div className="no-e-text">Ceritamu dimulai dari sini.<br />Mulai dari hari ini.</div>
+                    <div className="no-e-sub">ketuk tanggal mana saja untuk mulai menulis</div>
                   </div>
                 ) : (
                   <>
@@ -2929,6 +2958,20 @@ export default function CozyJournal() {
             {streakMilestone === 21 && "Tiga minggu! Ini sudah jadi kebiasaan 💪"}
             {streakMilestone === 28 && "Sebulan penuh! Jurnal sudah jadi bagian hidupmu 📖"}
             {streakMilestone > 28 && streakMilestone % 7 === 0 && `${streakMilestone / 7} minggu tanpa henti! Kamu luar biasa 🎉`}
+          </div>
+        </div>
+      )}
+
+      {/* CONFIRM MODAL */}
+      {confirmModal && (
+        <div className="confirm-backdrop" onClick={() => setConfirmModal(null)}>
+          <div className="confirm-box" onClick={e => e.stopPropagation()}>
+            <div className="confirm-msg">{confirmModal.msg}</div>
+            <div className="confirm-sub">{confirmModal.sub}</div>
+            <div className="confirm-actions">
+              <button className="confirm-cancel" onClick={() => setConfirmModal(null)}>Batal</button>
+              <button className="confirm-ok" onClick={confirmModal.onOk}>Ya, lanjut</button>
+            </div>
           </div>
         </div>
       )}
