@@ -444,6 +444,8 @@ body {
   perspective: 3000px;
   perspective-origin: 20% 40%;
   overflow: visible;
+  /* Background solid selama flip supaya konten di bawah tidak kelihatan saat swap */
+  background: linear-gradient(172deg, #FDF8F0 0%, #F8F0E0 45%, #F2E8D0 100%);
 }
 
 .page-flap {
@@ -578,10 +580,9 @@ body {
   100% { opacity: 0;    }
 }
 
-/* Card content crossfade — ganti saat halaman edge-on */
+/* Card content — no transition, swap happens behind the flipping page */
 .card-content {
   width: 100%;
-  transition: opacity 0.12s ease-in-out;
 }
 .card-content.fading { opacity: 0; }
 
@@ -1993,7 +1994,6 @@ export default function CozyJournal() {
   const [loading,   setLoading]   = useState(false);
   const [entryLoading, setEntryLoading] = useState(false);
   const [turning,   setTurning]   = useState("");
-  const [fading,    setFading]    = useState(false);
   const [toast,     setToast]     = useState(null); // {msg, type, out}
   const toastTimer = useRef(null);
   const [realStreak, setRealStreak] = useState(0);
@@ -2148,12 +2148,10 @@ export default function CozyJournal() {
     setTurning(dir);
     if (cardRef.current) cardRef.current.classList.add("is-flipping");
 
-    const dur = dir === "next" ? 820 : 820;
+    const dur = 820;
 
-    // 1. Mulai fade out konten di ~40% animasi (saat kertas hampir edge-on)
-    setTimeout(() => setFading(true), Math.round(dur * 0.40));
-
-    // 2. Swap konten saat kertas benar-benar edge-on (~48%)
+    // Swap konten tepat saat kertas edge-on (90°) = 50% dari animasi
+    // Pada titik ini kertas tidak terlihat → tidak ada glitch visual
     setTimeout(() => {
       if (dir === "next") {
         if (month === 11) { setYear(y => y + 1); setMonth(0); }
@@ -2164,12 +2162,9 @@ export default function CozyJournal() {
       }
       setSelDay(null);
       setSheetOpen(false);
-    }, Math.round(dur * 0.48));
+    }, Math.round(dur * 0.50));
 
-    // 3. Fade in konten baru setelah swap (~52%) — beri jeda agar React render dulu
-    setTimeout(() => setFading(false), Math.round(dur * 0.52));
-
-    // 4. Cleanup animasi setelah selesai
+    // Cleanup
     setTimeout(() => {
       setTurning("");
       if (cardRef.current) cardRef.current.classList.remove("is-flipping");
@@ -2267,7 +2262,7 @@ export default function CozyJournal() {
             {/* Corner fold */}
             <div className="card-fold" />
             {/* Nomor halaman */}
-            <div className={"page-num"+(fading?" fading":"")}>hal. {pageNum}</div>
+            <div className="page-num">hal. {pageNum}</div>
 
             {/* PAGE TURN OVERLAY — sits on top, animates, card content stays still */}
             {turning && (
@@ -2280,7 +2275,7 @@ export default function CozyJournal() {
             )}
 
             {/* CARD CONTENT — fades at midpoint to swap months */}
-            <div className={"card-content" + (fading ? " fading" : "")}>
+            <div className="card-content">
 
             {/* LEFT: calendar + insights */}
             <div style={{position:"relative", zIndex:2}}>
