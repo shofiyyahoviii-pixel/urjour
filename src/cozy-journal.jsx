@@ -1016,18 +1016,7 @@ body {
 }
 .pol:hover .pol-remove { opacity: 1; }
 .pol-remove:hover { background: #C97070; transform: scale(1.12); }
-/* Tombol ganti foto */
-.pol-change {
-  position: absolute; bottom: 44px; left: 50%;
-  transform: translateX(-50%);
-  background: rgba(59,36,16,0.65); backdrop-filter: blur(4px);
-  border: none; color: rgba(250,245,236,0.9);
-  font-family: 'DM Sans', sans-serif; font-size: 10px; letter-spacing: .06em;
-  padding: 4px 12px; border-radius: 20px; cursor: pointer;
-  opacity: 0; transition: all .18s; white-space: nowrap;
-}
-.pol:hover .pol-change { opacity: 1; }
-.pol-change:hover { background: rgba(59,36,16,0.88); }
+/* Tombol ganti foto dihapus */
 .up-area {
   width: 100%; aspect-ratio: 4/3; background: rgba(92,58,28,0.04);
   border: 1.5px dashed rgba(92,58,28,0.2); border-radius: 4px;
@@ -1611,7 +1600,225 @@ body {
 @media (max-width: 767px) {
   .right-col { display: none; }
 }
+
+/* ── GUIDED TOUR ─────────────────────────────────── */
+.tour-overlay {
+  position: fixed; inset: 0; z-index: 999;
+  pointer-events: none;
+}
+.tour-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(30,15,5,0.38);
+  backdrop-filter: blur(1.5px);
+  pointer-events: all;
+  animation: tourFadeIn 0.35s ease forwards;
+}
+@keyframes tourFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.tour-spotlight {
+  position: fixed;
+  border-radius: 10px;
+  box-shadow:
+    0 0 0 9999px rgba(30,15,5,0.38),
+    0 0 0 2px rgba(196,149,58,0.55),
+    0 0 20px rgba(196,149,58,0.22);
+  transition: all 0.38s cubic-bezier(0.22, 0.0, 0.08, 1.0);
+  pointer-events: none;
+  z-index: 1001;
+  animation: tourFadeIn 0.35s ease forwards;
+}
+.tour-tooltip {
+  position: fixed;
+  z-index: 1002;
+  pointer-events: all;
+  background: linear-gradient(160deg, #FDF8F0 0%, #F5EDD8 100%);
+  border: 1px solid rgba(196,149,58,0.30);
+  border-radius: 12px;
+  padding: 16px 18px 14px;
+  max-width: 260px;
+  box-shadow:
+    0 8px 28px rgba(80,40,10,0.18),
+    0 2px 8px rgba(80,40,10,0.10);
+  transition: all 0.38s cubic-bezier(0.22, 0.0, 0.08, 1.0);
+  animation: tooltipPop 0.38s cubic-bezier(0.22,0,0.08,1) forwards;
+}
+@keyframes tooltipPop {
+  from { opacity: 0; transform: translateY(6px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.tour-tooltip::before {
+  content: '';
+  position: absolute;
+  width: 8px; height: 8px;
+  background: #F5EDD8;
+  border-left: 1px solid rgba(196,149,58,0.30);
+  border-top: 1px solid rgba(196,149,58,0.30);
+  transform: rotate(45deg);
+}
+.tour-tooltip.arrow-top::before    { top: -5px; left: 22px; }
+.tour-tooltip.arrow-bottom::before { bottom: -5px; left: 22px; transform: rotate(225deg); border-left: none; border-top: none; border-right: 1px solid rgba(196,149,58,0.30); border-bottom: 1px solid rgba(196,149,58,0.30); }
+.tour-tooltip.arrow-right::before  { right: -5px; top: 18px; transform: rotate(135deg); border-left: none; border-top: none; border-right: 1px solid rgba(196,149,58,0.30); border-bottom: 1px solid rgba(196,149,58,0.30); }
+.tour-step-label {
+  font-family: 'DM Sans', sans-serif; font-size: 10px;
+  color: rgba(196,149,58,0.75); letter-spacing: .12em; text-transform: uppercase;
+  margin-bottom: 6px; font-weight: 500;
+}
+.tour-title {
+  font-family: 'Cormorant Garamond', serif; font-size: 17px;
+  color: #3B2410; font-weight: 400; line-height: 1.2;
+  margin-bottom: 6px;
+}
+.tour-desc {
+  font-family: 'DM Sans', sans-serif; font-size: 12.5px;
+  color: rgba(59,36,16,0.68); line-height: 1.6;
+}
+.tour-actions {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: 14px;
+}
+.tour-skip {
+  background: none; border: none; cursor: pointer;
+  font-family: 'DM Sans', sans-serif; font-size: 11px;
+  color: rgba(92,58,28,0.40); padding: 0;
+  letter-spacing: .04em; transition: color .18s;
+}
+.tour-skip:hover { color: rgba(92,58,28,0.65); }
+.tour-next {
+  background: linear-gradient(135deg, #C4953A 0%, #A87830 100%);
+  border: none; cursor: pointer; color: #FDF8F0;
+  font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500;
+  padding: 7px 16px; border-radius: 20px; letter-spacing: .06em;
+  box-shadow: 0 2px 8px rgba(164,116,42,0.30);
+  transition: all .18s;
+}
+.tour-next:hover {
+  background: linear-gradient(135deg, #D4A545 0%, #B88838 100%);
+  box-shadow: 0 4px 12px rgba(164,116,42,0.38);
+  transform: translateY(-1px);
+}
+.tour-dots {
+  display: flex; gap: 5px; align-items: center;
+}
+.tour-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: rgba(196,149,58,0.22); transition: all .22s;
+}
+.tour-dot.active {
+  background: #C4953A; width: 14px; border-radius: 3px;
+}
 `;
+
+// ─── Guided Tour ─────────────────────────────────────────────────────────────
+const TOUR_STEPS = [
+  {
+    target: "cal-wrap",
+    title: "Kalender Bulananmu",
+    desc: "Ini kalender bulan ini. Ketuk tanggal mana saja untuk mulai menulis jurnal hari itu.",
+    arrow: "top",
+  },
+  {
+    target: "cal-cell-today",
+    title: "Hari Ini",
+    desc: "Tanggal hari ini ditandai dengan lingkaran biru. Mulai dari sini!",
+    arrow: "top",
+  },
+  {
+    target: "mood-row",
+    title: "Pilih Mood",
+    desc: "Pilih satu emoji yang paling mencerminkan perasaanmu hari ini.",
+    arrow: "top",
+  },
+  {
+    target: "word-wrap",
+    title: "Kata Hari Ini",
+    desc: "Rangkum harimu dalam satu kata. Bisa apa saja — 'bersyukur', 'lelah', 'penasaran'.",
+    arrow: "top",
+  },
+  {
+    target: "pol-wrap",
+    title: "Kenangan Foto",
+    desc: "Opsional: upload foto untuk mengabadikan momen spesial hari ini.",
+    arrow: "top",
+  },
+  {
+    target: "sbtn",
+    title: "Simpan Catatanmu",
+    desc: "Tekan tombol ini untuk menyimpan. Jurnal juga tersimpan otomatis saat kamu berhenti mengetik.",
+    arrow: "top",
+  },
+];
+
+function GuidedTour({ step, onNext, onSkip }) {
+  const [rect, setRect] = useState(null);
+  const PAD = 8;
+
+  useEffect(() => {
+    const cfg = TOUR_STEPS[step];
+    if (!cfg) return;
+
+    const findEl = () => {
+      let el = document.querySelector(`[data-tour="${cfg.target}"]`);
+      if (!el) el = document.querySelector(`.${cfg.target}`);
+      if (el) {
+        const r = el.getBoundingClientRect();
+        setRect({ top: r.top - PAD, left: r.left - PAD, width: r.width + PAD*2, height: r.height + PAD*2 });
+      }
+    };
+
+    findEl();
+    const t = setTimeout(findEl, 200);
+    return () => clearTimeout(t);
+  }, [step]);
+
+  if (!rect) return null;
+  const cfg = TOUR_STEPS[step];
+
+  // Tooltip position: below spotlight if there's room, else above
+  const viewH = window.innerHeight;
+  const spaceBelow = viewH - (rect.top + rect.height);
+  const placedBelow = spaceBelow > 160;
+
+  const tooltipTop = placedBelow
+    ? rect.top + rect.height + 14
+    : rect.top - 14 - 180; // rough estimate
+
+  const tooltipLeft = Math.min(
+    Math.max(rect.left, 12),
+    window.innerWidth - 272
+  );
+
+  return (
+    <div className="tour-overlay">
+      <div className="tour-backdrop" onClick={onSkip} />
+      <div
+        className="tour-spotlight"
+        style={{ top: rect.top, left: rect.left, width: rect.width, height: rect.height }}
+      />
+      <div
+        className={`tour-tooltip arrow-${placedBelow ? "top" : "bottom"}`}
+        style={{ top: tooltipTop, left: tooltipLeft }}
+        onClick={e => e.stopPropagation()}
+      >
+        <div className="tour-step-label">Langkah {step + 1} / {TOUR_STEPS.length}</div>
+        <div className="tour-title">{cfg.title}</div>
+        <div className="tour-desc">{cfg.desc}</div>
+        <div className="tour-actions">
+          <button className="tour-skip" onClick={onSkip}>Lewati</button>
+          <div className="tour-dots">
+            {TOUR_STEPS.map((_, i) => (
+              <div key={i} className={`tour-dot${i === step ? " active" : ""}`} />
+            ))}
+          </div>
+          <button className="tour-next" onClick={onNext}>
+            {step === TOUR_STEPS.length - 1 ? "Mulai ✓" : "Lanjut →"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 // ─── Auth Screen ──────────────────────────────────────────────────────────────
 const AUTH_QUOTES = [
@@ -2005,6 +2212,48 @@ export default function CozyJournal() {
   const autoSaveTimer = useRef(null);
   const [autoSaving, setAutoSaving] = useState(false);
 
+  // ── Guided Tour ──────────────────────────────────────────────────────────
+  const [tourStep, setTourStep] = useState(-1); // -1 = not started / done
+
+  useEffect(() => {
+    // Cek apakah user baru (belum pernah lihat tour)
+    if (user) {
+      try {
+        const seen = localStorage.getItem(`urjour_tour_${user.id}`);
+        if (!seen) {
+          // Delay sedikit agar UI selesai render dulu
+          const t = setTimeout(() => setTourStep(0), 800);
+          return () => clearTimeout(t);
+        }
+      } catch {}
+    }
+  }, [user]);
+
+  const handleTourNext = () => {
+    if (tourStep >= TOUR_STEPS.length - 1) {
+      handleTourDone();
+    } else {
+      // Kalau step berikutnya butuh sheet terbuka (mood, word, foto, save)
+      // pastikan sheet terbuka dulu
+      if (tourStep === 1 && !sheetOpen) {
+        // Open sheet dengan hari ini
+        const d = today.getDate();
+        if (today.getFullYear() === year && today.getMonth() === month) {
+          setSelDay(d);
+          setSheetOpen(true);
+        }
+        setTimeout(() => setTourStep(s => s + 1), 350);
+      } else {
+        setTourStep(s => s + 1);
+      }
+    }
+  };
+
+  const handleTourDone = () => {
+    setTourStep(-1);
+    try { localStorage.setItem(`urjour_tour_${user.id}`, "1"); } catch {}
+  };
+
   // Hitung streak lintas bulan setiap kali data berubah
   useEffect(() => {
     if (!user) return;
@@ -2286,7 +2535,7 @@ export default function CozyJournal() {
 
             {/* LEFT: calendar + insights */}
             <div style={{position:"relative", zIndex:2}}>
-              <div className="cal-wrap">
+              <div className="cal-wrap" data-tour="cal-wrap">
                 <div style={{display:"flex", alignItems:"flex-start", justifyContent:"space-between"}}>
                   <div>
                     <div className="cal-big">{MONTHS[month]}</div>
@@ -2320,6 +2569,7 @@ export default function CozyJournal() {
                         key={d}
                         className={"cal-cell"+(isToday?" today":"")+(isSel?" sel":"")+(edata?" has-e":"")+(edata?.photo?" has-photo":"")+(isFuture?" future":"")}
                         onClick={() => openDay(d)}
+                        {...(isToday ? { "data-tour": "cal-cell-today" } : {})}
                       >
                         <div className="cal-num">{d}</div>
                         {edata?.photo ? (
@@ -2495,6 +2745,15 @@ export default function CozyJournal() {
           })}
         </div>
       )}
+
+      {/* GUIDED TOUR */}
+      {tourStep >= 0 && (
+        <GuidedTour
+          step={tourStep}
+          onNext={handleTourNext}
+          onSkip={handleTourDone}
+        />
+      )}
     </>
   );
 }
@@ -2545,7 +2804,7 @@ function EntryPanel({ dayName, selDay, month, year, entry, setEntry, saved, hand
       <div className="ep-sub">{year}-{pad(month+1)}-{pad(selDay)}</div>
 
       <div className="elabel">Kenangan</div>
-      <div className="pol-wrap">
+      <div className="pol-wrap" data-tour="pol-wrap">
         <div className="pol" onClick={() => !entry.photo && fileRef.current?.click()}>
           {entry.photo ? (
             <>
@@ -2559,10 +2818,7 @@ function EntryPanel({ dayName, selDay, month, year, entry, setEntry, saved, hand
                 onClick={e => { e.stopPropagation(); setEntry(p => ({...p, photo: null, caption: ""})); }}
                 title="Hapus foto"
               >✕</button>
-              <button
-                className="pol-change"
-                onClick={e => { e.stopPropagation(); fileRef.current?.click(); }}
-              >ganti foto</button>
+
               <textarea
                 className="pol-cap" value={entry.caption} rows={1}
                 onChange={e => setEntry(p => ({...p, caption: e.target.value}))}
@@ -2582,7 +2838,7 @@ function EntryPanel({ dayName, selDay, month, year, entry, setEntry, saved, hand
 
       <div className="ep-divider"><span className="ep-divider-dot" /></div>
       <div className="elabel">Bagaimana perasaanmu?</div>
-      <div className="mood-row">
+      <div className="mood-row" data-tour="mood-row">
         {MOODS.map(mo => (
           <div key={mo.emoji} className="mbtn-wrap">
             <div className="mbtn-tip">{mo.label}</div>
@@ -2596,7 +2852,7 @@ function EntryPanel({ dayName, selDay, month, year, entry, setEntry, saved, hand
 
       <div className="ep-divider"><span className="ep-divider-dot" /></div>
       <div className="elabel">Kata Hari Ini</div>
-      <div className="word-wrap">
+      <div className="word-wrap" data-tour="word-wrap">
         <input
           className="word-in" type="text"
           value={entry.word}
@@ -2605,7 +2861,7 @@ function EntryPanel({ dayName, selDay, month, year, entry, setEntry, saved, hand
         />
       </div>
 
-      <button className={"sbtn"+(saved?" ok":"")} onClick={handleSave}>
+      <button data-tour="sbtn" className={"sbtn"+(saved?" ok":"")} onClick={handleSave}>
         {saved ? <span className="sbtn-label">✓ Tersimpan!</span> : <span className="sbtn-label">Simpan Catatan</span>}
       </button>
       {(entry.mood || entry.word || entry.photo) && (
