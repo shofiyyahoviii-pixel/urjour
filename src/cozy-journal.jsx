@@ -20,7 +20,7 @@ const MOODS = [
   { emoji: "🤒", label: "Sick",        color: "#5D8A5E" },
 ];
 
-const DAYS   = ["Su","Mo","Tu","We","Th","Fr","Sa"];
+const DAYS   = ["Min","Sen","Sel","Rab","Kam","Jum","Sab"];
 const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -354,7 +354,7 @@ body {
   pointer-events: none;
 }
 
-/* ruled lines + margin line — lebih mirip buku tulis asli */
+/* ruled lines + margin line */
 .card::after {
   content: '';
   position: absolute; inset: 0; pointer-events: none; z-index: 1;
@@ -520,6 +520,19 @@ body {
 
 /* ── CALENDAR ───────────────────────────────────── */
 .cal-wrap { padding: 28px 16px 14px 24px; position: relative; z-index: 2; }
+/* Watermark nama bulan di background */
+.cal-watermark {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'Cormorant Garamond', serif; font-weight: 300;
+  font-size: clamp(60px, 18vw, 110px);
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: rgba(92,58,28,0.04);
+  pointer-events: none; user-select: none;
+  white-space: nowrap; z-index: 0;
+  line-height: 1;
+}
+
 .cal-big {
   font-family: 'Satisfy', cursive;
   font-size: 42px; color: #3B2410; line-height: 1;
@@ -539,13 +552,29 @@ body {
 .cal-cell {
   display: flex; flex-direction: column; align-items: center;
   padding: 3px 2px 4px; cursor: pointer; border-radius: 6px;
-  min-height: 54px; overflow: hidden; transition: background .15s;
+  min-height: 54px; overflow: hidden;
+  transition: background .18s, transform .18s, box-shadow .18s;
 }
-.cal-cell:hover { background: rgba(92,58,28,0.06); }
+/* #8 — Micro-interaction: hover scale + shadow */
+.cal-cell:hover {
+  background: rgba(92,58,28,0.06);
+  transform: scale(1.04);
+  box-shadow: 0 3px 10px rgba(92,58,28,0.10);
+  z-index: 2; position: relative;
+  overflow: visible;
+}
+.cal-cell:active { transform: scale(0.97); }
 .cal-cell.empty  { pointer-events: none; }
 .cal-cell.has-e  {
   background: rgba(201,112,112,0.09);
   border-radius: 6px;
+}
+/* #6 — Today cell ambient glow on the whole cell */
+.cal-cell.today {
+  background: rgba(196,149,58,0.08);
+  border-radius: 6px;
+  box-shadow: 0 0 0 1px rgba(196,149,58,0.18), 0 2px 8px rgba(196,149,58,0.10);
+}
 }
 .cal-cell.has-e:hover { background: rgba(92,58,28,0.08); }
 .cal-cell.future { opacity: 0.3; cursor: not-allowed; pointer-events: none; }
@@ -598,8 +627,9 @@ body {
   box-shadow: 0 2px 8px rgba(201,112,112,0.35);
 }
 .cal-thumb {
-  width: 100%; flex: 1; position: relative;
-  border-radius: 4px; overflow: hidden; margin-top: 3px; min-height: 20px;
+  width: 100%; position: relative;
+  aspect-ratio: 1/1;
+  border-radius: 4px; overflow: hidden; margin-top: 3px;
 }
 .cal-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .cal-moji-over {
@@ -616,6 +646,20 @@ body {
   display: flex; gap: 10px; padding: 6px 16px 2px 24px; flex-wrap: wrap;
   opacity: 0.6;
 }
+/* Keyboard shortcut hint — desktop only */
+.kbd-hint {
+  display: none;
+  font-family: 'DM Sans', sans-serif; font-size: 10px;
+  color: rgba(92,58,28,0.28); letter-spacing: .03em;
+  gap: 4px; align-items: center; padding: 2px 16px 4px 24px;
+}
+.kbd {
+  display: inline-flex; align-items: center; justify-content: center;
+  background: rgba(92,58,28,0.06); border: 1px solid rgba(92,58,28,0.13);
+  border-radius: 4px; padding: 1px 5px;
+  font-size: 9px; color: rgba(92,58,28,0.35);
+}
+@media (min-width: 768px) { .kbd-hint { display: flex; } }
 .leg-item {
   display: flex; align-items: center; gap: 4px;
   font-family: 'DM Sans', sans-serif; font-size: 10px; color: #9C7448; font-weight: 400;
@@ -812,18 +856,31 @@ body {
   position: relative;
 }
 .pol:hover { transform: rotate(-.5deg) scale(1.02); }
-.pol img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; }
-/* Remove photo button */
+.pol img { width: 100%; aspect-ratio: 1/1; object-fit: cover; display: block; }
+/* Tombol hapus foto — muncul saat hover */
 .pol-remove {
-  position: absolute; top: 8px; right: 8px;
-  width: 24px; height: 24px; border-radius: 50%;
-  background: rgba(59,36,16,0.65); color: #FAF5EC;
-  border: none; cursor: pointer; font-size: 10px;
+  position: absolute; top: 14px; right: 14px;
+  width: 26px; height: 26px; border-radius: 50%;
+  background: rgba(59,36,16,0.72); backdrop-filter: blur(4px);
+  color: #FAF5EC; border: none; cursor: pointer; font-size: 10px;
   display: flex; align-items: center; justify-content: center;
-  transition: background .18s; z-index: 5;
-  backdrop-filter: blur(4px);
+  transition: all .18s; z-index: 5;
+  opacity: 0;
 }
-.pol-remove:hover { background: rgba(201,112,112,0.85); }
+.pol:hover .pol-remove { opacity: 1; }
+.pol-remove:hover { background: #C97070; transform: scale(1.12); }
+/* Tombol ganti foto */
+.pol-change {
+  position: absolute; bottom: 44px; left: 50%;
+  transform: translateX(-50%);
+  background: rgba(59,36,16,0.65); backdrop-filter: blur(4px);
+  border: none; color: rgba(250,245,236,0.9);
+  font-family: 'DM Sans', sans-serif; font-size: 10px; letter-spacing: .06em;
+  padding: 4px 12px; border-radius: 20px; cursor: pointer;
+  opacity: 0; transition: all .18s; white-space: nowrap;
+}
+.pol:hover .pol-change { opacity: 1; }
+.pol-change:hover { background: rgba(59,36,16,0.88); }
 .up-area {
   width: 100%; aspect-ratio: 4/3; background: rgba(92,58,28,0.04);
   border: 1.5px dashed rgba(92,58,28,0.2); border-radius: 4px;
@@ -1076,24 +1133,55 @@ body {
 @media (max-width: 640px) {
   .auth-inner { grid-template-columns: 1fr; max-width: 420px; }
   .auth-left  { display: none; }
-  .auth-right { padding: 44px 28px 36px; border-radius: 20px; }
-  /* Show a mini top bar on mobile */
-  .auth-right::before {
-    content: 'Urjour';
-    display: block;
-    font-family: 'Cormorant Garamond', serif; font-weight: 300;
-    font-size: 28px; letter-spacing: 0.24em; color: #3B2410;
-    text-transform: uppercase; text-align: center;
-    margin-bottom: 4px;
-  }
-  .auth-right::after {
-    content: 'your everyday journal';
-    display: block;
-    font-family: 'Cormorant Garamond', serif; font-style: italic;
-    font-size: 12px; letter-spacing: 0.14em; color: rgba(92,58,28,0.45);
-    text-align: center; margin-bottom: 28px;
-  }
-  .auth-right-title { margin-top: 0; }
+  .auth-right { padding: 28px 28px 36px; border-radius: 20px; }
+  .auth-right::before { display: none; }
+  .auth-right::after  { display: none; }
+  .auth-mobile-quote  { display: block !important; }
+  .auth-right-title   { margin-top: 0; }
+}
+@media (min-width: 641px) {
+  .auth-mobile-quote { display: none !important; }
+}
+/* Mobile quote block */
+.auth-mobile-quote {
+  text-align: center;
+  margin-bottom: 24px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid rgba(92,58,28,0.10);
+}
+.auth-mobile-logo {
+  font-family: 'Cormorant Garamond', serif; font-weight: 300;
+  font-size: 30px; letter-spacing: 0.26em; color: #3B2410;
+  text-transform: uppercase; margin-bottom: 2px;
+}
+.auth-mobile-sub {
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: 11px; letter-spacing: 0.16em; color: rgba(92,58,28,0.40);
+  margin-bottom: 18px;
+}
+.auth-mobile-divider {
+  width: 24px; height: 1px; margin: 0 auto 18px;
+  background: rgba(92,58,28,0.18);
+}
+.auth-mobile-quote-text {
+  font-family: 'Caveat', cursive; font-size: 17px;
+  color: rgba(59,36,16,0.65); line-height: 1.55;
+  transition: opacity 0.4s ease;
+}
+.auth-mobile-quote-attr {
+  font-family: 'DM Sans', sans-serif; font-size: 10px;
+  color: rgba(92,58,28,0.35); margin-top: 8px;
+  letter-spacing: .06em; transition: opacity 0.4s ease;
+}
+.auth-mobile-dots {
+  display: flex; justify-content: center; gap: 5px; margin-top: 12px;
+}
+.auth-mobile-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: rgba(92,58,28,0.15); transition: all 0.3s ease; cursor: pointer;
+}
+.auth-mobile-dot.active {
+  background: rgba(92,58,28,0.45); width: 14px; border-radius: 3px;
 }
 .logout-btn {
   position: fixed; top: 14px; right: 16px; z-index: 100;
@@ -1125,6 +1213,77 @@ body {
   animation: pulse 1.4s ease-in-out infinite;
 }
 @keyframes pulse { 0%,100%{opacity:.3} 50%{opacity:.9} }
+
+/* ── TOAST NOTIFICATION ─────────────────────────── */
+.toast-wrap {
+  position: fixed; bottom: 28px; left: 50%;
+  transform: translateX(-50%);
+  z-index: 200; pointer-events: none;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+}
+.toast {
+  display: flex; align-items: center; gap: 10px;
+  background: #3B2410; color: #FAF5EC;
+  padding: 10px 18px 10px 14px;
+  border-radius: 30px;
+  font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 400;
+  letter-spacing: .03em;
+  box-shadow: 0 4px 20px rgba(59,36,16,0.30), 0 1px 6px rgba(59,36,16,0.20);
+  pointer-events: auto;
+  animation: toastIn 0.35s cubic-bezier(0.34,1.56,0.64,1) forwards;
+}
+.toast.toast-out {
+  animation: toastOut 0.25s ease-in forwards;
+}
+.toast.toast-success { background: #4A6840; }
+.toast.toast-error   { background: #8B3A2A; }
+.toast-icon { font-size: 15px; flex-shrink: 0; }
+.toast-spinner {
+  width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0;
+  border: 2px solid rgba(250,245,236,0.25);
+  border-top-color: rgba(250,245,236,0.85);
+  animation: toastSpin 0.7s linear infinite;
+}
+@keyframes toastSpin { to { transform: rotate(360deg); } }
+@keyframes toastIn {
+  0%   { opacity: 0; transform: translateY(10px) scale(0.9); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes toastOut {
+  0%   { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(6px) scale(0.95); }
+}
+
+/* ── DAILY GREETING QUOTE ───────────────────────── */
+.daily-quote-wrap {
+  width: 100%; max-width: 500px;
+  padding: 0 12px 14px;
+  position: relative; z-index: 2;
+  animation: fadeSlideUp 0.6s ease 0.3s both;
+}
+.daily-quote-inner {
+  background: rgba(255,255,255,0.35);
+  border-radius: 12px; padding: 12px 16px;
+  border: 1px solid rgba(92,58,28,0.08);
+  display: flex; gap: 10px; align-items: flex-start;
+}
+.daily-quote-mark {
+  font-family: 'Cormorant Garamond', serif; font-size: 28px;
+  font-weight: 300; line-height: 0.8;
+  color: rgba(201,112,112,0.40); flex-shrink: 0; margin-top: 4px;
+}
+.daily-quote-text {
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: 13px; color: rgba(59,36,16,0.65); line-height: 1.6;
+  letter-spacing: .02em;
+}
+.daily-quote-attr {
+  font-family: 'DM Sans', sans-serif; font-size: 10px;
+  color: rgba(92,58,28,0.35); margin-top: 5px; letter-spacing: .06em;
+}
+@media (min-width: 768px) {
+  .daily-quote-wrap { max-width: 960px; }
+}
 @media (min-width: 768px) {
   .logo-wrap  { max-width: 960px; padding: 40px 0 22px; }
   .logo-text  { font-size: 42px; }
@@ -1288,7 +1447,7 @@ function AuthScreen({ onAuth }) {
         onAuth(res.data.user);
       }
     } catch (e) {
-      setErr(e.message || "Something went wrong");
+      setErr(e.message || "Terjadi kesalahan");
     }
     setBusy(false);
   };
@@ -1301,7 +1460,7 @@ function AuthScreen({ onAuth }) {
         <div className="auth-left">
           <div className="auth-left-top">
             <div className="auth-left-logo">Urjour</div>
-            <div className="auth-left-sub">your everyday journal</div>
+            <div className="auth-left-sub">jurnalmu setiap hari</div>
             <div className="auth-left-divider" />
             <div className="auth-left-quote" style={{
               opacity: quoteFade ? 1 : 0,
@@ -1332,20 +1491,46 @@ function AuthScreen({ onAuth }) {
 
         {/* RIGHT — form panel */}
         <div className="auth-right">
+
+          {/* Mobile-only: logo + rotating quote di atas form */}
+          <div className="auth-mobile-quote">
+            <div className="auth-mobile-logo">Urjour</div>
+            <div className="auth-mobile-sub">jurnalmu setiap hari</div>
+            <div className="auth-mobile-divider" />
+            <div className="auth-mobile-quote-text" style={{opacity: quoteFade ? 1 : 0}}>
+              {AUTH_QUOTES[quoteIdx].text.split("\n").map((line, i) => (
+                <span key={i}>{line}<br /></span>
+              ))}
+            </div>
+            {AUTH_QUOTES[quoteIdx].attr && (
+              <div className="auth-mobile-quote-attr" style={{opacity: quoteFade ? 1 : 0}}>
+                — {AUTH_QUOTES[quoteIdx].attr}
+              </div>
+            )}
+            <div className="auth-mobile-dots">
+              {AUTH_QUOTES.map((_, i) => (
+                <div
+                  key={i}
+                  className={"auth-mobile-dot"+(i===quoteIdx?" active":"")}
+                  onClick={() => { setQuoteFade(false); setTimeout(() => { setQuoteIdx(i); setQuoteFade(true); }, 400); }}
+                />
+              ))}
+            </div>
+          </div>
           <div className="auth-right-title">
-            {mode === "login" ? "Welcome back" : "Start your journal"}
+            {mode === "login" ? "Selamat datang kembali" : "Mulai jurnalmu"}
           </div>
           <div className="auth-right-sub">
             {mode === "login"
-              ? "Sign in to continue your journey"
-              : "Create an account to begin recording your days"}
+              ? "Masuk untuk melanjutkan perjalananmu"
+              : "Buat akun untuk mulai mencatat hari-harimu"}
           </div>
 
           <div className="auth-tabs">
             <button className={"auth-tab"+(mode==="login"?" active":"")}
-              onClick={() => { setMode("login"); setErr(""); }}>Sign In</button>
+              onClick={() => { setMode("login"); setErr(""); }}>Masuk</button>
             <button className={"auth-tab"+(mode==="register"?" active":"")}
-              onClick={() => { setMode("register"); setErr(""); }}>Register</button>
+              onClick={() => { setMode("register"); setErr(""); }}>Daftar</button>
           </div>
 
           <div className="auth-field">
@@ -1371,15 +1556,15 @@ function AuthScreen({ onAuth }) {
 
           <button className="sbtn" style={{marginTop:8}} onClick={submit} disabled={busy}>
             <span className="sbtn-label">
-              {busy ? "…" : mode === "login" ? "Sign In" : "Create Account"}
+              {busy ? "…" : mode === "login" ? "Masuk" : "Buat Akun"}
             </span>
           </button>
 
           <div className="auth-switch">
-            {mode === "login" ? "New here? " : "Already have an account? "}
+            {mode === "login" ? "Belum punya akun? " : "Sudah punya akun? "}
             <span className="auth-switch-link"
               onClick={() => { setMode(mode === "login" ? "register" : "login"); setErr(""); }}>
-              {mode === "login" ? "Create an account" : "Sign in"}
+              {mode === "login" ? "Buat akun" : "Masuk"}
             </span>
           </div>
         </div>
@@ -1391,14 +1576,14 @@ function AuthScreen({ onAuth }) {
 
 // ─── Writing prompts ──────────────────────────────────────────────────────────
 const PROMPTS = [
-  "What made you smile today?",
-  "Describe today in three words.",
-  "What are you grateful for right now?",
-  "What was the highlight of your day?",
-  "How did your body feel today?",
-  "What do you want to remember about today?",
-  "What surprised you today?",
-  "Who made a difference in your day?",
+  "Apa yang membuatmu tersenyum hari ini?",
+  "Gambarkan harimu dalam tiga kata.",
+  "Apa yang kamu syukuri saat ini?",
+  "Apa momen terbaik harimu?",
+  "Bagaimana kondisi tubuhmu hari ini?",
+  "Apa yang ingin kamu ingat dari hari ini?",
+  "Apa yang mengejutkanmu hari ini?",
+  "Siapa yang membuat harimu bermakna?",
 ];
 
 function RightPlaceholder({ entMap, month, year }) {
@@ -1411,7 +1596,7 @@ function RightPlaceholder({ entMap, month, year }) {
   const prompt = PROMPTS[today.getDate() % PROMPTS.length];
 
   const greeting = isCurrentMonth
-    ? "Hello,\nwhat's on your mind?"
+    ? "Halo,\napa yang ada di pikiranmu?"
     : `${MONTHS[month]} ${year}`;
 
   return (
@@ -1440,7 +1625,7 @@ function RightPlaceholder({ entMap, month, year }) {
 
         {/* Recent entries summary */}
         <div className="ph-recent">
-          <div className="ph-recent-label">{isCurrentMonth ? "this month" : MONTHS[month].toLowerCase()}</div>
+          <div className="ph-recent-label">{isCurrentMonth ? "bulan ini" : MONTHS[month].toLowerCase()}</div>
           {totalEntries === 0 ? (
             isCurrentMonth ? (
               <div className="ph-recent-empty">No entries yet — start with today ✨</div>
@@ -1448,10 +1633,10 @@ function RightPlaceholder({ entMap, month, year }) {
               <div className="ph-past-empty">
                 <div style={{fontSize:28, marginBottom:8, opacity:0.4}}>🕰️</div>
                 <div style={{fontFamily:"'Cormorant Garamond',serif", fontStyle:"italic", fontSize:15, color:"#7A5030", lineHeight:1.6}}>
-                  No memories recorded<br />for this month.
+                  Belum ada kenangan<br />yang tercatat bulan ini.
                 </div>
                 <div style={{fontFamily:"'DM Sans',sans-serif", fontSize:11, color:"rgba(92,58,28,0.38)", marginTop:8, lineHeight:1.6}}>
-                  You can still tap any past date<br />to add a memory retroactively.
+                  Kamu masih bisa ketuk tanggal mana saja<br />untuk menambah kenangan.
                 </div>
               </div>
             )
@@ -1481,7 +1666,42 @@ function RightPlaceholder({ entMap, month, year }) {
       {/* Bottom hint */}
       <div className="ph-bottom">
         <div className="ph-arrow">←</div>
-        <div className="ph-hint">Tap any date on the calendar<br />to write your entry</div>
+        <div className="ph-hint">Ketuk tanggal di kalender<br />untuk menulis catatanmu</div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Daily Quote ──────────────────────────────────────────────────────────────
+const DAILY_QUOTES = [
+  { text: "Jurnal adalah kendaraan untuk rasa diri kita.", attr: "Susan Sontag" },
+  { text: "Tuliskan hatimu di atas kertas dengan sepenuh jiwa.", attr: "William Wordsworth" },
+  { text: "Sebuah jurnal adalah suaramu yang paling jujur.", attr: "Lucy Dacus" },
+  { text: "Menulis adalah cara menemukan apa yang kamu percaya.", attr: "David Hare" },
+  { text: "Dalam jurnal, aku tidak hanya mengungkapkan diri — aku menciptakan diriku.", attr: "Susan Sontag" },
+  { text: "Tulislah dengan keras dan jujur tentang apa yang menyakitkan.", attr: "Ernest Hemingway" },
+  { text: "Setiap hari adalah halaman baru yang menunggu untuk ditulis.", attr: "" },
+  { text: "Kenangan yang dituliskan adalah kenangan yang tidak terlupakan.", attr: "" },
+  { text: "Satu kalimat hari ini lebih berarti dari diam seribu hari.", attr: "" },
+  { text: "Catatan kecil hari ini adalah harta besar di masa depan.", attr: "" },
+  { text: "Hidupmu layak untuk diceritakan, mulailah dari hari ini.", attr: "" },
+  { text: "Jurnal bukan tentang menulis dengan sempurna, tapi menulis dengan jujur.", attr: "" },
+];
+
+function DailyQuote() {
+  // Pilih quote berdasarkan hari dalam setahun — berganti tiap hari, konsisten sehari penuh
+  const today = new Date();
+  const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / 86400000);
+  const q = DAILY_QUOTES[dayOfYear % DAILY_QUOTES.length];
+
+  return (
+    <div className="daily-quote-wrap">
+      <div className="daily-quote-inner">
+        <div className="daily-quote-mark">"</div>
+        <div>
+          <div className="daily-quote-text">{q.text}</div>
+          {q.attr && <div className="daily-quote-attr">— {q.attr}</div>}
+        </div>
       </div>
     </div>
   );
@@ -1504,6 +1724,17 @@ export default function CozyJournal() {
   const [entryLoading, setEntryLoading] = useState(false);
   const [turning,   setTurning]   = useState("");
   const [fading,    setFading]    = useState(false);
+  const [toast,     setToast]     = useState(null); // {msg, type, out}
+  const toastTimer = useRef(null);
+
+  const showToast = (msg, type = "default", duration = 2200) => {
+    if (toastTimer.current) clearTimeout(toastTimer.current);
+    setToast({ msg, type, out: false });
+    toastTimer.current = setTimeout(() => {
+      setToast(t => t ? { ...t, out: true } : null);
+      setTimeout(() => setToast(null), 280);
+    }, duration);
+  };
 
   // Listen to auth state on mount
   useEffect(() => {
@@ -1542,24 +1773,47 @@ export default function CozyJournal() {
   };
 
   const handleSave = async () => {
-    let finalEntry = { ...entry };
-    // Upload foto ke Storage kalau ada data URL baru
-    if (entry.photo && entry.photo.startsWith("data:")) {
-      finalEntry.photo = await uploadPhoto(user.id, year, month, selDay, entry.photo);
-      setEntry(finalEntry);
+    showToast("Menyimpan...", "default", 99999); // tetap sampai selesai
+    try {
+      let finalEntry = { ...entry };
+      if (entry.photo && entry.photo.startsWith("data:")) {
+        showToast("Mengupload foto...", "default", 99999);
+        finalEntry.photo = await uploadPhoto(user.id, year, month, selDay, entry.photo);
+        setEntry(finalEntry);
+      }
+      await dbSaveEntry(user.id, year, month, selDay, finalEntry);
+      await dbSaveQuote(user.id, year, month, quote);
+      await refresh();
+      playSave();
+      showToast("✓ Catatan tersimpan!", "success", 1800);
+      setSaved(true);
+      setTimeout(() => {
+        setSaved(false);
+        if (window.innerWidth < 768) setSheetOpen(false);
+      }, 500);
+    } catch {
+      showToast("Gagal menyimpan. Coba lagi.", "error", 3000);
     }
-    await dbSaveEntry(user.id, year, month, selDay, finalEntry);
-    await dbSaveQuote(user.id, year, month, quote);
-    await refresh();
-    playSave();
-    setSaved(true);
-    setTimeout(() => {
-      setSaved(false);
-      if (window.innerWidth < 768) setSheetOpen(false);
-    }, 500);
   };
 
-  const handleLogout = () => supabase.auth.signOut();
+  const handleLogout = () => {
+    if (window.confirm("Keluar dari Urjour?\nSemua catatan kamu sudah tersimpan dengan aman.")) {
+      supabase.auth.signOut();
+    }
+  };
+
+  // Keyboard navigation
+  useEffect(() => {
+    const onKey = (e) => {
+      // Jangan intercept kalau user sedang typing di input/textarea
+      if (["INPUT","TEXTAREA"].includes(e.target.tagName)) return;
+      if (e.key === "ArrowLeft")  flipNav("prev");
+      if (e.key === "ArrowRight") flipNav("next");
+      if (e.key === "Escape") { setSheetOpen(false); setSelDay(null); }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [month, year, turning]); // eslint-disable-line
 
   const cardRef = useRef(null);
 
@@ -1613,7 +1867,7 @@ export default function CozyJournal() {
   const streak      = getStreak(entMap, year, month);
 
   const selDate = selDay ? new Date(year, month, selDay) : null;
-  const dayName = selDate ? ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][selDate.getDay()] : "";
+  const dayName = selDate ? ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"][selDate.getDay()] : "";
 
   const ep = { dayName, selDay, month, year, entry, setEntry, saved, handleSave, entryLoading };
 
@@ -1622,7 +1876,7 @@ export default function CozyJournal() {
     <>
       <style>{CSS}</style>
       <div className="app" style={{alignItems:"center", justifyContent:"center"}}>
-        <div style={{fontFamily:"DM Sans,sans-serif", color:"#8C6840", fontSize:14}}>Loading…</div>
+        <div style={{fontFamily:"DM Sans,sans-serif", color:"#8C6840", fontSize:14}}>Memuat…</div>
       </div>
     </>
   );
@@ -1652,18 +1906,18 @@ export default function CozyJournal() {
             </div>
             <div className="logo-text">Urjour</div>
           </div>
-          <div className="logo-tagline">your everyday journal</div>
+          <div className="logo-tagline">jurnalmu setiap hari</div>
           <div className="logo-line"><span className="logo-line-diamond" /></div>
         </div>
 
-        {/* Logout — fixed top right, tidak ganggu logo */}
-        <button className="logout-btn" onClick={handleLogout} title="Log out">
+        {/* Daily greeting quote */}
+        <DailyQuote />
+
+        {/* Logout */}
+        <button className="logout-btn" onClick={handleLogout} title="Keluar">
           <span className="logout-dot" />
           {user.email.split("@")[0]}
         </button>
-
-        {/* Loading overlay */}
-        {loading && <div className="db-loading">syncing…</div>}
 
         {/* BOOK */}
         <div
@@ -1691,14 +1945,16 @@ export default function CozyJournal() {
             {/* LEFT: calendar + insights */}
             <div style={{position:"relative", zIndex:2}}>
               <div className="cal-wrap">
+                {/* Watermark nama bulan */}
+                <div className="cal-watermark">{MONTHS[month]}</div>
                 <div style={{display:"flex", alignItems:"flex-start", justifyContent:"space-between"}}>
                   <div>
                     <div className="cal-big">{MONTHS[month]}</div>
                     <div className="cal-yr">{year}</div>
                   </div>
                   <div className="cal-nav">
-                    <button className="cal-nav-btn" onClick={() => flipNav("prev")}>‹</button>
-                    <button className="cal-nav-btn" onClick={() => flipNav("next")}>›</button>
+                    <button className="cal-nav-btn" title="Bulan sebelumnya (←)" onClick={() => flipNav("prev")}>‹</button>
+                    <button className="cal-nav-btn" title="Bulan berikutnya (→)" onClick={() => flipNav("next")}>›</button>
                   </div>
                 </div>
                 <div className="cal-grid">
@@ -1731,9 +1987,16 @@ export default function CozyJournal() {
                 </div>
 
                 <div className="legend">
-                  <div className="leg-item"><div className="leg-dot" style={{background:"#2A3860"}} />Today</div>
-                  <div className="leg-item"><div className="leg-dot" style={{background:"#C97070"}} />Selected</div>
+                  <div className="leg-item"><div className="leg-dot" style={{background:"#2A3860"}} />Hari ini</div>
+                  <div className="leg-item"><div className="leg-dot" style={{background:"#C97070"}} />Dipilih</div>
                   <div className="leg-item">📷 Memory</div>
+                </div>
+                <div className="kbd-hint">
+                  <span className="kbd">←</span><span className="kbd">→</span>
+                  <span>navigasi bulan</span>
+                  <span style={{margin:"0 4px"}}>·</span>
+                  <span className="kbd">Esc</span>
+                  <span>tutup</span>
                 </div>
               </div>
 
@@ -1741,9 +2004,9 @@ export default function CozyJournal() {
 
               {/* INSIGHTS */}
               <div className="ins-wrap">
-                <div className="ins-title">This Month's Feelings</div>
-                <div className="ins-sub">based on your entries</div>
-                <div className="slabel">Mood Overview</div>
+                <div className="ins-title">Perasaan Bulan Ini</div>
+                <div className="ins-sub">berdasarkan catatanmu</div>
+                <div className="slabel">Ringkasan Mood</div>
 
                 {totalMoods === 0 ? (
                   <div className="no-e">
@@ -1781,29 +2044,29 @@ export default function CozyJournal() {
                     <>
                       <div className="dom-em">{domMood.emoji}</div>
                       <div className="dom-lbl">{domMood.label}</div>
-                      <div className="dom-sub">appeared {domCt} day{domCt!==1?"s":""} this month</div>
+                      <div className="dom-sub">muncul {domCt} kali bulan ini</div>
                     </>
                   ) : (
                     <>
                       <div style={{fontSize:28,opacity:.3,marginBottom:6}}>—</div>
-                      <div className="dom-sub">no entries yet</div>
+                      <div className="dom-sub">belum ada catatan</div>
                     </>
                   )}
                 </div>
 
                 <div className="streak">
-                  {streak > 0 ? `🔥 ${streak} day streak` : "Start your streak today 🌱"}
+                  {streak > 0 ? `🔥 ${streak} hari berturut-turut` : "Mulai streakmu hari ini 🌱"}
                 </div>
 
                 <div style={{marginTop:16}}>
-                  <div className="slabel">Quote of the Month</div>
+                  <div className="slabel">Kutipan Bulan Ini</div>
                   <div className="qcard-ins">
                     <textarea
                       className="qta-ins"
                       value={quote}
                       onChange={e => setQuote(e.target.value)}
                       onBlur={() => dbSaveQuote(user.id, year, month, quote)}
-                      placeholder="something that moved you this month..."
+                      placeholder="sesuatu yang menyentuhmu bulan ini..."
                     />
                   </div>
                 </div>
@@ -1835,6 +2098,18 @@ export default function CozyJournal() {
         </div>
       </div>
       <div className="bsheet-fade" />
+
+      {/* TOAST NOTIFICATION */}
+      {toast && (
+        <div className="toast-wrap">
+          <div className={"toast"+(toast.type==="success"?" toast-success":toast.type==="error"?" toast-error":"")+(toast.out?" toast-out":"")}>
+            {toast.type === "default" && <div className="toast-spinner" />}
+            {toast.type === "success" && <span className="toast-icon">✓</span>}
+            {toast.type === "error"   && <span className="toast-icon">✕</span>}
+            {toast.msg}
+          </div>
+        </div>
+      )}
     </>
   );
 }
@@ -1877,36 +2152,39 @@ function EntryPanel({ dayName, selDay, month, year, entry, setEntry, saved, hand
       <div className="ep-date">{dayName}, {MONTHS[month]} {selDay}</div>
       <div className="ep-sub">{year}-{pad(month+1)}-{pad(selDay)}</div>
 
-      <div className="elabel">Memory</div>
+      <div className="elabel">Kenangan</div>
       <div className="pol-wrap">
         <div className="pol" onClick={() => !entry.photo && fileRef.current?.click()}>
           {entry.photo ? (
             <>
               <img src={entry.photo} alt="memory" />
-              {/* Remove photo button */}
               <button
                 className="pol-remove"
                 onClick={e => { e.stopPropagation(); setEntry(p => ({...p, photo: null, caption: ""})); }}
-                title="Remove photo"
+                title="Hapus foto"
               >✕</button>
+              <button
+                className="pol-change"
+                onClick={e => { e.stopPropagation(); fileRef.current?.click(); }}
+              >ganti foto</button>
               <textarea
                 className="pol-cap" value={entry.caption} rows={1}
                 onChange={e => setEntry(p => ({...p, caption: e.target.value}))}
-                placeholder="add a caption..."
+                placeholder="tambah keterangan..."
                 onClick={e => e.stopPropagation()}
               />
             </>
           ) : (
             <div className="up-area">
               <div className="up-icon">📷</div>
-              <div className="up-title">Add a memory</div>
-              <div className="up-sub">tap to upload a photo</div>
+              <div className="up-title">Tambah kenangan</div>
+              <div className="up-sub">ketuk untuk upload foto</div>
             </div>
           )}
         </div>
       </div>
 
-      <div className="elabel">How are you feeling?</div>
+      <div className="elabel">Bagaimana perasaanmu?</div>
       <div className="mood-row">
         {MOODS.map(mo => (
           <div key={mo.emoji} className="mbtn-wrap">
@@ -1919,13 +2197,13 @@ function EntryPanel({ dayName, selDay, month, year, entry, setEntry, saved, hand
         ))}
       </div>
 
-      <div className="elabel">Word of the Day</div>
+      <div className="elabel">Kata Hari Ini</div>
       <div className="word-wrap">
         <input
           className="word-in" type="text"
           value={entry.word}
           onChange={e => setEntry(p => ({...p, word: e.target.value}))}
-          placeholder="one word for today..."
+          placeholder="satu kata untuk hari ini..."
         />
       </div>
 
