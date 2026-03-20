@@ -379,22 +379,6 @@ body {
     linear-gradient(to bottom, rgba(110,68,24,0.025) 0%, transparent 8%);
 }
 
-/* Corner fold — pojok kanan atas seperti halaman yang dilipat */
-.card-fold {
-  position: absolute; top: 0; right: 0; z-index: 25;
-  pointer-events: none;
-  width: 22px; height: 22px;
-  background:
-    linear-gradient(225deg, #C8B896 50%, transparent 50%);
-  filter: drop-shadow(-1px 1px 3px rgba(92,58,28,0.22));
-  border-bottom-left-radius: 3px;
-}
-.card-fold::after {
-  content: '';
-  position: absolute; top: 0; right: 0;
-  width: 22px; height: 22px;
-  background: linear-gradient(225deg, rgba(180,148,100,0.20) 50%, transparent 50%);
-}
 
 /* spine — elemen terpisah di book-stage, tidak ikut flip */
 .book-spine {
@@ -744,8 +728,13 @@ body {
 }
 
 .legend {
-  display: flex; gap: 10px; padding: 6px 16px 2px 24px; flex-wrap: wrap;
-  opacity: 0.6;
+  display: none;
+}
+@media (min-width: 768px) {
+  .legend {
+    display: flex; gap: 10px; padding: 6px 16px 2px 24px; flex-wrap: wrap;
+    opacity: 0.5;
+  }
 }
 /* Keyboard shortcut hint — desktop only */
 .kbd-hint {
@@ -951,7 +940,7 @@ body {
   transform: translateX(-50%) translateY(100%);
   width: 100%; max-width: 500px;
   background: linear-gradient(180deg, #FDF8F0 0%, #F8F0E0 100%); border-radius: 22px 22px 0 0;
-  max-height: 90vh; overflow-y: auto; z-index: 101;
+  max-height: 90vh; overflow-y: auto; overflow-x: visible; z-index: 101;
   transition: transform .38s cubic-bezier(.22,.68,0,1.2);
   box-shadow: 0 -4px 24px rgba(92,58,28,0.14);
 }
@@ -966,8 +955,29 @@ body {
   opacity: 0; transition: opacity .38s cubic-bezier(.22,.68,0,1.2);
 }
 .bsheet.open ~ .bsheet-fade { opacity: 1; }
-.handle { width: 40px; height: 4px; background: rgba(92,58,28,0.18); border-radius: 99px; margin: 12px auto 0; }
-.shinner { padding: 20px 20px 50px; }
+.handle {
+  width: 40px; height: 4px;
+  background: rgba(92,58,28,0.18);
+  border-radius: 99px;
+  margin: 0 auto;
+  pointer-events: none;
+}
+.handle-bar {
+  width: 100%; padding: 14px 16px 6px;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; cursor: pointer; flex-shrink: 0;
+}
+.sheet-close-btn {
+  position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+  width: 30px; height: 30px; border-radius: 50%;
+  background: rgba(92,58,28,0.08); border: none;
+  color: rgba(92,58,28,0.55); font-size: 14px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all .18s;
+}
+.sheet-close-btn:hover { background: rgba(92,58,28,0.14); color: rgba(92,58,28,0.85); }
+.sheet-close-btn:active { transform: translateY(-50%) scale(0.9); }
+.shinner { padding: 10px 20px 50px; }
 
 /* Fade gradient at the bottom to hint there's more content */
 .bsheet-fade {
@@ -1031,13 +1041,14 @@ body {
   text-align: center; background: transparent; margin-top: 4px; resize: none;
 }
 
-.mood-row { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 22px; scrollbar-width: none; }
+.mood-row { display: flex; gap: 8px; overflow-x: auto; padding: 6px 4px 14px; margin-bottom: 22px; scrollbar-width: none; }
 .mood-row::-webkit-scrollbar { display: none; }
 
 /* Wrapper buat tooltip */
 .mbtn-wrap {
   position: relative; flex-shrink: 0;
   display: flex; flex-direction: column; align-items: center;
+  overflow: visible;
 }
 .mbtn-tip {
   position: absolute; bottom: calc(100% + 7px);
@@ -1069,7 +1080,7 @@ body {
   background: rgba(92,58,28,0.07); cursor: pointer; font-size: 22px;
   display: flex; align-items: center; justify-content: center;
   transition: background .2s, border-color .2s, box-shadow .2s;
-  position: relative; overflow: hidden;
+  position: relative;
 }
 .mbtn:hover { transform: scale(1.12); background: rgba(92,58,28,0.12); }
 .mbtn.sel {
@@ -2009,8 +2020,8 @@ function RightPlaceholder({ entMap, month, year }) {
   const isCurrentMonth = today.getFullYear() === year && today.getMonth() === month;
   const totalEntries = Object.keys(entMap).length;
   const daysInMonth  = getDaysInMonth(year, month);
+  const daysLogged   = isCurrentMonth ? today.getDate() : daysInMonth;
 
-  // Pick a prompt based on day of month so it feels curated, not random
   const prompt = PROMPTS[today.getDate() % PROMPTS.length];
 
   const greeting = isCurrentMonth
@@ -2026,17 +2037,14 @@ function RightPlaceholder({ entMap, month, year }) {
             <div key={i} className="ph-greeting">{line}</div>
           ))}
           <div className="ph-greeting-sub">
-            {isCurrentMonth
-              ? `${totalEntries} of ${today.getDate()} days logged`
-              : `${totalEntries} of ${daysInMonth} days logged`
-            }
+            {totalEntries} dari {daysLogged} hari tercatat
           </div>
         </div>
 
-        {/* Writing prompt */}
+        {/* Writing prompt — only current month */}
         {isCurrentMonth && (
           <div className="ph-tip-card">
-            <div className="ph-tip-label">today's prompt</div>
+            <div className="ph-tip-label">prompt hari ini</div>
             <div className="ph-tip-text">"{prompt}"</div>
           </div>
         )}
@@ -2046,7 +2054,7 @@ function RightPlaceholder({ entMap, month, year }) {
           <div className="ph-recent-label">{isCurrentMonth ? "bulan ini" : MONTHS[month].toLowerCase()}</div>
           {totalEntries === 0 ? (
             isCurrentMonth ? (
-              <div className="ph-recent-empty">No entries yet — start with today ✨</div>
+              <div className="ph-recent-empty">Belum ada catatan — mulai dari hari ini ✨</div>
             ) : (
               <div className="ph-past-empty">
                 <div style={{fontSize:28, marginBottom:8, opacity:0.4}}>🕰️</div>
@@ -2062,7 +2070,7 @@ function RightPlaceholder({ entMap, month, year }) {
             <div style={{display:"flex", flexWrap:"wrap", gap:"6px"}}>
               {Object.entries(entMap)
                 .sort((a,b) => b[0]-a[0])
-                .slice(0,5)
+                .slice(0,6)
                 .map(([d, e]) => (
                   <div key={d} style={{
                     display:"flex", alignItems:"center", gap:"5px",
@@ -2198,6 +2206,7 @@ export default function CozyJournal() {
   const [sheetOpen, setSheetOpen] = useState(false);
   const [entry,     setEntry]     = useState({ photo: null, mood: null, word: "", caption: "" });
   const [quote,     setQuote]     = useState("");
+  const quoteDebounceRef = useRef(null);
   const [entMap,    setEntMap]    = useState({});
   const [saved,     setSaved]     = useState(false);
   const [loading,   setLoading]   = useState(false);
@@ -2515,8 +2524,7 @@ export default function CozyJournal() {
           <div className="card" ref={cardRef}>
             {/* Paper aging vignette */}
             <div className="card-age" />
-            {/* Corner fold */}
-            <div className="card-fold" />
+            {/* Corner fold dihapus */}
             {/* Nomor halaman */}
             <div className="page-num">hal. {pageNum}</div>
 
@@ -2667,8 +2675,18 @@ export default function CozyJournal() {
                     <textarea
                       className="qta-ins"
                       value={quote}
-                      onChange={e => setQuote(e.target.value)}
-                      onBlur={() => dbSaveQuote(user.id, year, month, quote)}
+                      onChange={e => {
+                        const val = e.target.value;
+                        setQuote(val);
+                        clearTimeout(quoteDebounceRef.current);
+                        quoteDebounceRef.current = setTimeout(() => {
+                          dbSaveQuote(user.id, year, month, val);
+                        }, 1200);
+                      }}
+                      onBlur={() => {
+                        clearTimeout(quoteDebounceRef.current);
+                        dbSaveQuote(user.id, year, month, quote);
+                      }}
                       placeholder="sesuatu yang menyentuhmu bulan ini..."
                     />
                   </div>
@@ -2695,7 +2713,10 @@ export default function CozyJournal() {
       {/* MOBILE BOTTOM SHEET */}
       <div className={"backdrop"+(sheetOpen?" open":"")} onClick={() => setSheetOpen(false)} />
       <div className={"bsheet mob-sheet"+(sheetOpen?" open":"")}>
-        <div className="handle" />
+        <div className="handle-bar" onClick={() => setSheetOpen(false)}>
+          <div className="handle" />
+          <button className="sheet-close-btn" onClick={() => setSheetOpen(false)}>✕</button>
+        </div>
         <div className="shinner">
           {selDay && <EntryPanel {...ep} />}
         </div>
