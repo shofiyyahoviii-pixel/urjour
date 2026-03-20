@@ -2275,16 +2275,15 @@ export default function CozyJournal() {
             {/* Nomor halaman */}
             <div className="page-num">hal. {pageNum}</div>
 
-            {/* PAGE TURN OVERLAY — sits on top, animates, card content stays still */}
+            {/* PAGE TURN OVERLAY */}
             {turning && (
-              {/* Wrapper dengan border-radius untuk clip kertas flip */}
               <div className="page-clip">
-              <div className={"page-turn-stage turning-" + turning}>
-                <div className="page-flap">
-                  <div className="page-flap-front" />
-                  <div className="page-flap-back" />
+                <div className={"page-turn-stage turning-" + turning}>
+                  <div className="page-flap">
+                    <div className="page-flap-front" />
+                    <div className="page-flap-back" />
+                  </div>
                 </div>
-              </div>
               </div>
             )}
 
