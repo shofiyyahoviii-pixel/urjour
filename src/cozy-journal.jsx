@@ -362,8 +362,7 @@ body {
     -10px 0 0 0 #6E4520,
     -14px 3px 14px rgba(0,0,0,0.22),
     0 16px 48px rgba(80,45,10,0.18),
-    0 4px 12px rgba(80,45,10,0.10),
-    inset 10px 0 24px rgba(100,60,15,0.05);
+    0 4px 12px rgba(80,45,10,0.10);
 }
 .card.is-flipping { overflow: visible; }
 
@@ -397,13 +396,14 @@ body {
   background: linear-gradient(225deg, rgba(180,148,100,0.20) 50%, transparent 50%);
 }
 
-/* spine — richer amber-brown */
-.card::before {
-  content: '';
-  position: absolute; left: 0; top: 0; bottom: 0; width: 8px; z-index: 20;
+/* spine — elemen terpisah di book-stage, tidak ikut flip */
+.book-spine {
+  position: absolute; left: -11px; top: 0; bottom: 0; width: 8px; z-index: 10;
   background: linear-gradient(to right,
     #3D1E08 0%, #6B3A18 30%, #96693A 55%, #7A4E28 75%, #5A3018 100%);
   pointer-events: none;
+  border-radius: 2px 0 0 2px;
+  box-shadow: -3px 0 6px rgba(0,0,0,0.18);
 }
 
 /* ruled lines */
@@ -2256,6 +2256,7 @@ export default function CozyJournal() {
           onTouchStart={onTouchStart}
           onTouchEnd={onTouchEnd}
         >
+          <div className="book-spine" />
           <div className="card" ref={cardRef}>
             {/* Paper aging vignette */}
             <div className="card-age" />
