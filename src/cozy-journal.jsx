@@ -445,10 +445,6 @@ body {
   perspective-origin: 20% 40%;
   overflow: visible;
 }
-/* PREV: perspective dari tengah atas supaya rotateX terlihat natural */
-.page-turn-stage.turning-prev {
-  perspective-origin: 50% -10%;
-}
 
 .page-flap {
   position: absolute; inset: 0;
@@ -460,10 +456,9 @@ body {
 .page-turn-stage.turning-next .page-flap {
   animation: flipNext 0.82s cubic-bezier(0.30, 0.0, 0.08, 1.0) forwards;
 }
-/* PREV: flip vertikal dari atas ke bawah — seperti membalik kertas ke depan */
+/* PREV: flip ke kanan — sama dengan NEXT tapi arah balik */
 .page-turn-stage.turning-prev .page-flap {
-  transform-origin: center top;
-  animation: flipPrev 0.88s cubic-bezier(0.22, 0.0, 0.12, 1.0) forwards;
+  animation: flipPrev 0.82s cubic-bezier(0.30, 0.0, 0.08, 1.0) forwards;
 }
 
 /* ── Face textures ──
@@ -493,11 +488,7 @@ body {
     ),
     linear-gradient(172deg, #EDE3CF 0%, #E5D8BC 50%, #DCCFAA 100%);
   background-position: 0 52px, 0 0;
-  /* NEXT: back rotasi Y | PREV: back rotasi X */
   transform: rotateY(180deg);
-}
-.page-turn-stage.turning-prev .page-flap-back {
-  transform: rotateX(-180deg);
 }
 
 /* ── Lift glow ── */
@@ -510,7 +501,7 @@ body {
   animation: paperLift 0.82s ease forwards;
 }
 .page-turn-stage.turning-prev .page-flap-front::before {
-  animation: paperLift 0.88s ease forwards;
+  animation: paperLift 0.82s ease forwards;
 }
 
 /* ── Shadows ── */
@@ -532,18 +523,18 @@ body {
     transparent 55%);
   animation: shadowLand 0.82s ease-in-out forwards;
 }
-/* PREV — shadow vertikal (atas → bawah) */
+/* PREV — shadow horizontal (kiri → kanan, mirror dari NEXT) */
 .page-turn-stage.turning-prev .page-flap-front::after {
-  background: linear-gradient(to bottom,
-    rgba(8,3,0,0.35) 0%, rgba(8,3,0,0.14) 18%,
-    rgba(8,3,0,0.04) 42%, transparent 65%);
-  animation: shadowLift 0.88s ease-in-out forwards;
+  background: linear-gradient(to right,
+    rgba(8,3,0,0.35) 0%, rgba(8,3,0,0.14) 16%,
+    rgba(8,3,0,0.04) 40%, transparent 62%);
+  animation: shadowLift 0.82s ease-in-out forwards;
 }
 .page-turn-stage.turning-prev .page-flap-back::after {
-  background: linear-gradient(to top,
+  background: linear-gradient(to left,
     rgba(8,3,0,0.24) 0%, rgba(8,3,0,0.08) 22%,
     transparent 55%);
-  animation: shadowLand 0.88s ease-in-out forwards;
+  animation: shadowLand 0.82s ease-in-out forwards;
 }
 
 /* ── Keyframes ── */
@@ -553,11 +544,11 @@ body {
   6%   { transform: rotateY(-8deg);   }
   100% { transform: rotateY(-180deg); }
 }
-/* PREV: hinge atas, vertikal dari atas ke bawah */
+/* PREV: hinge kiri, flip ke kanan */
 @keyframes flipPrev {
-  0%   { transform: rotateX(0deg);    }
-  6%   { transform: rotateX(8deg);    }
-  100% { transform: rotateX(180deg);  }
+  0%   { transform: rotateY(0deg);   }
+  6%   { transform: rotateY(8deg);   }
+  100% { transform: rotateY(180deg); }
 }
 
 /* Paper lift glow */
