@@ -440,12 +440,10 @@ body {
 
 .page-turn-stage {
   position: absolute; inset: 0;
-  pointer-events: none; z-index: 50;
+  pointer-events: none;
   perspective: 3000px;
   perspective-origin: 20% 40%;
   overflow: visible;
-  /* Background solid selama flip supaya konten di bawah tidak kelihatan saat swap */
-  background: linear-gradient(172deg, #FDF8F0 0%, #F8F0E0 45%, #F2E8D0 100%);
 }
 
 .page-flap {
@@ -465,14 +463,20 @@ body {
   animation: flipPrev 0.82s cubic-bezier(0.92, 0.0, 0.70, 1.0) forwards;
 }
 
-/* ── Face textures ──
-   PENTING: clip-path karena overflow:hidden tidak bisa di preserve-3d ── */
+/* Wrapper untuk clip corner rounding — di luar preserve-3d */
+.page-clip {
+  position: absolute; inset: 0; z-index: 50;
+  border-radius: 2px 16px 16px 2px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* ── Face textures ── */
 .page-flap-front,
 .page-flap-back {
   position: absolute; inset: 0;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  clip-path: inset(0 0 0 0 round 2px 16px 16px 2px);
 }
 .page-flap-front {
   background:
@@ -2273,11 +2277,14 @@ export default function CozyJournal() {
 
             {/* PAGE TURN OVERLAY — sits on top, animates, card content stays still */}
             {turning && (
+              {/* Wrapper dengan border-radius untuk clip kertas flip */}
+              <div className="page-clip">
               <div className={"page-turn-stage turning-" + turning}>
                 <div className="page-flap">
                   <div className="page-flap-front" />
                   <div className="page-flap-back" />
                 </div>
+              </div>
               </div>
             )}
 
