@@ -113,6 +113,32 @@ function getDominant(counts) {
   return { mood: winner, count: max };
 }
 
+// Streak lintas bulan — query langsung ke Supabase dari hari ini ke belakang
+async function calcStreak(userId) {
+  const today = new Date();
+  // Ambil 90 hari terakhir entries
+  const from = new Date(today); from.setDate(today.getDate() - 90);
+  const fromStr = from.toISOString().split("T")[0];
+  const toStr   = today.toISOString().split("T")[0];
+  const { data } = await supabase
+    .from("entries")
+    .select("date,mood,word,photo_url")
+    .eq("user_id", userId)
+    .gte("date", fromStr)
+    .lte("date", toStr);
+  const filled = new Set((data || [])
+    .filter(r => r.mood || r.word || r.photo_url)
+    .map(r => r.date));
+  let streak = 0;
+  const cur = new Date(today);
+  while (true) {
+    const ds = cur.toISOString().split("T")[0];
+    if (filled.has(ds)) { streak++; cur.setDate(cur.getDate() - 1); }
+    else break;
+  }
+  return streak;
+}
+
 function getStreak(entMap, y, m) {
   const now = new Date();
   if (now.getFullYear() !== y || now.getMonth() !== m) return 0;
@@ -340,10 +366,29 @@ body {
   position: absolute; inset: 0; pointer-events: none; z-index: 3;
   border-radius: 2px 16px 16px 2px;
   background:
-    radial-gradient(ellipse 55% 35% at 0% 0%,   rgba(120,75,30,0.09) 0%, transparent 70%),
-    radial-gradient(ellipse 55% 35% at 100% 0%,  rgba(120,75,30,0.07) 0%, transparent 70%),
-    radial-gradient(ellipse 55% 35% at 0% 100%,  rgba(120,75,30,0.08) 0%, transparent 70%),
-    radial-gradient(ellipse 55% 35% at 100% 100%,rgba(120,75,30,0.07) 0%, transparent 70%);
+    radial-gradient(ellipse 60% 40% at 0% 0%,    rgba(110,68,24,0.10) 0%, transparent 65%),
+    radial-gradient(ellipse 50% 35% at 100% 0%,   rgba(110,68,24,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 55% 40% at 0% 100%,   rgba(110,68,24,0.09) 0%, transparent 65%),
+    radial-gradient(ellipse 50% 35% at 100% 100%,  rgba(110,68,24,0.08) 0%, transparent 60%),
+    /* subtle center-edge darkening along top */
+    linear-gradient(to bottom, rgba(110,68,24,0.025) 0%, transparent 8%);
+}
+
+/* Corner fold — pojok kanan atas seperti halaman yang dilipat */
+.card-fold {
+  position: absolute; top: 0; right: 0; z-index: 25;
+  pointer-events: none;
+  width: 22px; height: 22px;
+  background:
+    linear-gradient(225deg, #C8B896 50%, transparent 50%);
+  filter: drop-shadow(-1px 1px 3px rgba(92,58,28,0.22));
+  border-bottom-left-radius: 3px;
+}
+.card-fold::after {
+  content: '';
+  position: absolute; top: 0; right: 0;
+  width: 22px; height: 22px;
+  background: linear-gradient(225deg, rgba(180,148,100,0.20) 50%, transparent 50%);
 }
 
 /* spine */
@@ -354,7 +399,7 @@ body {
   pointer-events: none;
 }
 
-/* ruled lines + margin line */
+/* ruled lines */
 .card::after {
   content: '';
   position: absolute; inset: 0; pointer-events: none; z-index: 1;
@@ -364,16 +409,9 @@ body {
       transparent, transparent 29px,
       rgba(180,148,100,0.09) 29px, rgba(180,148,100,0.09) 30px
     ),
-    /* Margin line merah tipis di kiri — khas buku tulis */
-    linear-gradient(
-      to right,
-      transparent 30px,
-      rgba(201,112,112,0.12) 30px, rgba(201,112,112,0.12) 31px,
-      transparent 31px
-    ),
-    /* Subtle grain di tepi kanan — paper edge variation */
+    /* Subtle grain di tepi kanan */
     radial-gradient(ellipse 30% 100% at 98% 50%, rgba(150,120,80,0.04) 0%, transparent 100%);
-  background-position: 0 52px, 0 0, 0 0;
+  background-position: 0 52px, 0 0;
 }
 
 /* ── PAGE TURN OVERLAY ───────────────────────────────────────────────────────
@@ -398,10 +436,10 @@ body {
   inset: 0;
   pointer-events: none;
   z-index: 50;
-  perspective: 2400px;
-  perspective-origin: 50% 36%;
+  perspective: 2800px;
+  perspective-origin: 18% 36%;
   overflow: visible;
-  border-radius: 2px 14px 14px 2px;
+  border-radius: 2px 16px 16px 2px;
 }
 
 .page-flap {
@@ -410,15 +448,16 @@ body {
   transform-origin: left center;
   transform-style: preserve-3d;
   will-change: transform;
+  border-radius: 2px 16px 16px 2px;
 }
 
 /* NEXT: pergi ke kiri */
 .page-turn-stage.turning-next .page-flap {
-  animation: flipNext 0.85s cubic-bezier(0.4, 0.0, 0.2, 1.0) forwards;
+  animation: flipNext 0.75s cubic-bezier(0.35, 0.0, 0.15, 1.0) forwards;
 }
 /* PREV: pergi ke kanan (mirror) */
 .page-turn-stage.turning-prev .page-flap {
-  animation: flipPrev 0.85s cubic-bezier(0.4, 0.0, 0.2, 1.0) forwards;
+  animation: flipPrev 0.75s cubic-bezier(0.35, 0.0, 0.15, 1.0) forwards;
 }
 
 /* ── Face textures ── */
@@ -428,23 +467,32 @@ body {
   inset: 0;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
+  border-radius: 2px 16px 16px 2px;
+  overflow: hidden;
 }
 .page-flap-front {
-  background: #FAF5EC;
+  background: linear-gradient(170deg, #FBF6EE 0%, #F7F0E4 100%);
   background-image: repeating-linear-gradient(
     transparent, transparent 29px,
     rgba(180,148,100,0.09) 29px, rgba(180,148,100,0.09) 30px
   );
   background-position: 0 52px;
+  /* Simulasi paper aging di sudut */
+  box-shadow:
+    inset -2px 0 8px rgba(92,58,28,0.05),
+    inset 0 -2px 8px rgba(92,58,28,0.03);
 }
 .page-flap-back {
-  background: #ECE2CC;
+  background: linear-gradient(170deg, #F0E8D6 0%, #E8DCC8 100%);
   background-image: repeating-linear-gradient(
     transparent, transparent 29px,
     rgba(140,108,65,0.07) 29px, rgba(140,108,65,0.07) 30px
   );
   background-position: 0 52px;
   transform: rotateY(180deg);
+  box-shadow:
+    inset 2px 0 8px rgba(92,58,28,0.06),
+    inset 0 -2px 8px rgba(92,58,28,0.03);
 }
 
 /* ── Shadows ── */
@@ -455,59 +503,76 @@ body {
   inset: 0;
   pointer-events: none;
   opacity: 0;
+  border-radius: 2px 16px 16px 2px;
 }
 
 /* NEXT front: shadow di kiri saat halaman pergi ke kiri */
 .page-turn-stage.turning-next .page-flap-front::after {
-  background: linear-gradient(to left, rgba(20,8,2,0.22) 0%, rgba(20,8,2,0.06) 30%, transparent 60%);
-  animation: shadowLift 0.85s ease-in-out forwards;
+  background: linear-gradient(to left,
+    rgba(20,8,2,0.28) 0%,
+    rgba(20,8,2,0.12) 20%,
+    rgba(20,8,2,0.04) 50%,
+    transparent 70%);
+  animation: shadowLift 0.75s ease-in-out forwards;
 }
 /* NEXT back: shadow saat landing */
 .page-turn-stage.turning-next .page-flap-back::after {
-  background: linear-gradient(to right, rgba(20,8,2,0.16) 0%, rgba(20,8,2,0.04) 35%, transparent 65%);
-  animation: shadowLand 0.85s ease-in-out forwards;
+  background: linear-gradient(to right,
+    rgba(20,8,2,0.20) 0%,
+    rgba(20,8,2,0.08) 25%,
+    rgba(20,8,2,0.02) 55%,
+    transparent 75%);
+  animation: shadowLand 0.75s ease-in-out forwards;
 }
 
-/* PREV front: shadow di kanan saat halaman pergi ke kanan */
+/* PREV front: shadow di kanan */
 .page-turn-stage.turning-prev .page-flap-front::after {
-  background: linear-gradient(to right, rgba(20,8,2,0.22) 0%, rgba(20,8,2,0.06) 30%, transparent 60%);
-  animation: shadowLift 0.85s ease-in-out forwards;
+  background: linear-gradient(to right,
+    rgba(20,8,2,0.28) 0%,
+    rgba(20,8,2,0.12) 20%,
+    rgba(20,8,2,0.04) 50%,
+    transparent 70%);
+  animation: shadowLift 0.75s ease-in-out forwards;
 }
 /* PREV back: shadow saat landing */
 .page-turn-stage.turning-prev .page-flap-back::after {
-  background: linear-gradient(to left, rgba(20,8,2,0.16) 0%, rgba(20,8,2,0.04) 35%, transparent 65%);
-  animation: shadowLand 0.85s ease-in-out forwards;
+  background: linear-gradient(to left,
+    rgba(20,8,2,0.20) 0%,
+    rgba(20,8,2,0.08) 25%,
+    rgba(20,8,2,0.02) 55%,
+    transparent 75%);
+  animation: shadowLand 0.75s ease-in-out forwards;
 }
 
 /* ── Keyframes ── */
 
-/* NEXT: 0° → -180° */
+/* NEXT: 0° → -180°, sedikit overshoot biar terasa natural */
 @keyframes flipNext {
-  0%   { transform: rotateY(0deg);    }
-  100% { transform: rotateY(-180deg); }
+  0%   { transform: rotateY(0deg);     }
+  100% { transform: rotateY(-180deg);  }
 }
 
-/* PREV: 0° → +180° (mirror dari next) */
+/* PREV: 0° → +180° */
 @keyframes flipPrev {
-  0%   { transform: rotateY(0deg);   }
-  100% { transform: rotateY(180deg); }
+  0%   { transform: rotateY(0deg);    }
+  100% { transform: rotateY(180deg);  }
 }
 
-/* Shadow naik saat halaman terangkat, hilang di 90° */
+/* Shadow naik saat terangkat, peak di ~30%, hilang di 50% */
 @keyframes shadowLift {
   0%   { opacity: 0;    }
-  20%  { opacity: 0.80; }
-  45%  { opacity: 0.50; }
-  55%  { opacity: 0;    }
+  15%  { opacity: 0.75; }
+  40%  { opacity: 0.40; }
+  52%  { opacity: 0;    }
   100% { opacity: 0;    }
 }
 
-/* Shadow landing: muncul setelah 90°, hilang saat flat */
+/* Shadow landing: muncul setelah 50°, halus hilang */
 @keyframes shadowLand {
   0%   { opacity: 0;    }
   50%  { opacity: 0;    }
-  70%  { opacity: 0.55; }
-  88%  { opacity: 0.20; }
+  65%  { opacity: 0.50; }
+  85%  { opacity: 0.20; }
   100% { opacity: 0;    }
 }
 
@@ -520,19 +585,6 @@ body {
 
 /* ── CALENDAR ───────────────────────────────────── */
 .cal-wrap { padding: 28px 16px 14px 24px; position: relative; z-index: 2; }
-/* Watermark nama bulan di background */
-.cal-watermark {
-  position: absolute; top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  font-family: 'Cormorant Garamond', serif; font-weight: 300;
-  font-size: clamp(60px, 18vw, 110px);
-  letter-spacing: 0.18em; text-transform: uppercase;
-  color: rgba(92,58,28,0.04);
-  pointer-events: none; user-select: none;
-  white-space: nowrap; z-index: 0;
-  line-height: 1;
-}
-
 .cal-big {
   font-family: 'Satisfy', cursive;
   font-size: 42px; color: #3B2410; line-height: 1;
@@ -638,8 +690,8 @@ body {
   width: 15px; height: 15px; display: flex; align-items: center; justify-content: center;
 }
 .cal-moji-only {
-  font-size: 16px; margin-top: 2px; line-height: 1;
-  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.12));
+  font-size: 20px; margin-top: 2px; line-height: 1;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.10));
 }
 
 .legend {
@@ -1206,14 +1258,6 @@ body {
   width: 6px; height: 6px; border-radius: 50%;
   background: rgba(92,58,28,0.22); flex-shrink: 0;
 }
-.db-loading {
-  font-family: 'DM Sans', sans-serif; font-size: 11px;
-  color: rgba(92,58,28,0.35); letter-spacing: .08em;
-  text-align: center; margin-top: -8px; margin-bottom: 6px;
-  animation: pulse 1.4s ease-in-out infinite;
-}
-@keyframes pulse { 0%,100%{opacity:.3} 50%{opacity:.9} }
-
 /* ── TOAST NOTIFICATION ─────────────────────────── */
 .toast-wrap {
   position: fixed; bottom: 28px; left: 50%;
@@ -1726,6 +1770,35 @@ export default function CozyJournal() {
   const [fading,    setFading]    = useState(false);
   const [toast,     setToast]     = useState(null); // {msg, type, out}
   const toastTimer = useRef(null);
+  const [realStreak, setRealStreak] = useState(0);
+  const autoSaveTimer = useRef(null);
+  const [autoSaving, setAutoSaving] = useState(false);
+
+  // Hitung streak lintas bulan setiap kali data berubah
+  useEffect(() => {
+    if (user) calcStreak(user.id).then(setRealStreak);
+  }, [user, entMap]);
+
+  // Auto-save: simpan otomatis 2 detik setelah user berhenti ngetik
+  useEffect(() => {
+    if (!selDay || !user) return;
+    if (!entry.mood && !entry.word && !entry.photo && !entry.caption) return;
+    if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current);
+    autoSaveTimer.current = setTimeout(async () => {
+      setAutoSaving(true);
+      try {
+        let finalEntry = { ...entry };
+        if (entry.photo && entry.photo.startsWith("data:")) {
+          finalEntry.photo = await uploadPhoto(user.id, year, month, selDay, entry.photo);
+          setEntry(finalEntry);
+        }
+        await dbSaveEntry(user.id, year, month, selDay, finalEntry);
+        await refresh();
+        setAutoSaving(false);
+      } catch { setAutoSaving(false); }
+    }, 2000);
+    return () => clearTimeout(autoSaveTimer.current);
+  }, [entry.mood, entry.word, entry.caption]); // eslint-disable-line
 
   const showToast = (msg, type = "default", duration = 2200) => {
     if (toastTimer.current) clearTimeout(toastTimer.current);
@@ -1823,9 +1896,8 @@ export default function CozyJournal() {
     setTurning(dir);
     if (cardRef.current) cardRef.current.classList.add("is-flipping");
 
-    // Halaman edge-on (tidak terlihat) di ~42% dari 850ms ≈ 355ms
-    // Swap konten tepat di situ — tidak ada jump karena halaman sedang tegak
-    setTimeout(() => setFading(true), 330);
+    // Halaman edge-on di ~42% dari 750ms ≈ 315ms
+    setTimeout(() => setFading(true), 290);
     setTimeout(() => {
       if (dir === "next") {
         if (month === 11) { setYear(y => y + 1); setMonth(0); }
@@ -1837,12 +1909,12 @@ export default function CozyJournal() {
       setSelDay(null);
       setSheetOpen(false);
       setFading(false);
-    }, 380);
+    }, 330);
 
     setTimeout(() => {
       setTurning("");
       if (cardRef.current) cardRef.current.classList.remove("is-flipping");
-    }, 900);
+    }, 780);
   };
 
   const swipeRef = useRef({ x: 0, t: 0 });
@@ -1854,7 +1926,7 @@ export default function CozyJournal() {
     if (turning) return;
     const dx = e.changedTouches[0].clientX - swipeRef.current.x;
     const dt = Date.now() - swipeRef.current.t;
-    if (Math.abs(dx) > 50 && dt < 400) {
+    if (Math.abs(dx) > 35 && dt < 500) {
       flipNav(dx < 0 ? "next" : "prev");
     }
   };
@@ -1864,12 +1936,12 @@ export default function CozyJournal() {
   const moodStats   = getMoodStats(entMap, year, month);
   const totalMoods  = Object.values(moodStats).reduce((a,b) => a+b, 0);
   const { mood: domMood, count: domCt } = getDominant(moodStats);
-  const streak      = getStreak(entMap, year, month);
+  const streak      = realStreak;
 
   const selDate = selDay ? new Date(year, month, selDay) : null;
   const dayName = selDate ? ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"][selDate.getDay()] : "";
 
-  const ep = { dayName, selDay, month, year, entry, setEntry, saved, handleSave, entryLoading };
+  const ep = { dayName, selDay, month, year, entry, setEntry, saved, handleSave, entryLoading, autoSaving };
 
   // Belum tahu status auth
   if (!authReady) return (
@@ -1928,6 +2000,8 @@ export default function CozyJournal() {
           <div className="card" ref={cardRef}>
             {/* Paper aging vignette */}
             <div className="card-age" />
+            {/* Corner fold */}
+            <div className="card-fold" />
 
             {/* PAGE TURN OVERLAY — sits on top, animates, card content stays still */}
             {turning && (
@@ -1945,8 +2019,6 @@ export default function CozyJournal() {
             {/* LEFT: calendar + insights */}
             <div style={{position:"relative", zIndex:2}}>
               <div className="cal-wrap">
-                {/* Watermark nama bulan */}
-                <div className="cal-watermark">{MONTHS[month]}</div>
                 <div style={{display:"flex", alignItems:"flex-start", justifyContent:"space-between"}}>
                   <div>
                     <div className="cal-big">{MONTHS[month]}</div>
@@ -2115,7 +2187,7 @@ export default function CozyJournal() {
 }
 
 // ─── Entry Panel ──────────────────────────────────────────────────────────────
-function EntryPanel({ dayName, selDay, month, year, entry, setEntry, saved, handleSave, entryLoading }) {
+function EntryPanel({ dayName, selDay, month, year, entry, setEntry, saved, handleSave, entryLoading, autoSaving }) {
   const fileRef = useRef(null);
 
   const onFile = (e) => {
@@ -2149,7 +2221,14 @@ function EntryPanel({ dayName, selDay, month, year, entry, setEntry, saved, hand
     <>
       <input ref={fileRef} type="file" accept="image/*" style={{display:"none"}} onChange={onFile} />
 
-      <div className="ep-date">{dayName}, {MONTHS[month]} {selDay}</div>
+      <div style={{display:"flex", alignItems:"baseline", justifyContent:"space-between"}}>
+        <div className="ep-date">{dayName}, {MONTHS[month]} {selDay}</div>
+        {autoSaving && (
+          <div style={{fontFamily:"'DM Sans',sans-serif", fontSize:"10px", color:"rgba(92,58,28,0.4)", letterSpacing:".06em", fontStyle:"italic"}}>
+            menyimpan...
+          </div>
+        )}
+      </div>
       <div className="ep-sub">{year}-{pad(month+1)}-{pad(selDay)}</div>
 
       <div className="elabel">Kenangan</div>
