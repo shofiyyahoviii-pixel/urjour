@@ -51,6 +51,13 @@ async function dbSaveEntry(userId, y, m, d, entry) {
   await supabase.from("entries").upsert(row, { onConflict: "user_id,date" });
 }
 
+async function dbDeleteEntry(userId, y, m, d) {
+  await supabase.from("entries")
+    .delete()
+    .eq("user_id", userId)
+    .eq("date", dateStr(y, m, d));
+}
+
 async function dbLoadQuote(userId, y, m) {
   const { data } = await supabase
     .from("quotes")
@@ -158,7 +165,7 @@ const SAVE_SOUND = "data:audio/mp3;base64,//PkZAAf+gTuBmtMXhkJFgQUwZBYCKx3jRmVoQ
 function playSave() {
   try {
     const audio = new Audio(SAVE_SOUND);
-    audio.volume = 0.7;
+    audio.volume = 1.0;
     audio.play().catch(() => {});
   } catch {}
 }
@@ -166,7 +173,7 @@ function playSave() {
 function playFlip() {
   try {
     const audio = new Audio(FLIP_SOUND);
-    audio.volume = 0.85; // volume kencang
+    audio.volume = 1.0;
     audio.play().catch(() => {});
   } catch {}
 }
@@ -432,145 +439,124 @@ body {
 .card.is-flipping { overflow: visible; }
 
 .page-turn-stage {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 50;
-  perspective: 3200px;
-  perspective-origin: 22% 38%;
+  position: absolute; inset: 0;
+  pointer-events: none; z-index: 50;
+  perspective: 3000px;
+  /* NEXT: pivot kiri | PREV: pivot kanan — beda per arah */
   overflow: visible;
-  border-radius: 2px 16px 16px 2px;
 }
+.page-turn-stage.turning-next { perspective-origin: 20% 40%; }
+.page-turn-stage.turning-prev { perspective-origin: 80% 40%; }
 
 .page-flap {
-  position: absolute;
-  inset: 0;
-  transform-origin: left center;
+  position: absolute; inset: 0;
   transform-style: preserve-3d;
   will-change: transform;
-  border-radius: 2px 16px 16px 2px;
 }
-
-/* NEXT: pergi ke kiri — accelerate out, decelerate landing */
+/* NEXT: hinge dari kiri, flip ke kiri — lebih cepat keluar, lembut landing */
 .page-turn-stage.turning-next .page-flap {
-  animation: flipNext 0.80s cubic-bezier(0.32, 0.0, 0.10, 1.0) forwards;
+  transform-origin: left center;
+  animation: flipNext 0.82s cubic-bezier(0.30, 0.0, 0.08, 1.0) forwards;
 }
-/* PREV: pergi ke kanan */
+/* PREV: hinge dari kanan, flip ke kanan — sedikit lebih lambat, terasa "dibuka" */
 .page-turn-stage.turning-prev .page-flap {
-  animation: flipPrev 0.80s cubic-bezier(0.32, 0.0, 0.10, 1.0) forwards;
+  transform-origin: right center;
+  animation: flipPrev 0.88s cubic-bezier(0.25, 0.0, 0.12, 1.0) forwards;
 }
 
-/* ── Face textures ── */
+/* ── Face textures ──
+   PENTING: border-radius TIDAK bisa pakai overflow:hidden di preserve-3d parent
+   Solusi: clip-path inset dengan rounding ──────────────────────────────────── */
 .page-flap-front,
 .page-flap-back {
-  position: absolute;
-  inset: 0;
+  position: absolute; inset: 0;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  border-radius: 2px 16px 16px 2px;
-  overflow: hidden;
+  /* clip-path mensimulasikan border-radius: 2px 16px 16px 2px */
+  clip-path: inset(0 0 0 0 round 2px 16px 16px 2px);
 }
 .page-flap-front {
-  background: linear-gradient(172deg, #FDF8F0 0%, #F8F0E0 50%, #F3E8D2 100%);
-  background-image: repeating-linear-gradient(
-    transparent, transparent 29px,
-    rgba(170,130,75,0.08) 29px, rgba(170,130,75,0.08) 30px
-  );
-  background-position: 0 52px;
+  background:
+    repeating-linear-gradient(
+      transparent, transparent 29px,
+      rgba(170,130,75,0.07) 29px, rgba(170,130,75,0.07) 30px
+    ),
+    linear-gradient(172deg, #FDF8F0 0%, #F8F0E0 45%, #F2E8D0 100%);
+  background-position: 0 52px, 0 0;
 }
 .page-flap-back {
-  background: linear-gradient(172deg, #EEE4D0 0%, #E6D8BE 55%, #DECFAC 100%);
-  background-image: repeating-linear-gradient(
-    transparent, transparent 29px,
-    rgba(130,95,45,0.07) 29px, rgba(130,95,45,0.07) 30px
-  );
-  background-position: 0 52px;
+  background:
+    repeating-linear-gradient(
+      transparent, transparent 29px,
+      rgba(130,95,45,0.07) 29px, rgba(130,95,45,0.07) 30px
+    ),
+    linear-gradient(172deg, #EDE3CF 0%, #E5D8BC 50%, #DCCFAA 100%);
+  background-position: 0 52px, 0 0;
   transform: rotateY(180deg);
 }
 
-/* ── Lift glow — kertas terasa terangkat dari buku ── */
-.page-flap-front::before,
-.page-flap-back::before {
-  content: '';
-  position: absolute; inset: 0;
+/* ── Lift glow ── */
+.page-flap-front::before {
+  content: ''; position: absolute; inset: 0;
   pointer-events: none; opacity: 0;
-  border-radius: 2px 16px 16px 2px;
-  transition: opacity 0.1s;
+  background: linear-gradient(to bottom, rgba(255,240,200,0.16) 0%, transparent 35%);
 }
 .page-turn-stage.turning-next .page-flap-front::before,
 .page-turn-stage.turning-prev .page-flap-front::before {
-  background: linear-gradient(to bottom,
-    rgba(255,240,200,0.18) 0%, transparent 40%);
-  animation: paperLift 0.80s ease forwards;
+  animation: paperLift 0.82s ease forwards;
 }
 
 /* ── Shadows ── */
 .page-flap-front::after,
 .page-flap-back::after {
-  content: '';
-  position: absolute; inset: 0;
+  content: ''; position: absolute; inset: 0;
   pointer-events: none; opacity: 0;
-  border-radius: 2px 16px 16px 2px;
 }
-
+/* NEXT — shadow dari kanan saat halaman pergi kiri */
 .page-turn-stage.turning-next .page-flap-front::after {
-  background:
-    linear-gradient(to left,
-      rgba(10,4,0,0.32) 0%,
-      rgba(10,4,0,0.14) 18%,
-      rgba(10,4,0,0.04) 42%,
-      transparent 65%),
-    linear-gradient(to bottom,
-      rgba(10,4,0,0.06) 0%,
-      transparent 30%);
-  animation: shadowLift 0.80s ease-in-out forwards;
+  background: linear-gradient(to left,
+    rgba(8,3,0,0.35) 0%, rgba(8,3,0,0.14) 16%,
+    rgba(8,3,0,0.04) 40%, transparent 62%);
+  animation: shadowLift 0.82s ease-in-out forwards;
 }
 .page-turn-stage.turning-next .page-flap-back::after {
   background: linear-gradient(to right,
-    rgba(10,4,0,0.22) 0%,
-    rgba(10,4,0,0.08) 22%,
-    rgba(10,4,0,0.02) 50%,
-    transparent 72%);
-  animation: shadowLand 0.80s ease-in-out forwards;
+    rgba(8,3,0,0.24) 0%, rgba(8,3,0,0.08) 22%,
+    transparent 55%);
+  animation: shadowLand 0.82s ease-in-out forwards;
 }
+/* PREV — shadow dari kiri saat halaman datang dari kanan */
 .page-turn-stage.turning-prev .page-flap-front::after {
-  background:
-    linear-gradient(to right,
-      rgba(10,4,0,0.32) 0%,
-      rgba(10,4,0,0.14) 18%,
-      rgba(10,4,0,0.04) 42%,
-      transparent 65%),
-    linear-gradient(to bottom,
-      rgba(10,4,0,0.06) 0%,
-      transparent 30%);
-  animation: shadowLift 0.80s ease-in-out forwards;
+  background: linear-gradient(to right,
+    rgba(8,3,0,0.35) 0%, rgba(8,3,0,0.14) 16%,
+    rgba(8,3,0,0.04) 40%, transparent 62%);
+  animation: shadowLift 0.88s ease-in-out forwards;
 }
 .page-turn-stage.turning-prev .page-flap-back::after {
   background: linear-gradient(to left,
-    rgba(10,4,0,0.22) 0%,
-    rgba(10,4,0,0.08) 22%,
-    rgba(10,4,0,0.02) 50%,
-    transparent 72%);
-  animation: shadowLand 0.80s ease-in-out forwards;
+    rgba(8,3,0,0.24) 0%, rgba(8,3,0,0.08) 22%,
+    transparent 55%);
+  animation: shadowLand 0.88s ease-in-out forwards;
 }
 
 /* ── Keyframes ── */
+/* NEXT: hinge kiri, flip ke kiri — awal agresif, akhir lembut */
 @keyframes flipNext {
-  0%   { transform: rotateY(0deg); }
-  /* Sedikit pause di awal — kertas 'terangkat' dulu */
-  8%   { transform: rotateY(-6deg); }
+  0%   { transform: rotateY(0deg);    }
+  6%   { transform: rotateY(-8deg);   }  /* peel off */
   100% { transform: rotateY(-180deg); }
 }
+/* PREV: hinge kanan, flip ke kanan — terasa seperti membuka halaman */
 @keyframes flipPrev {
-  0%   { transform: rotateY(0deg); }
-  8%   { transform: rotateY(6deg); }
+  0%   { transform: rotateY(0deg);   }
+  6%   { transform: rotateY(8deg);   }  /* peel dari kanan */
   100% { transform: rotateY(180deg); }
 }
 
-/* Paper lift glow — muncul saat terangkat */
+/* Paper lift glow */
 @keyframes paperLift {
   0%   { opacity: 0; }
-  12%  { opacity: 1; }
+  10%  { opacity: 1; }
   45%  { opacity: 0; }
   100% { opacity: 0; }
 }
@@ -614,6 +600,22 @@ body {
   letter-spacing: .18em; font-style: italic;
 }
 .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+
+/* Calendar skeleton — shown while loading month data */
+.cal-skeleton-grid {
+  display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px;
+}
+.cal-skeleton-cell {
+  height: 54px; border-radius: 6px;
+  background: linear-gradient(90deg,
+    rgba(180,140,80,0.07) 25%,
+    rgba(180,140,80,0.13) 50%,
+    rgba(180,140,80,0.07) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+.cal-skeleton-cell.empty { background: transparent; animation: none; }
 .cal-dh {
   text-align: center; font-family: 'DM Sans', sans-serif; font-weight: 500;
   font-size: 10px; color: #2A3860; letter-spacing: .1em;
@@ -702,6 +704,32 @@ body {
   border-radius: 4px; overflow: hidden; margin-top: 3px;
 }
 .cal-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* Mobile — foto jadi full background cell */
+@media (max-width: 767px) {
+  .cal-cell.has-e.has-photo {
+    padding: 0; overflow: hidden;
+    position: relative; min-height: 54px;
+  }
+  .cal-cell.has-e.has-photo .cal-thumb {
+    position: absolute; inset: 0;
+    aspect-ratio: unset; margin: 0; border-radius: 6px;
+  }
+  .cal-cell.has-e.has-photo .cal-num {
+    position: absolute; top: 3px; left: 50%;
+    transform: translateX(-50%);
+    z-index: 2; font-size: 11px; font-weight: 600;
+    color: #FAF5EC; width: 20px; height: 20px;
+    background: rgba(0,0,0,0.35); border-radius: 50%;
+    backdrop-filter: blur(2px);
+    box-shadow: none;
+  }
+  /* today tetap pakai style khusus */
+  .cal-cell.has-e.has-photo.today .cal-num {
+    background: rgba(42,56,96,0.75);
+    box-shadow: 0 0 0 2px rgba(42,56,96,0.40);
+  }
+}
 .cal-moji-over {
   position: absolute; bottom: 2px; right: 2px; font-size: 14px;
   background: rgba(253,248,240,0.92); border-radius: 50%;
@@ -1097,6 +1125,30 @@ body {
 .word-in:focus { border-bottom-color: #7A5030; border-bottom-width: 1.5px; }
 .word-in::placeholder { color: #C4A882; font-size: 16px; font-style: italic; letter-spacing: .02em; }
 
+/* Section divider di entry panel */
+.ep-divider {
+  display: flex; align-items: center; gap: 8px;
+  margin: 18px 0 16px;
+}
+.ep-divider::before, .ep-divider::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(to right, rgba(92,58,28,0.12), rgba(92,58,28,0.04));
+}
+.ep-divider::after {
+  background: linear-gradient(to left, rgba(92,58,28,0.12), rgba(92,58,28,0.04));
+}
+.ep-divider-dot {
+  width: 3px; height: 3px; border-radius: 50%;
+  background: rgba(92,58,28,0.18); flex-shrink: 0;
+}
+.del-btn {
+  width: 100%; height: 38px; border: 1px solid rgba(201,112,112,0.30);
+  border-radius: 10px; background: transparent; color: rgba(201,112,112,0.70);
+  font-family: 'DM Sans', sans-serif; font-size: 12px; letter-spacing: .06em;
+  cursor: pointer; margin-top: 10px;
+  transition: all .2s;
+}
+.del-btn:hover { background: rgba(201,112,112,0.08); border-color: #C97070; color: #C97070; }
 .sbtn {
   width: 100%; height: 50px; border: none; border-radius: 10px;
   background: #3B2410; color: #FAF5EC;
@@ -2057,6 +2109,20 @@ export default function CozyJournal() {
     }
   };
 
+  const handleDelete = async () => {
+    if (!window.confirm("Hapus catatan hari ini?\nTindakan ini tidak bisa dibatalkan.")) return;
+    showToast("Menghapus...", "default", 99999);
+    try {
+      await dbDeleteEntry(user.id, year, month, selDay);
+      await refresh();
+      setEntry({ photo: null, mood: null, word: "", caption: "" });
+      showToast("Catatan dihapus.", "success", 1800);
+      if (window.innerWidth < 768) setSheetOpen(false);
+    } catch {
+      showToast("Gagal menghapus.", "error", 3000);
+    }
+  };
+
   const handleLogout = () => {
     if (window.confirm("Keluar dari Urjour?\nSemua catatan kamu sudah tersimpan dengan aman.")) {
       supabase.auth.signOut();
@@ -2084,8 +2150,9 @@ export default function CozyJournal() {
     setTurning(dir);
     if (cardRef.current) cardRef.current.classList.add("is-flipping");
 
-    // Halaman edge-on di ~42% dari 800ms ≈ 336ms
-    setTimeout(() => setFading(true), 310);
+    // Edge-on di ~42% dari durasi — swap konten di sini
+    const dur = dir === "next" ? 820 : 880;
+    setTimeout(() => setFading(true), Math.round(dur * 0.38));
     setTimeout(() => {
       if (dir === "next") {
         if (month === 11) { setYear(y => y + 1); setMonth(0); }
@@ -2097,12 +2164,12 @@ export default function CozyJournal() {
       setSelDay(null);
       setSheetOpen(false);
       setFading(false);
-    }, 355);
+    }, Math.round(dur * 0.42));
 
     setTimeout(() => {
       setTurning("");
       if (cardRef.current) cardRef.current.classList.remove("is-flipping");
-    }, 820);
+    }, dur + 40);
   };
 
   const swipeRef = useRef({ x: 0, t: 0 });
@@ -2133,7 +2200,7 @@ export default function CozyJournal() {
   const selDate = selDay ? new Date(year, month, selDay) : null;
   const dayName = selDate ? ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"][selDate.getDay()] : "";
 
-  const ep = { dayName, selDay, month, year, entry, setEntry, saved, handleSave, entryLoading, autoSaving, setLightbox };
+  const ep = { dayName, selDay, month, year, entry, setEntry, saved, handleSave, handleDelete, entryLoading, autoSaving, setLightbox };
 
   // Belum tahu status auth
   if (!authReady) return (
@@ -2223,6 +2290,15 @@ export default function CozyJournal() {
                     <button className="cal-nav-btn" title="Bulan berikutnya (→)" onClick={() => flipNav("next")}>›</button>
                   </div>
                 </div>
+                {loading ? (
+                  <div className="cal-skeleton-grid">
+                    {DAYS.map(d => <div key={d} className="cal-dh">{d}</div>)}
+                    {Array.from({ length: firstDay }).map((_,i) => <div key={"e"+i} className="cal-skeleton-cell empty" />)}
+                    {Array.from({ length: daysInMonth }).map((_,i) => (
+                      <div key={i} className="cal-skeleton-cell" style={{animationDelay:`${i*0.02}s`}} />
+                    ))}
+                  </div>
+                ) : (
                 <div className="cal-grid">
                   {DAYS.map(d => <div key={d} className="cal-dh">{d}</div>)}
                   {Array.from({ length: firstDay }).map((_,i) => <div key={"e"+i} className="cal-cell empty" />)}
@@ -2235,7 +2311,7 @@ export default function CozyJournal() {
                     return (
                       <div
                         key={d}
-                        className={"cal-cell"+(isToday?" today":"")+(isSel?" sel":"")+(edata?" has-e":"")+(isFuture?" future":"")}
+                        className={"cal-cell"+(isToday?" today":"")+(isSel?" sel":"")+(edata?" has-e":"")+(edata?.photo?" has-photo":"")+(isFuture?" future":"")}
                         onClick={() => openDay(d)}
                       >
                         <div className="cal-num">{d}</div>
@@ -2251,6 +2327,7 @@ export default function CozyJournal() {
                     );
                   })}
                 </div>
+                )}
 
                 <div className="legend">
                   <div className="leg-item"><div className="leg-dot" style={{background:"#2A3860"}} />Hari ini</div>
@@ -2416,7 +2493,7 @@ export default function CozyJournal() {
 }
 
 // ─── Entry Panel ──────────────────────────────────────────────────────────────
-function EntryPanel({ dayName, selDay, month, year, entry, setEntry, saved, handleSave, entryLoading, autoSaving, setLightbox }) {
+function EntryPanel({ dayName, selDay, month, year, entry, setEntry, saved, handleSave, handleDelete, entryLoading, autoSaving, setLightbox }) {
   const fileRef = useRef(null);
 
   const onFile = (e) => {
@@ -2496,6 +2573,7 @@ function EntryPanel({ dayName, selDay, month, year, entry, setEntry, saved, hand
         </div>
       </div>
 
+      <div className="ep-divider"><span className="ep-divider-dot" /></div>
       <div className="elabel">Bagaimana perasaanmu?</div>
       <div className="mood-row">
         {MOODS.map(mo => (
@@ -2509,6 +2587,7 @@ function EntryPanel({ dayName, selDay, month, year, entry, setEntry, saved, hand
         ))}
       </div>
 
+      <div className="ep-divider"><span className="ep-divider-dot" /></div>
       <div className="elabel">Kata Hari Ini</div>
       <div className="word-wrap">
         <input
@@ -2520,8 +2599,11 @@ function EntryPanel({ dayName, selDay, month, year, entry, setEntry, saved, hand
       </div>
 
       <button className={"sbtn"+(saved?" ok":"")} onClick={handleSave}>
-        {saved ? <span className="sbtn-label">✓ Saved!</span> : <span className="sbtn-label">Save Entry</span>}
+        {saved ? <span className="sbtn-label">✓ Tersimpan!</span> : <span className="sbtn-label">Simpan Catatan</span>}
       </button>
+      {(entry.mood || entry.word || entry.photo) && (
+        <button className="del-btn" onClick={handleDelete}>hapus catatan ini</button>
+      )}
     </>
   );
 }
