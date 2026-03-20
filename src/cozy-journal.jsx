@@ -581,7 +581,7 @@ body {
 /* Card content crossfade — ganti saat halaman edge-on */
 .card-content {
   width: 100%;
-  transition: opacity 0.08s ease-in-out;
+  transition: opacity 0.12s ease-in-out;
 }
 .card-content.fading { opacity: 0; }
 
@@ -2148,9 +2148,12 @@ export default function CozyJournal() {
     setTurning(dir);
     if (cardRef.current) cardRef.current.classList.add("is-flipping");
 
-    // Edge-on di ~42% dari durasi — swap konten di sini
-    const dur = dir === "next" ? 820 : 880;
-    setTimeout(() => setFading(true), Math.round(dur * 0.38));
+    const dur = dir === "next" ? 820 : 820;
+
+    // 1. Mulai fade out konten di ~40% animasi (saat kertas hampir edge-on)
+    setTimeout(() => setFading(true), Math.round(dur * 0.40));
+
+    // 2. Swap konten saat kertas benar-benar edge-on (~48%)
     setTimeout(() => {
       if (dir === "next") {
         if (month === 11) { setYear(y => y + 1); setMonth(0); }
@@ -2161,13 +2164,16 @@ export default function CozyJournal() {
       }
       setSelDay(null);
       setSheetOpen(false);
-      setFading(false);
-    }, Math.round(dur * 0.42));
+    }, Math.round(dur * 0.48));
 
+    // 3. Fade in konten baru setelah swap (~52%) — beri jeda agar React render dulu
+    setTimeout(() => setFading(false), Math.round(dur * 0.52));
+
+    // 4. Cleanup animasi setelah selesai
     setTimeout(() => {
       setTurning("");
       if (cardRef.current) cardRef.current.classList.remove("is-flipping");
-    }, dur + 40);
+    }, dur + 60);
   };
 
   const swipeRef = useRef({ x: 0, t: 0 });
