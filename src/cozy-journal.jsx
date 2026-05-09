@@ -1290,36 +1290,6 @@ body {
   color: #9C8878; cursor: pointer;
   text-decoration: underline; text-underline-offset: 3px;
 }
-/* Google sign-in */
-.auth-divider {
-  display: flex; align-items: center; gap: 10px;
-  margin: 20px 0 16px;
-}
-.auth-divider::before, .auth-divider::after {
-  content: ''; flex: 1; height: 1px;
-  background: rgba(100,75,50,0.14);
-}
-.auth-divider-text {
-  font-family: 'DM Sans', sans-serif; font-size: 11px;
-  color: rgba(100,75,50,0.38); letter-spacing: .08em;
-}
-.google-btn {
-  width: 100%; height: 46px; border-radius: 10px;
-  border: 1px solid rgba(100,75,50,0.18);
-  background: #FDFAF5;
-  display: flex; align-items: center; justify-content: center; gap: 10px;
-  cursor: pointer; transition: all .2s;
-  font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
-  color: #4A3828; letter-spacing: .02em;
-  box-shadow: 0 1px 4px rgba(100,75,50,0.08);
-}
-.google-btn:hover {
-  background: #F8F3EB;
-  border-color: rgba(100,75,50,0.28);
-  box-shadow: 0 2px 10px rgba(100,75,50,0.12);
-  transform: translateY(-1px);
-}
-.google-btn:active { transform: translateY(0); }
 /* Mobile: stack vertically, hide left panel, show mini header */
 @media (max-width: 640px) {
   .auth-inner { grid-template-columns: 1fr; max-width: 420px; }
@@ -2037,20 +2007,6 @@ function AuthScreen({ onAuth }) {
     setBusy(false);
   };
 
-  const signInWithGoogle = async () => {
-    setBusy(true); setErr("");
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: { redirectTo: window.location.href },
-      });
-      if (error) throw error;
-    } catch (e) {
-      setErr(e.message || "Gagal masuk dengan Google");
-      setBusy(false);
-    }
-  };
-
   return (
     <div className="auth-wrap">
       <div className="auth-inner">
@@ -2157,20 +2113,6 @@ function AuthScreen({ onAuth }) {
             <span className="sbtn-label">
               {busy ? "…" : mode === "login" ? "Masuk" : "Buat Akun"}
             </span>
-          </button>
-
-          <div className="auth-divider">
-            <span className="auth-divider-text">atau</span>
-          </div>
-
-          <button className="google-btn" onClick={signInWithGoogle} disabled={busy}>
-            <svg width="18" height="18" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-              <path fill="#EA4335" d="M24 9.5c3.14 0 5.95 1.08 8.17 2.84l6.1-6.1C34.46 3.19 29.54 1 24 1 14.82 1 7.07 6.48 3.64 14.26l7.1 5.52C12.44 13.61 17.76 9.5 24 9.5z"/>
-              <path fill="#4285F4" d="M46.52 24.5c0-1.64-.15-3.22-.42-4.74H24v8.98h12.7c-.55 2.9-2.2 5.36-4.68 7.02l7.18 5.58C43.18 37.18 46.52 31.32 46.52 24.5z"/>
-              <path fill="#FBBC05" d="M10.74 28.22A14.6 14.6 0 0 1 9.5 24c0-1.47.25-2.9.7-4.22l-7.1-5.52A23.93 23.93 0 0 0 0 24c0 3.86.92 7.5 2.56 10.72l8.18-6.5z"/>
-              <path fill="#34A853" d="M24 47c5.54 0 10.2-1.84 13.6-4.98l-7.18-5.58c-1.84 1.24-4.2 1.96-6.42 1.96-6.24 0-11.56-4.11-13.26-9.72l-8.18 6.5C7.07 41.52 14.82 47 24 47z"/>
-            </svg>
-            Lanjutkan dengan Google
           </button>
 
           <div className="auth-switch">
